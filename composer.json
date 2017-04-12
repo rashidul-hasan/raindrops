@@ -1,0 +1,18 @@
+{
+    "name": "rashidul/raindrops",
+    "description": "Laravel package to help building enterprize applications",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Rashidul Hasan",
+            "email": "rashidul69@gmail.com"
+        }
+    ],
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "Rashidul\\Raindrops\\": "src/"
+        }
+    }
+}
