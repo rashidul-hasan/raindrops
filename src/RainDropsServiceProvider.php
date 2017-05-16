@@ -15,6 +15,11 @@ class RainDropsServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->loadViewsFrom(__DIR__.'/views', 'raindrops');
+
+        // publish configs
+        $this->publishes([
+            __DIR__ . '/config' => config_path('raindrops'),
+        ]);
     }
 
     /**
@@ -31,5 +36,11 @@ class RainDropsServiceProvider extends ServiceProvider
             return new Builder();
         });
         $this->app->alias(Builder::class, 'formbuilder');
+
+        // load configs
+        $this->mergeConfigFrom(
+            __DIR__ . '/config/form.php', 'raindrops.form'
+        );
+
     }
 }
