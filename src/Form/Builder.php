@@ -733,6 +733,7 @@ class Builder
                         ->setName($field)
                         ->setRequired($required)
                         ->set('rows', '10')
+                        ->text($value)
                         ->render();
 
                     break;
@@ -745,6 +746,7 @@ class Builder
                         ->setName($field)
                         ->setRequired($required)
                         ->set('rows', '10')
+                        ->text($value)
                         ->render();
 
                     break;

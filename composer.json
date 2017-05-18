@@ -14,5 +14,7 @@
         "psr-4": {
             "Rashidul\\RainDrops\\": "src/"
         }
-    }
+    },
+    "minimum-stability":"dev"
+
 }
