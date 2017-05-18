@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
 use Rashidul\RainDrops\Helper;
+use Rashidul\RainDrops\Html\Helper as HtmlHelper;
 use Rashidul\RainDrops\Html\Element;
 use Illuminate\Support\Facades\DB;
 
@@ -38,6 +39,8 @@ class Builder
      * @var Helper
      */
     protected $helper;
+
+    protected $htmlHelper;
 
     /**
      * @var array
@@ -128,6 +131,7 @@ class Builder
     public function __construct()
     {
         $this->helper = new Helper();
+        $this->htmlHelper = new HtmlHelper();
         $this->errors = $this->getErrorsFromRequest();
         $this->configs = config('raindrops.form');
     }
@@ -599,23 +603,27 @@ class Builder
 
     private function renderSubmitButton()
     {
-        $stub = '<button type="submit" class="%s">%s <i class="%s"></i></button>';
 
         if ( !$this->submitButtonOptions ){
             return '';
         }
 
-        /*if ( is_array($this->submitButtonOptions) ){
-            $btn_class = array_key_exists('class') ? $this->submitButtonOptions['class'] : 'btn btn-primary';
-        }*/
+        $button = Element::build('button')
+                        ->setType('submit')
+                        ->addClass($this->submitButtonOptions['class'])
+                        ->text($this->submitButtonOptions['text']);
 
-        // TODO.
-        // implement wrapper element
-        return sprintf($stub,
-            $this->submitButtonOptions['class'],
-            $this->submitButtonOptions['text'],
-            $this->submitButtonOptions['icon']);
+        $icon = Element::build('i')
+                    ->addClass($this->submitButtonOptions['icon']);
 
+        $button->text($icon);
+
+        if ( strlen($this->submitButtonOptions['wrapper']) ) {
+            $wrapper = $this->htmlHelper->elementFromSyntax( $this->submitButtonOptions['wrapper'] );
+            return $wrapper->text($button)->render();
+        }
+
+        return $button->render();
 
     }
 
@@ -669,14 +677,20 @@ class Builder
     private function initFormObject()
     {
 
-        if ( $this->formOptions ){
+        if ($this->formOptions) {
 
-            /*$action = $this->helper->returnIfExists($this->formOptions, 'action');
-            $method = $this->helper->returnIfExists($this->formOptions, 'method');
-            $attributes = $this->helper->returnIfExists($this->formOptions, 'attributes');*/
+            $method_field = '';
+
+            if (array_key_exists('method', $this->formOptions)
+                && in_array($this->formOptions['method'], ['PUT', 'PATCH', 'DELETE']) ) {
+
+                $method_field = method_field($this->formOptions['method']);
+                $this->formOptions['method'] = 'POST';
+            }
 
             return Element::build('form')
-                        ->set($this->formOptions);
+                ->text($method_field)
+                ->set($this->formOptions);
 
         }
 
@@ -789,6 +803,7 @@ class Builder
                     // TODO.
                     // need to let user filter some records before adding them to option list
                     // this data should be pulled via eloquent instead of raw DB query
+                    // refactor it to use the new Element class
                     $table_data = DB::table($options['table'])->select($options['options'])->get();
 
                     $option_key = $options['options'][0];
