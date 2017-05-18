@@ -826,6 +826,7 @@ class Builder
                         ->addClass('datepicker')
                         ->setName($field)
                         ->setType('text')
+                        ->setValue($value)
                         ->setRequired($required)
                         ->render();
 
