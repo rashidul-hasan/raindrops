@@ -9,14 +9,13 @@
 namespace Rashidul\RainDrops\Form;
 
 
-use Collective\Html\FormFacade;
 use Exception;
-use Illuminate\Contracts\Filesystem\FileNotFoundException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Illuminate\Support\MessageBag;
 use Rashidul\RainDrops\Helper;
+use Rashidul\RainDrops\Html\Element;
+use Illuminate\Support\Facades\DB;
 
 class Builder
 {
@@ -48,7 +47,7 @@ class Builder
     /**
      * @var string
      */
-    protected $templateName;
+    protected $templateName = 'default';
 
     /**
      * @var array
@@ -61,11 +60,25 @@ class Builder
     protected $fieldsAdded = [];
 
     /**
+     * @var array|Config
+     */
+    protected $configs = [];
+
+    /**
      * @var string
      */
     protected $wrapperElements;
 
+    /**
+     * @var null
+     */
     protected $errors;
+
+    /**
+     * Form object
+     * @var | Element
+     */
+    protected $form;
 
     /**
      * @var boolean
@@ -86,6 +99,12 @@ class Builder
      * @var array
      */
     protected $hiddenFields = [];
+
+    /**
+     * Should csrf field be generated
+     * @var bool
+     */
+    protected $csrfField = true;
 
     /**
      * @var array
@@ -110,6 +129,7 @@ class Builder
     {
         $this->helper = new Helper();
         $this->errors = $this->getErrorsFromRequest();
+        $this->configs = config('raindrops.form');
     }
 
     /**
@@ -119,7 +139,7 @@ class Builder
      * @return $this
      * @throws Exception
      */
-    public function create($model = null)
+    /*public function create($model = null)
     {
 
         if ( !is_null($model) && !$model instanceof Model ){
@@ -130,7 +150,7 @@ class Builder
         $this->model = $model;
 
         return $this;
-    }
+    }*/
 
     /**
      * Start building your form
@@ -142,11 +162,14 @@ class Builder
     public function build($model = null)
     {
 
-        if ( !is_null($model) && !$model instanceof Model ){
-            throw new \Exception("dafuq bro???");
+        if ( !is_null($model) && !$model instanceof Model )
+        {
+            throw new \InvalidArgumentException("Argument 1 of build method must be an instance of Illuminate\\Database\\Eloquent\\Model");
         }
 
         $this->model = $model;
+
+        //$this->setFormDefaults($model);
 
         return $this;
     }
@@ -157,13 +180,13 @@ class Builder
      * @param $model
      * @return $this
      */
-    public function edit($model)
+    /*public function edit($model)
     {
         $this->formType = 'edit';
         $this->model = $model;
 
         return $this;
-    }
+    }*/
 
     public function section($name, $fields)
     {
@@ -173,22 +196,36 @@ class Builder
     }
 
     /**
-     *
      * Template name, defined in form config's 'templates' key
      *
      * @param $name
      * @return $this
      * @throws Exception
      */
-    public function template($name)
+    public function template( $name )
     {
 
         $templateName = 'raindrops.form.templates.' . $name;
 
         if ( ! Config::has( $templateName ) )
-            throw new \Exception('template doesn\'t exists in config file');
+        {
+            throw new \Exception('template doesn\'t exist in config file');
+        }
 
-        $this->templateName = $templateName;
+        $this->templateName = $name;
+
+        return $this;
+    }
+
+    /**
+     * generate csrf field or not
+     *
+     * @param $value
+     * @return $this
+     */
+    public function csrf($value)
+    {
+        $this->csrfField = $value;
 
         return $this;
     }
@@ -199,12 +236,12 @@ class Builder
      * @param $errors
      * @return $this
      */
-    public function errors($errors)
+    /*public function errors($errors)
     {
         $this->errors = $errors;
 
         return $this;
-    }
+    }*/
 
     /**
      * Add new fields to the form
@@ -229,9 +266,12 @@ class Builder
     public function remove($fields)
     {
 
-        if (is_array($fields)) {
+        if (is_array($fields))
+        {
             $this->fieldsExcept = array_merge($this->fieldsExcept, $fields);
-        } else {
+        }
+        else
+        {
             array_push($this->fieldsExcept, $fields);
         }
 
@@ -415,169 +455,60 @@ class Builder
     public function render()
     {
 
+        // first create an element object
+        /*if ( $this->formOptions ){
+            $data = $this->wrapWithForm($data);
+        }*/
+        $this->form = $this->initFormObject();
+
         // build the fields array
         $this->fields = $this->populateFieldsArray();
 
-        //$open = FormFacade::open(['url' => 'foo/bar'])->toHtml();
+        //$templatePath = config( $this->templateName );
 
-        //$close = FormFacade::close();
+        // variable that will hold the final form in string format
+        //$data = '';
 
-        //$test = $this->model->exists;
+        // if sections are defined, populate those first
+        if ( $this->sections )
+        {
 
-        //$test = config('raindrops.form.name');
-
-        $template = file_get_contents( config( $this->templateName ) );
-
-        // build the form tag, if its needed
-        // build all the fields
-        // combine and return the form
-        $data = '';
-
-
-        foreach ($this->fields as $field => $options) {
-
-            // form is false then abort
-            if ( array_key_exists('form', $options) && !$options['form'] ){
-                continue;
-            }
-
-            /*$html = '<div class="col-md-6">
-                        <div class="form-group %s">
-                            %s
-							%s
-							%s
-					    </div>
-					</div>';*/
-
-            // build label
-            // set error class
-            // build element
-            // set error text
-            // replace all in templete
-            // add it to $data
-
-            //$required = isset($value['required']) && $value['required'] ? 'required' : '';
-
-            $required = $this->isRequired($options);
-
-            $unique = $this->isUnique($options);
-
-            $label = $this->getLabel($options, $required, $unique);
-
-            // if its unique field then add 'Unique' to label
-            //$unique = isset($value['unique']) && $value['unique'] ? '(Unique)' : '';
-
-            $error_class = '';
-
-            /*if ( isset($value['required']) && $value['required'] ){
-                $label = sprintf('<label class="control-label">%s %s<span class="required-field">*</span></label>', $value['label'], $unique);
-            } else {
-                $label = sprintf('<label class="control-label">%s %s</label>', $value['label'], $unique);
-            }*/
-
-            $element = '';
-            $error_text = '';
-
-
-            if ( $this->errors != null && $this->errors->any() ) {
-                if ($this->errors->has($field)) {
-                    $error_class = 'has-error';
-                    $error_text = $this->errors->first($field);
-                }
-            }
-
-            switch($options['type'])
+            foreach ($this->sections as $header => $fields)
             {
-                case 'textarea':
-                    $element = sprintf('<textarea name="%s" class="form-control"  rows="10" %s></textarea>', $field, $required);
-                    break;
+                // build header
+                $header = Element::build('div')
+                                ->addClass('col-md-12')
+                                ->addChild('h3')
+                                ->text($header);
 
-                case 'editor':
-                    $element = sprintf('<textarea name="%s" class="form-control editor"  rows="10" %s></textarea>', $field, $required);
-                    break;
+                $this->form->addChild($header);
 
-                case 'select':
-                    $element = sprintf('<select name="%s" class="form-control select2" %s>', $field, $required);
+                // field fields for sections
+                $section_fields = array_only( $this->fields, $fields );
 
-                    $element .= '<option value="" disabled selected>--Select One--</option>';
-                    foreach ($options['options'] as $option_key => $option_value) {
-                        $element .= sprintf('<option value="%s">%s</option>', $option_key, $option_value);
-                    }
-                    $element .= '</select>';
-                    break;
+                $this->populateFormWithElements( $section_fields );
 
-                case 'select_db':
-                    $table_data = DB::table($options['table'])->select($options['options'])->get();
-
-                    $option_key = $options['options'][0];
-                    //$option_value = $value['options'][1];
-                    $element = sprintf('<select name="%s" class="form-control select2" %s>', $field, $required);
-
-                    $element .= '<option value="" disabled selected>--Select One--</option>';
-                    foreach ($table_data as $table_data_single) {
-                        $option_value = count($options['options']) > 2 ? $table_data_single->{$options['options'][1]} . ' ' . $table_data_single->{$options['options'][2]} : $table_data_single->{$options['options'][1]};
-                        $element .= sprintf('<option value="%s">%s</option>', $table_data_single->{$option_key}, $option_value);
-                    }
-                    $element .= '</select>';
-
-                    break;
-
-                case 'date':
-                    $element = sprintf('<input type="text" name="%s" class="form-control datepicker" %s>', $field, $required);
-                    break;
-
-                case 'date_time':
-                    $element = sprintf('<input type="text" name="%s" class="form-control datetimepicker" %s>', $field, $required);
-                    break;
-
-                case 'file':
-                    $element = sprintf('<input type="%s"  name="%s" class="form-control" accept="%s" %s>', $options['type'], $field, $options['accept'], $required);
-                    break;
-
-                // TODO.
-                // 1. implement a better timepicker instead of html5 default
-                // 2. extract the element generation code to diffeerent methods,
-                //    same method for both create & edit form
-                // 3. improve image input field
-                // 4. improve 2-column horizontal form layout (add row after each 2 columns)
-
-                case 'time':
-                    $element = sprintf('<input type="text" name="%s" class="form-control timepicker" %s>', $field, $required);
-                    break;
-
-                default:
-                    $element = sprintf('<input type="%s" name="%s" class="form-control" %s>', $options['type'], $field, $required);
+                // remove the fields those are just generated from the fields property
+                array_forget( $this->fields, array_keys($section_fields) );
 
             }
 
-            $placeholders = [
-                '{error_class}' => $error_class,
-                '{label_text}' => $label,
-                '{element}' => $element,
-                '{error_text}' => $error_text
-
-            ];
-
-
-            //$raw = sprintf($html, $error_class, $label, $element, $help_block);
-            $raw = strtr($template, $placeholders);
-
-            $data .= $raw;
-
         }
 
-        $data .= $this->renderHiddenFields();
+        // generate the rest of the elements without sections
+        $this->populateFormWithElements( $this->fields );
 
-        $data .= csrf_field();
+        $this->form->text( $this->renderHiddenFields() );
 
-        $data .= $this->renderSubmitButton();
-
-        if ( $this->formOptions ){
-            $data = $this->wrapWithForm($data);
+        if ( $this->csrfField )
+        {
+            $this->form->text( csrf_field() );
         }
 
+        $this->form->text( $this->renderSubmitButton() );
 
-        return $data;
+        return $this->form->render();
+
     }
 
     private function populateFieldsArray()
@@ -590,8 +521,9 @@ class Builder
         $fields = array_merge($defaults, $this->fieldsAdded);
 
         // removed fields
-        if ( !empty($this->fieldsExcept) ){
-            $fields = array_diff_key($fields, array_flip($this->fieldsExcept));
+        if ( !empty( $this->fieldsExcept ) )
+        {
+            $fields = array_except( $fields, $this->fieldsExcept );
         }
 
         // if $fieldsOnly field is set, keep only those and discard others
@@ -733,6 +665,232 @@ class Builder
 
         return null;
     }
+
+    private function initFormObject()
+    {
+
+        if ( $this->formOptions ){
+
+            /*$action = $this->helper->returnIfExists($this->formOptions, 'action');
+            $method = $this->helper->returnIfExists($this->formOptions, 'method');
+            $attributes = $this->helper->returnIfExists($this->formOptions, 'attributes');*/
+
+            return Element::build('form')
+                        ->set($this->formOptions);
+
+        }
+
+        // return empty element if form is false
+        return Element::build('');
+    }
+
+    /**
+     * Populate the $form object with elements
+     *
+     * @param $section_fields
+     */
+    private function populateFormWithElements($section_fields)
+    {
+
+        if ( empty($section_fields) ) return ;
+
+        $elementClass = $this->configs['classes']['element'];
+
+        $template = file_get_contents( $this->configs['templates'][ $this->templateName ] );
+
+        foreach ( $section_fields as $field => $options) {
+
+            // form is false then abort
+            if ( array_key_exists('form', $options) && !$options['form'] ){
+                continue;
+            }
+
+            $value = $this->model->exists ? $this->model->getOriginal($field) : null;
+
+            $required = $this->isRequired($options);
+
+            $unique = $this->isUnique($options);
+
+            $label = $this->getLabel($options, $required, $unique);
+
+            $error_class = '';
+
+            $error_text = '';
+
+            if ( $this->errors != null && $this->errors->any() ) {
+                if ($this->errors->has($field)) {
+                    $error_class = 'has-error';
+                    $error_text = $this->errors->first($field);
+                }
+            }
+
+            switch($options['type'])
+            {
+                case 'textarea':
+
+                    $element = Element::build('textarea')
+                        ->addClass($elementClass)
+                        ->setName($field)
+                        ->setRequired($required)
+                        ->set('rows', '10')
+                        ->render();
+
+                    break;
+
+                case 'editor':
+
+                    $element = Element::build('textarea')
+                        ->addClass($elementClass)
+                        ->addClass('editor')
+                        ->setName($field)
+                        ->setRequired($required)
+                        ->set('rows', '10')
+                        ->render();
+
+                    break;
+
+                case 'select':
+
+                    $element = Element::build('select')
+                        ->addClass($elementClass)
+                        ->addClass('select2')
+                        ->setName($field)
+                        ->setRequired($required);
+
+                    $default = Element::build('option')
+                        ->setSelected(true)
+                        ->setValue('')
+                        ->setDisabled(true)
+                        ->text('--Select One--');
+
+                    $element->addChild($default);
+
+                    foreach ($options['options'] as $option_key => $option_value) {
+
+                        $isSelected = $value === $option_key ? true : false;
+
+                        $option = Element::build('option')
+                            ->setValue($option_key)
+                            ->setSelected($isSelected)
+                            ->text($option_value);
+
+                        $element->addChild($option);
+
+                    }
+
+                    $element = $element->render();
+
+                    break;
+
+                case 'select_db':
+
+                    // TODO.
+                    // need to let user filter some records before adding them to option list
+                    // this data should be pulled via eloquent instead of raw DB query
+                    $table_data = DB::table($options['table'])->select($options['options'])->get();
+
+                    $option_key = $options['options'][0];
+
+                    $element = sprintf('<select name="%s" class="form-control select2" %s>', $field, $required);
+
+                    $element .= '<option value="" disabled selected>--Select One--</option>';
+                    foreach ($table_data as $table_data_single) {
+                        $option_value = count($options['options']) > 2 ? $table_data_single->{$options['options'][1]} . ' ' . $table_data_single->{$options['options'][2]} : $table_data_single->{$options['options'][1]};
+                        $element .= sprintf('<option value="%s">%s</option>', $table_data_single->{$option_key}, $option_value);
+                    }
+                    $element .= '</select>';
+
+                    break;
+
+                case 'date':
+
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->addClass('datepicker')
+                        ->setName($field)
+                        ->setType('text')
+                        ->setRequired($required)
+                        ->render();
+
+                    break;
+
+                case 'date_time':
+
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->addClass('datetimepicker')
+                        ->setName($field)
+                        ->setType('text')
+                        ->setRequired($required)
+                        ->render();
+
+                    break;
+
+                case 'file':
+
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->setName($field)
+                        ->setType('file')
+                        ->set('accept', $options['accept'])
+                        ->setRequired($required)
+                        ->render();
+
+                    break;
+
+                // TODO.
+                // 2. extract the element generation code to diffeerent methods,
+
+                case 'time':
+
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->addClass('timepicker')
+                        ->setName($field)
+                        ->setType('text')
+                        ->setRequired($required)
+                        ->render();
+
+                    break;
+
+                default:
+
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->setName($field)
+                        ->setValue($value)
+                        ->setType($options['type'])
+                        ->setRequired($required)
+                        ->render();
+
+
+            }
+
+            $placeholders = [
+                '{error_class}' => $error_class,
+                '{label_text}' => $label,
+                '{element}' => $element,
+                '{error_text}' => $error_text
+
+            ];
+
+            $raw = strtr($template, $placeholders);
+
+            $this->form->text($raw);
+
+        }
+
+    }
+
+    /*private function setFormDefaults($model)
+    {
+
+        if ( $model->exists )
+        {
+            $this->formOptions['method'] = 'PUT';
+        }
+
+    }*/
 
 
 }

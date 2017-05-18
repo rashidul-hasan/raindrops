@@ -1,3 +1,3 @@
 <?php
 
-Route::get('rainyday/{timezone}', 'RainyDay\RainDrops\TimezonesController@index');
+//Route::get('rainyday/{timezone}', 'RainyDay\RainDrops\TimezonesController@index');

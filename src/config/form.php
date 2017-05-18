@@ -2,16 +2,16 @@
 
 return [
 
-
-
-    'name' => 'rashidul',
-
-
     'templates' => [
 
-        'default' => __DIR__ . '/../Form/templates/default.stub',
-        'three-column' => __DIR__ . '/../Form/templates/three-column.stub',
-        'four-column' => __DIR__ . '/../Form/templates/four-column.stub',
+        'default' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/default.stub',
+        'three-column' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/three-column.stub',
+        'four-column' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/four-column.stub',
+    ],
+
+    'classes' => [
+
+        'element' => 'form-control',
 
     ],
 
