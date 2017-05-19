@@ -688,6 +688,11 @@ class Builder
                 $this->formOptions['method'] = 'POST';
             }
 
+            if (array_key_exists('action', $this->formOptions) ) {
+
+                $this->formOptions['action'] = url($this->formOptions['action']);
+            }
+
             return Element::build('form')
                 ->text($method_field)
                 ->set($this->formOptions);

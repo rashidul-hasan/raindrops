@@ -1,5 +1,147 @@
 (Work in Progress)
 
+## Installation
+
+1. Inside your project root, run
+
+    `composer require rashidul/raindrops=dev-master`
+    
+2. Add this to your `app.php` config file's `providers` array
+
+    `Rashidul\RainDrops\RainDropsServiceProvider::class,`
+    
+3. Optionally, you can add this to `aliases` array for simplicity
+
+    `'FormBuilder' => Rashidul\RainDrops\Facades\FormBuilder::class,`
+    
+4. Finally, publish the config files.
+
+    `php artisan vendor:publish --provider=Rashidul\RainDrops\RainDropsServiceProvider`
+    
+    
+## Generating Form
+
+To generate a form for a model, you first need to add a `$fields` public property to your model and populate it with required informations.
+
+Then you can generate the form markup by simply calling the `build` method on `FormBuilder` providing an instance of your model
+
+Example:
+---
+
+In your controller:
+
+```php
+
+    $client = new Client();
+    
+    /* or, $client = Client::find(<id>); if you are editing ane existing record */
+
+    $form = FormBuilder::build( $client )
+                    ->form([
+                        'action' => 'clients',
+                        'method' => 'POST'
+                    ])
+                    ->render();
+
+    return view('create', compact('form'));
+
+```
+*don't forget to `use` the `FormBuilder` class at the top of your model*
+
+Then in your view, you can do: 
+
+```php
+{!! $form !!}
+```
+That's it!
+
+Form Configuration
+---
+
+There are some helpful methods to further customize the form.
+
+- `add( $field_name, $options = [] )` You can add fields to the existing fields which are defined in your model's `$fields` property.
+
+    ```php
+    $form = FormBuilder::build( $client )
+                        ->form([
+                            'action' => 'clients',
+                            'method' => 'POST'
+                        ])
+                        ->add('field_name', [
+                            'label' => 'Field Label',
+                            'type' => 'date'
+                        ])
+                        ->render();
+    
+    ```
+    first argument is the field's `name` and second one is an array containing various options for that field.
+    
+    *`label` & `type` fields are mandatory*
+    
+- `modify( $field_name, $options = [] )` You can modify any defined field in the model
+
+    ```php
+    $form = FormBuilder::build( $client )
+                        ->form([
+                            'action' => 'clients',
+                            'method' => 'POST'
+                        ])
+                        ->modify('field_name', [
+                            'label' => 'New changed label',
+                            'required' => true
+                        ])
+                        ->render();
+    
+    ```
+    You need to provide only the options you want to modify/override.
+    
+- `section( $header, $fields = [] )` Grouping some fields together with a header.
+
+    ```php
+        $form = FormBuilder::build( $client )
+                            ->form([
+                                'action' => 'clients',
+                                'method' => 'POST'
+                            ])
+                            ->section('Awesome Section One', [ 'field_one', 'field_two'])
+                            ->section('Awesome Section Two', [ 'field_three', 'field_four'])
+                            ->render();
+        
+        ```
+      
+- `template( $name )` Name of the template to be used to generate a single field. This is defined in the `form` config file
+    inside `raindrops` directory. You can use multiple templates to create two-column/three column layout.
+    
+- `remove( $field_name )` To remove any field. you can also pass an array of field name to be excluded in the final generated form.
+
+- `csrf( boolean )` By default, a csrf field will be generated. you can exclude it by passing `false`
+
+- `only( $fields = [] )` Select only some of the fields to be generated.
+
+- `hidden( $name, $value )` Add hidden field to the form.
+
+- `submit` To configure the submit option.
+
+    ```php
+        $form = FormBuilder::build( $client )
+                            ->form([
+                                'action' => 'clients',
+                                'method' => 'POST'
+                                ])
+                            ->submit([
+                                'text' => 'Save Me',
+                                'class' => 'btn btn-success',
+                                'icon' => 'fa fa-save'
+                            ])
+                            ->render();
+        
+    ```
+
+
+
+    
+    
 ## CRUD Generator
 
 Our model will have a array property called `$fields` which will hold all the information we need 
