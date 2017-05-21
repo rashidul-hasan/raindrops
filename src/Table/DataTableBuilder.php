@@ -6,7 +6,7 @@
  * Time: 5:38 PM
  */
 
-namespace Rashidul\RainDrops\Table\Datatable;
+namespace Rashidul\RainDrops\Table;
 
 use Exception;
 use Illuminate\Database\Eloquent\Model;
@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Config;
 use Rashidul\RainDrops\Html\Element;
 
 
-class Builder
+class DataTableBuilder
 {
 
 

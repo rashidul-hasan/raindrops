@@ -4,7 +4,7 @@ namespace Rashidul\RainDrops;
 
 use Illuminate\Support\ServiceProvider;
 use Rashidul\RainDrops\Form\Builder;
-use Rashidul\RainDrops\Table\DataTable\Builder as DataTableBuilder;
+use Rashidul\RainDrops\Table\DataTableBuilder;
 
 class RainDropsServiceProvider extends ServiceProvider
 {
@@ -19,7 +19,7 @@ class RainDropsServiceProvider extends ServiceProvider
 
         // publish configs
         $this->publishes([
-            __DIR__ . '/config' => config_path('raindrops'),
+            __DIR__ . '/configs' => config_path('raindrops'),
         ], 'raindrops');
     }
 
@@ -30,7 +30,7 @@ class RainDropsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__.'/routes.php';
+        include __DIR__.'/routes/routes.php';
 
         // register form builder
         $this->app->singleton(Builder::class, function () {
@@ -46,11 +46,11 @@ class RainDropsServiceProvider extends ServiceProvider
 
         // load configs
         $this->mergeConfigFrom(
-            __DIR__ . '/config/form.php', 'raindrops.form'
+            __DIR__ . '/configs/form.php', 'raindrops.form'
         );
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/datatable.php', 'raindrops.datatable'
+            __DIR__ . '/configs/datatable.php', 'raindrops.datatable'
         );
 
     }

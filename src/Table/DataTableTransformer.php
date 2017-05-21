@@ -6,20 +6,18 @@
  * Time: 2:57 PM
  */
 
-namespace Rashidul\RainDrops\Table\DataTable;
-
+namespace Rashidul\RainDrops\Table;
 
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract;
 
-class DataTransformer extends TransformerAbstract
+class DataTableTransformer extends TransformerAbstract
 {
     /**
      * @param Model $model
      * @return array
      */
-
     protected $model;
 
     public function transform(Model $model)
@@ -38,7 +36,6 @@ class DataTransformer extends TransformerAbstract
             // 1. first decide how to show the data
             // function, determines data type by examining 'show' element
             $dataType = $this->getDataType($value); // img/doc/string/noshow/relation/exact/enum
-            //$dataType = isset($value['show']) ? $value['show'] : 'string'; // img/doc/string/noshow/relation
 
             $fieldName = '';
             $relatedColumnName = '';

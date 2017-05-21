@@ -32,18 +32,18 @@ In your controller:
 
 ```php
 
-    $client = new Client();
-    
-    /* or, $client = Client::find(<id>); if you are editing ane existing record */
+$client = new Client();
 
-    $form = FormBuilder::build( $client )
-                    ->form([
-                        'action' => 'clients',
-                        'method' => 'POST'
-                    ])
-                    ->render();
+/* or, $client = Client::find(<id>); if you are editing ane existing record */
 
-    return view('create', compact('form'));
+$form = FormBuilder::build( $client )
+                ->form([
+                    'action' => 'clients',
+                    'method' => 'POST'
+                ])
+                ->render();
+
+return view('create', compact('form'));
 
 ```
 *don't forget to `use` the `FormBuilder` class at the top of your model*
