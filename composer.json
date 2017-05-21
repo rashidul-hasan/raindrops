@@ -10,7 +10,8 @@
         }
     ],
     "require": {
-        "league/fractal": "^0.16.0"
+        "league/fractal": "^0.16.0",
+        "yajra/laravel-datatables-oracle": "^7.4"
     },
     "autoload": {
         "psr-4": {

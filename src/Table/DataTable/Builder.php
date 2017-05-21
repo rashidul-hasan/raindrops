@@ -330,8 +330,7 @@ class Builder
         $headers = $this->prepareHeaderRow();
 
         // prepare the columns
-        $columns = $this->prepareColumns();
-        $this->options['columns'] = $columns;
+        $this->options['columns'] = $this->prepareColumns();
 
 
         // create mapping for frontend
