@@ -9,7 +9,9 @@
             "email": "rashidul69@gmail.com"
         }
     ],
-    "require": {},
+    "require": {
+        "league/fractal": "^0.16.0"
+    },
     "autoload": {
         "psr-4": {
             "Rashidul\\RainDrops\\": "src/"
