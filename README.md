@@ -139,6 +139,43 @@ There are some helpful methods to further customize the form.
     ```
 
 
+## Index Page
+
+For index page, we'll use [datatable](https://datatables.net/) jQuery plugin. First include the necessary
+js/css files for the datatable plugin.
+
+#### Generating table markup/scripts
+
+
+```php
+    $table = DataTable::of(new Client)
+            ->setUrl(url('datatables.data'))
+            ->setId('data-table')
+            ->render();
+
+        return view('index', compact('table'));
+
+```
+
+In the view file: ```{!! $table !!}```
+
+#### Handling backend
+
+
+```php
+
+    public function anyData(Datatables $datatables)
+    {
+        $query = Client::select();
+
+        return $datatables->eloquent($query)
+            ->setTransformer(new DataTableTransformer())
+            ->make(true);
+    }
+
+```
+
+
 
     
     
@@ -151,7 +188,7 @@ to generate forms/list pages/filter options etc. later on.
 
 ```php
 
-protected $fields = [
+public $fields = [
 
 	'field_name' => [
 		'label' => 'Field Label',
@@ -277,7 +314,7 @@ The following options are required based on the value of `type`
     /**
      * Fields
      */
-    protected $fields = [
+    public $fields = [
 
         'public_id' => [
             'label' => 'Device ID',
