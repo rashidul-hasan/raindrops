@@ -138,111 +138,15 @@ trait EloquentHelperTrait
 
     public function getIndexFields()
     {
-        $fields = $this->fields;
-
-        $indexFields = [];
-
-        foreach ($fields as $field_name => $options){
-            if (array_key_exists('index', $options) && $options['index']){
-                //array_push($indexFields, $field);
-                $indexFields[$field_name] = $options;
-            }
-        }
-
-        return $indexFields;
+        return ModelHelper::getIndexFields($this->fields);
     }
 
     public function getActionLinks($url = null)
     {
-        if (!$url){
-            $url = $this->getBaseUrl();
-        }
-
-        $linksTemplate = '<td>
-                      <div class="btn-group">
-                           %s
-                           <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
-                           <span class="caret"></span>
-                           <span class="sr-only">Toggle Dropdown</span>
-                           </a>
-                           <ul class="dropdown-menu" role="menu">
-                                %s
-                                %s
-                                %s
-                           </ul>
-                      </div>
-                  </td>';
-
-        //$singleLinkTemplate = ''
-
-        // first create basic view, edit, delete links
-        $viewLink = sprintf('<a href="%s" class="btn btn-sm btn-default button-show">View</a>', url($url . '/' . $this->id));
-        $editLink = sprintf('<li><a href="%s" class="button-edit">Edit</a></li>', url($url . '/' . $this->id . '/edit'));
-        $deleteLink = sprintf('<li><a href="%s" class="button-delete">Delete</a></li>', url($url .'/'.$this->id));
-
-        // if there's extra links defined in the model
-        $extraLinks = '';
-
-        // check if there's any extra action links defined in the model
-        if (property_exists($this, 'actions')){
-            $extraActions = $this->actions;
-            $extraLinks .= '<li class="divider"></li>';
-            $extraLinkTemplate = '<li><a href="%s" class="%s">%s</a></li>';
-
-            foreach ($extraActions as $linkText => $linkParams){
-
-                /*
-                 * $linkParams will contain information about the link
-                 * if its a string then its just the link url
-                 * it can be an array of variable size, in array
-                 * the first item is always the url
-                 * 2nd: anchor tag's class
-                 * 3rd: link target
-                 */
-                $linkUrl = '';
-                $linkClass = '';
-
-                // if its an array
-                if (is_array($linkParams)){
-
-                    // check length of array
-                    switch(count($linkParams)){
-
-                        case 2:
-                            $linkUrl = $this->getReplacedUrl($linkParams[0], $url);
-                            $linkClass = $linkParams[1];
-                            break;
-
-                        default:
-                            continue;
-                    }
-
-                } else{
-                    //else its just a string, link's url
-                    $linkUrl = $this->getReplacedUrl($linkParams, $url);
-                }
-                $extraLinks .= sprintf($extraLinkTemplate, url($linkUrl), $linkClass, $linkText);
-            }
-        }
-
-        return sprintf($linksTemplate, $viewLink, $editLink, $deleteLink, $extraLinks);
-
+        return ModelHelper::getActionLinks($this, $url);
     }
 
-    private function getReplacedUrl($linkUrl, $url)
-    {
-        $search = [
-            '{url}',
-            '{id}'
-        ];
 
-        $replace = [
-            $url,
-            $this->id
-        ];
-
-        return str_replace($search, $replace, $linkUrl);
-    }
 
 
 

@@ -11,6 +11,7 @@ namespace Rashidul\RainDrops\Table;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract;
+use Rashidul\RainDrops\Model\ModelHelper;
 
 class DataTableTransformer extends TransformerAbstract
 {
@@ -29,7 +30,7 @@ class DataTableTransformer extends TransformerAbstract
 
         //$data['select'] = $model->id;
 
-        $fields = $model->getIndexFields();
+        $fields = ModelHelper::getIndexFields($model->fields);
 
         foreach ($fields as $field => $value)
         {
@@ -118,7 +119,7 @@ class DataTableTransformer extends TransformerAbstract
         }
 
         // now add the actions column
-        $data['action'] = $model->getActionLinks();
+        $data['action'] = ModelHelper::getActionLinks($model);
 
         return $data;
     }
