@@ -30,7 +30,7 @@ class DataTableTransformer extends TransformerAbstract
 
         //$data['select'] = $model->id;
 
-        $fields = ModelHelper::getIndexFields($model->fields);
+        $fields = ModelHelper::getIndexFields( $model );
 
         foreach ($fields as $field => $value)
         {

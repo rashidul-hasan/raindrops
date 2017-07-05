@@ -9,8 +9,13 @@
 namespace Rashidul\RainDrops\Model;
 
 
-trait EloquentHelperTrait
+trait RainDropsModelHelper
 {
+
+    public function getBaseUrl()
+    {
+        return property_exists($this, 'baseUrl') ? $this->baseUrl : null;
+    }
 
     /**
      * Generate show details url for this model
@@ -42,6 +47,13 @@ trait EloquentHelperTrait
     public function getCreateUrl($baseUrl)
     {
         return url($baseUrl . '/create');
+    }
+
+    public function getDataUrl($baseUrl = null)
+    {
+        $baseUrl = !$baseUrl ? $this->getBaseUrl() : $baseUrl;
+
+        return url($baseUrl . '/data');
     }
 
     /**
@@ -107,10 +119,6 @@ trait EloquentHelperTrait
             : str_plural($this->getEntityName());
     }
 
-    public function getBaseUrl()
-    {
-        return property_exists($this, 'baseUrl') ? $this->baseUrl : null;
-    }
 
     public function getRelations()
     {

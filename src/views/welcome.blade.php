@@ -78,9 +78,7 @@
             @endif
 
             <div class="content">
-                <div class="title m-b-md">
-                    I love Rain
-                </div>
+
             </div>
         </div>
     </body>

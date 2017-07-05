@@ -12,9 +12,11 @@ namespace Rashidul\RainDrops\Model;
 class ModelHelper
 {
 
-    public static function getIndexFields( $fields )
+    public static function getIndexFields( $model )
     {
         $indexFields = [];
+
+        $fields = $model->fields;
 
         foreach ($fields as $field_name => $options){
             if (array_key_exists('index', $options) && $options['index']){
@@ -25,7 +27,7 @@ class ModelHelper
         return $indexFields;
     }
 
-    public static function getActionLinks($model, $url = null)
+    public static function getActionLinks( $model, $url = null )
     {
         if (!$url){
             $url = $model->baseUrl;
@@ -115,5 +117,7 @@ class ModelHelper
 
         return str_replace($search, $replace, $linkUrl);
     }
+
+
 
 }

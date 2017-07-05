@@ -2,6 +2,28 @@
 
 return array(
 
+    // details table related configs
+    'details' => [
+
+        /*
+         * class name that should be added to the table element.
+         * separate multiple class names by space.
+         */
+        'table_class' => 'table table-borderless table-show',
+
+        /*
+         * class for the th tag of the table, this will come in handy if
+         * you want to style the table headers differently.
+         */
+        'header_class' => 'header',
+
+        /*
+         * classes for the wrapper div of the table, set false if you
+         * don't want any wrapper elements. seperate multiple class names by space.
+         */
+        'wrapper' => false
+    ],
+
     /*
     |--------------------------------------------------------------------------
     | Table specific configuration options.
