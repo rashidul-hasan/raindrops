@@ -92,7 +92,7 @@ class ColumnTransformer
         $path = $model->paths["$field"];
         if ($model->{$field}){
             $filename = $model->{$field};
-            $url = url($path . '/' . $filename);
+            $url = url('storage/' . $path . '/' . $filename);
             return sprintf('<img class="img-thumb img-responsive ui small rounded image" src="%s" alt="%s">', $url, $value['label']);
         }
 

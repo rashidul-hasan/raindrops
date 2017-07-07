@@ -43,10 +43,12 @@ trait PerformCrudActions
             'title' => $this->modelClass->getEntityNamePlural(),
             'entity' => $this->modelClass,
             'ajax' => $ajax,
-            'table' => $table
+            'table' => $table,
+            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'index'
+
         ];
-        
-        return view('raindrops::crud.index', $data);
+
+        return view('raindrops::crud.table', $data);
 
     }
 
@@ -74,43 +76,27 @@ trait PerformCrudActions
         // get resource obj
         $item = $this->modelClass;
 
-        // if create form is being requested by ajax
-        // generate the form and send it via ajax
-        if($this->request->ajax()){
-
-            // TODO.
-            // need a way to let user modify the form markup for certain controllers
-            $formMarkup = '<div class="box-body"><form action="%s" autocomplete="off" method="POST" enctype="multipart/form-data" class="form-create">%s</form></div>';
-            $formFields = $item->createForm();
-
-            return response()->json([
-                'status' => 'success',
-                'data' => sprintf($formMarkup, url($this->modelClass->getBaseUrl()), $formFields)
-            ], 200);
-
-        }
-
-        // TODO feature: if we wanna inject any scripts into this
-        // page, we do it here, first we check if there's any
-        $view_path = $item->getBaseUrl() . '.' . 'create';
+        // generate form
+        $form = FormBuilder::build( $item );
 
         $data = [
             'title' => 'Add New ' . $item->getEntityName(),
-            'url' => $item->getBaseUrl(),
-            'item' => $item,
             'back_url' => $item->getBaseUrl(),
-            'view_path' => $view_path
+            'form' => $form,
+            'view' => 'raindrops::crud.form',
+            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'create'
         ];
 
         // check if we need to pass additional data to view
         // there will be a method 'creating', we'll pass the request object
         // and the $data array variable to it, it'll return $data after adding/modifying
         // it's elements
-        if (method_exists($this, 'creating')){
-            $data = $this->creating($this->formRequest, $data);
+        if (method_exists($this, 'creating'))
+        {
+            $data = $this->creating($this->request, $data);
         }
 
-        return view('core::cruds.create', $data);
+        return $this->responseBuilder->send($this->request, $data);
 
     }
 
@@ -129,39 +115,38 @@ trait PerformCrudActions
 
         $input = $this->request->except(['_token']);
 
-
+        // handle files uploads
+        $fileInputs = $item->getFileFields();
+        foreach ($fileInputs as $field => $options)
+        {
+            if ($this->request->hasFile($field))
+            {
+                $input[$field] = $this->request->file($field)->store($field, 'public');
+            }
+        }
         $item->fill($input);
-
-        $status = null;
-        $msg = null;
-        $data = null;
 
         try{
             if ($item->save()){
-                $status = 'success';
-                $msg = $this->modelClass->getEntityName() . ' Created!';
-                $data = $item;
+                $data['success'] = true;
+                $data['message'] = $this->modelClass->getEntityName() . ' Created!';
+                $data['item'] = $item;
             } else {
-                $status = 'error';
-                $msg = 'Something went wrong';
+                $data['success'] = false;
+                $data['message'] = 'Something went wrong';
             }
         } catch (QueryException $e){
-            $msg = $e->getMessage();
-            $status = 'error';
+            $data['message'] = $e->getMessage();
+            $data['success'] = false;
         }
 
-        if($this->request->ajax()){
-
-            return response()->json([
-                'status' => $status,
-                'data' => $data,
-                'msg' => $msg
-            ], 200);
-
+        // set redirect url
+        if ( $data['success'] )
+        {
+            $data['redirect'] = $item->getShowUrl();
         }
 
-        Session::flash($status, $msg);
-        return $status === 'success' ? redirect($item->getShowUrl()) : redirect()->back();
+        return $this->responseBuilder->send($this->request, $data);
 
     }
 
@@ -176,18 +161,15 @@ trait PerformCrudActions
     {
 
         // get item obj by id
-        $item = $this->modelClass->findOrFail($id);
-
-        if($request->ajax()){
-
-            $tableMarkup = '<div class="box-body"><table class="table table-borderless table-show"><tbody>%s</tbody></table></div>';
-            $tableRows = $item->detailsTable();
-
-            return response()->json([
-                'status' => 'success',
-                'data' => sprintf($tableMarkup, $tableRows)
-            ], 200);
-
+        try
+        {
+            $item = $this->modelClass->findOrFail($id);
+        }
+        catch (\Exception $e)
+        {
+            $data['success'] = false;
+            $data['message'] = $e->getMessage();
+            return $this->responseBuilder->send($this->request, $data);
         }
 
         // prepare table object
@@ -196,12 +178,19 @@ trait PerformCrudActions
         $data = [
             'title' => $this->modelClass->getEntityName() . ' Details',
             'item' => $item,
-            'url' => $this->modelClass->getBaseUrl(),
+            'success' => true,
             'back_url' => $this->modelClass->getBaseUrl(),
-            'table' => $table
+            'table' => $table,
+            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'show',
+            'view' => 'raindrops::crud.table'
         ];
 
-        return view('raindrops::crud.show', $data);
+        if (method_exists($this, 'showing'))
+        {
+            $data = $this->showing($this->request, $data);
+        }
+
+        return $this->responseBuilder->send($this->request, $data);
     }
 
     /**
@@ -215,58 +204,41 @@ trait PerformCrudActions
     {
 
         // get item obj by id
-        $item = $this->modelClass->findOrFail($id);
-
-        /**
-         * if edit is requested via ajax, generate the form with
-         * current values and send it via json response
-         *
-         * json response object structure:
-         *
-         * responseObj = {
-         *      status: success/error,
-         *      data: <the form in html>
-         * }
-         */
-        if($request->ajax()){
-
-            $formMarkup = '<div class="box-body"><form action="%s" autocomplete="off" method="POST" enctype="multipart/form-data" class="form-create">%s</form></div>';
-            $formFields = $item->editForm(null);
-
-            return response()->json([
-                'status' => 'success',
-                'data' => sprintf($formMarkup, $item->getShowUrl(), $formFields)
-            ], 200);
-
+        try
+        {
+            $item = $this->modelClass->findOrFail($id);
+        }
+        catch (\Exception $e)
+        {
+            $data['success'] = false;
+            $data['message'] = $e->getMessage();
+            return $this->responseBuilder->send($this->request, $data);
         }
 
         // prepare the form
-        $form = FormBuilder::build( $item )
-            ->form([
-                'action' => 'clients/' .$item->id,
-                'method' => 'PUT'
-            ]);
-
-        //$view_path = $this->modelClass->getBaseUrl() . '.' . 'edit';
+        $form = FormBuilder::build( $item );
 
         $data = [
             'title' => 'Edit ' . $this->modelClass->getEntityName(),
             'item' => $item,
+            'success' => true,
             'url' => $this->modelClass->getBaseurl(),
             'back_url' => $item->getShowUrl(),
             'form' => $form,
-            //'view_path' => $view_path
+            'view' => 'raindrops::crud.form',
+            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'edit'
         ];
 
         // check if we need to pass additional data to view
         // there will be a method 'creating', we'll pass the request object
         // and the $data array variable to it, it'll return $data after adding/modifying
         // it's elements
-        if (method_exists($this, 'editing')){
-            $data = $this->creating($this->formRequest, $data);
+        if (method_exists($this, 'editing'))
+        {
+            $data = $this->editing($this->request, $data);
         }
 
-        return view('raindrops::crud.edit', $data);
+        return $this->responseBuilder->send($this->request, $data);
     }
 
     /**
@@ -279,7 +251,17 @@ trait PerformCrudActions
      */
     public function update(Request $request, $id)
     {
-        $item =  $this->modelClass->findOrFail($id);
+        // get item obj by id
+        try
+        {
+            $item = $this->modelClass->findOrFail($id);
+        }
+        catch (\Exception $e)
+        {
+            $data['success'] = false;
+            $data['message'] = $e->getMessage();
+            return $this->responseBuilder->send($this->request, $data);
+        }
 
         $this->validate($request, $this->modelClass->getvalidationRules($item), [], $this->modelClass->getFieldsWithLabels());
 
@@ -287,36 +269,27 @@ trait PerformCrudActions
 
         $item->fill($input);
 
-        $data = null;
-
         try{
-            if ($item->update($input)){
-                $success = true;
-                $msg = $this->modelClass->getEntityName() . ' Updated!';
-                $data = $item;
+            if ($item->update()){
+                $data['success'] = true;
+                $data['message'] = $this->modelClass->getEntityName() . ' Updated!';
+                $data['item'] = $item;
             } else {
-                $success = false;
-                $msg = 'Something went wrong';
+                $data['success'] = false;
+                $data['message'] = 'Something went wrong';
             }
         } catch (QueryException $e){
-            $msg = $e->getMessage();
-            $success = false;
+            $data['message'] = $e->getMessage();
+            $data['success'] = false;
         }
 
-        if($request->ajax()){
-
-            return response()->json([
-                'success' => $success,
-                'msg' => $msg,
-                'data' => $data
-            ], 200);
-
+        // set redirect url
+        if ( $data['success'] )
+        {
+            $data['redirect'] = $item->getShowUrl();
         }
 
-        $status = $success ? 'success' : 'error';
-
-        Session::flash($status, $msg);
-        return $success ? redirect($item->getShowUrl()) : redirect()->back();
+        return $this->responseBuilder->send($this->request, $data);
 
     }
 
@@ -329,35 +302,32 @@ trait PerformCrudActions
      */
     public function destroy(Request $request, $id)
     {
-        $item =  $this->modelClass->findOrFail($id);
+        // get item obj by id
+        try
+        {
+            $item = $this->modelClass->findOrFail($id);
+        }
+        catch (\Exception $e)
+        {
+            $data['success'] = false;
+            $data['message'] = $e->getMessage();
+            return $this->responseBuilder->send($this->request, $data);
+        }
 
         try{
             if ($item->delete()){
-                $success = true;
-                $msg = $this->modelClass->getEntityName() . ' Deleted!';
+                $data['success'] = true;
+                $data['message'] = $this->modelClass->getEntityName() . ' Deleted!';
             } else {
-                $success = false;
-                $msg = 'Something went wrong';
+                $data['success'] = false;
+                $data['message'] = 'Something went wrong';
             }
         } catch (QueryException $e){
-            $code = $e->getCode();
-            $msg = $code == '23000' ? 'Duplicate entry in the Database.Please check the unique fields for duplicate data' : 'Something went wrong!';
-            $success = false;
+            $data['message'] = $e->getMessage();
+            $data['success'] = false;
         }
 
-        if($request->ajax()){
-
-            return response()->json([
-                'success' => $success,
-                'msg' => $msg,
-            ], 200);
-
-        }
-
-        $status = $success ? 'success' : 'error';
-
-        Session::flash($status, $msg);
-        return redirect()->back();
+        return $this->responseBuilder->send($this->request, $data);
 
     }
 

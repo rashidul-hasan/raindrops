@@ -149,6 +149,15 @@ trait RainDropsModelHelper
         return ModelHelper::getIndexFields($this->fields);
     }
 
+    /**
+     * Returns all file type fields
+     * @return array
+     */
+    public function getFileFields()
+    {
+        return ModelHelper::getFileFields($this);
+    }
+
     public function getActionLinks($url = null)
     {
         return ModelHelper::getActionLinks($this, $url);

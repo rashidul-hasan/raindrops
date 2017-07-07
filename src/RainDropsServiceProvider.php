@@ -4,6 +4,8 @@ namespace Rashidul\RainDrops;
 
 use Illuminate\Support\ServiceProvider;
 use Rashidul\RainDrops\Form\Builder;
+use Rashidul\RainDrops\Hook\Events;
+use Rashidul\RainDrops\Route\ResourceRegister;
 use Rashidul\RainDrops\Table\DataTableBuilder;
 use Rashidul\RainDrops\Table\DetailsTableBuilder;
 
@@ -16,12 +18,21 @@ class RainDropsServiceProvider extends ServiceProvider
      */
     public function boot()
     {
+        // load views
         $this->loadViewsFrom(__DIR__.'/views', 'raindrops');
 
         // publish configs
         $this->publishes([
             __DIR__ . '/configs' => config_path('raindrops'),
         ], 'raindrops');
+
+        // register new resource route methods
+        $registrar = new ResourceRegister($this->app['router']);
+
+        $this->app->bind('Illuminate\Routing\ResourceRegistrar', function () use ($registrar) {
+            return $registrar;
+        });
+
     }
 
     /**
@@ -34,22 +45,25 @@ class RainDropsServiceProvider extends ServiceProvider
         include __DIR__.'/routes/routes.php';
 
         // register form builder
-        $this->app->singleton(Builder::class, function () {
+        $this->app->singleton('formbuilder', function ($app) {
             return new Builder();
         });
-        $this->app->alias(Builder::class, 'formbuilder');
 
         // register datatable builder
-        $this->app->singleton(DataTableBuilder::class, function () {
+        $this->app->singleton('indexbuilder', function () {
             return new DataTableBuilder();
         });
-        $this->app->alias(DataTableBuilder::class, 'indexbuilder');
 
         // register details table builder
-        $this->app->singleton(DetailsTableBuilder::class, function () {
+        $this->app->singleton('detailstable', function () {
             return new DetailsTableBuilder();
         });
-        $this->app->alias(DetailsTableBuilder::class, 'detailstable');
+        //$this->app->alias(DetailsTableBuilder::class, 'detailstable');
+
+        // register hook service providers
+        $this->app->singleton('eventy', function ($app) {
+            return new Events();
+        });
 
         // load configs
         $this->mergeConfigFrom(

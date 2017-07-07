@@ -84,9 +84,9 @@ class Builder
     protected $form;
 
     /**
-     * @var boolean
+     * @var mixed
      */
-    protected $formOptions = false;
+    protected $formOptions = 'auto';
 
     /**
      * @var int
@@ -115,6 +115,12 @@ class Builder
     protected $sections = [];
 
     /**
+     * Old form inputs
+     * @var array|mixed
+     */
+    protected $oldInputs = [];
+
+    /**
      * @var array
      */
     protected $submitButtonOptions = [
@@ -133,6 +139,7 @@ class Builder
         $this->helper = new Helper();
         $this->htmlHelper = new HtmlHelper();
         $this->errors = $this->getErrorsFromRequest();
+        $this->oldInputs = $this->getOldInputsFromSession();
         $this->configs = config('raindrops.form');
     }
 
@@ -664,7 +671,7 @@ class Builder
     private function getErrorsFromRequest()
     {
 
-        $request = resolve(Request::class);
+        $request = app(Request::class);
 
         if ( $request->session()->exists('errors') )
         {
@@ -674,6 +681,10 @@ class Builder
         return null;
     }
 
+    /**
+     * Constructing the form object
+     * @return \Rashidul\RainDrops\Html\Markup
+     */
     private function initFormObject()
     {
 
@@ -681,20 +692,49 @@ class Builder
 
             $method_field = '';
 
-            if (array_key_exists('method', $this->formOptions)
-                && in_array($this->formOptions['method'], ['PUT', 'PATCH', 'DELETE']) ) {
+            // first we need to check if the form option is a string
+            // and set to 'auto' if it is, then we will predict the `method`
+            // and `action` value automatically, otherwise if $this->>formOptions
+            // is an array, then user provided the values for action & method explicitly
+            // we'll use those
+            if ( is_string($this->formOptions) && $this->formOptions === 'auto')
+            {
+                // first make it an array
+                $this->formOptions = [];
 
-                $method_field = method_field($this->formOptions['method']);
-                $this->formOptions['method'] = 'POST';
+                // check if the $this->model is hydrated or an instance of
+                // a database row, if hydrated then its a create form, and if instance
+                // then its a edit form
+                if ( $this->model->exists )
+                {
+                    $method_field = method_field('PUT');
+                    $this->formOptions['method'] = 'POST';
+                    $this->formOptions['action'] = url($this->model->getShowUrl());
+                }
+                else
+                {
+                    $this->formOptions['method'] = 'POST';
+                    $this->formOptions['action'] = url($this->model->getBaseUrl());
+                }
             }
+            else
+            {
+                if (array_key_exists('method', $this->formOptions)
+                    && in_array($this->formOptions['method'], ['PUT', 'PATCH', 'DELETE']) ) {
 
-            if (array_key_exists('action', $this->formOptions) ) {
+                    $method_field = method_field($this->formOptions['method']);
+                    $this->formOptions['method'] = 'POST';
+                }
 
-                $this->formOptions['action'] = url($this->formOptions['action']);
+                if (array_key_exists('action', $this->formOptions) ) {
+
+                    $this->formOptions['action'] = url($this->formOptions['action']);
+                }
             }
 
             return Element::build('form')
                 ->text($method_field)
+                ->set(['enctype' => 'multipart/form-data'])
                 ->set($this->formOptions);
 
         }
@@ -725,6 +765,13 @@ class Builder
             }
 
             $value = $this->model->exists ? $this->model->getOriginal($field) : null;
+
+            // if old input value exists in the session
+            // for this field, use that
+            if ( !empty($this->oldInputs[$field]) )
+            {
+                $value = $this->oldInputs[$field];
+            }
 
             $required = $this->isRequired($options);
 
@@ -903,6 +950,17 @@ class Builder
 
         }
 
+    }
+
+    /**
+     * Returns old form inputs from session
+     * @return mixed
+     */
+    private function getOldInputsFromSession()
+    {
+        $request = app(Request::class);
+
+        return $request->session()->getOldInput();
     }
 
     /*private function setFormDefaults($model)

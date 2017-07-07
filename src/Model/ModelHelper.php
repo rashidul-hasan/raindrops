@@ -53,7 +53,7 @@ class ModelHelper
         // first create basic view, edit, delete links
         $viewLink = sprintf('<a href="%s" class="btn btn-sm btn-default button-show">View</a>', url($url . '/' . $model->id));
         $editLink = sprintf('<li><a href="%s" class="button-edit">Edit</a></li>', url($url . '/' . $model->id . '/edit'));
-        $deleteLink = sprintf('<li><a href="%s" class="button-delete">Delete</a></li>', url($url .'/'.$model->id));
+        $deleteLink = sprintf('<li><a href="%s" class="button-delete" data-method="delete" data-confirm="Are you sure?">Delete</a></li>', url($url .'/'.$model->id));
 
         // if there's extra links defined in the model
         $extraLinks = '';
@@ -118,6 +118,19 @@ class ModelHelper
         return str_replace($search, $replace, $linkUrl);
     }
 
+    public static function getFileFields( $model )
+    {
+        $fields = [];
+        $fileTypes = ['file', 'image'];
+
+        foreach ($model->fields as $field_name => $options){
+            if (array_key_exists('type', $options) && in_array($options['type'], $fileTypes)){
+                $fields[$field_name] = $options;
+            }
+        }
+
+        return $fields;
+    }
 
 
 }

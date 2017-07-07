@@ -11,6 +11,7 @@ namespace Rashidul\RainDrops\Controllers;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Rashidul\RainDrops\Crud\PerformCrudActions;
+use Rashidul\RainDrops\Crud\ResponseBuilder;
 use Yajra\Datatables\Datatables;
 
 abstract class BaseController extends Controller
@@ -20,6 +21,7 @@ abstract class BaseController extends Controller
     protected $modelClass;
     protected $dataTable;
     protected $request;
+    protected $responseBuilder;
 
     /**
      * BaseController constructor.
@@ -30,6 +32,7 @@ abstract class BaseController extends Controller
     {
         $this->request = app(Request::class);
         $this->dataTable = app(Datatables::class);
+        $this->responseBuilder = new ResponseBuilder();
     }
 
 }
