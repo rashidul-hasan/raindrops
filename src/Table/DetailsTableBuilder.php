@@ -96,7 +96,7 @@ class DetailsTableBuilder
 
     public function __construct()
     {
-        $this->config = Config::get('raindrops.datatable.details');
+        $this->config = Config::get('raindrops.table.show');
 
         $this->helper = new Helper();
     }

@@ -26,6 +26,11 @@ class RainDropsServiceProvider extends ServiceProvider
             __DIR__ . '/configs' => config_path('raindrops'),
         ], 'raindrops');
 
+        // publish stub files for the generator
+        $this->publishes([
+            __DIR__ . '/Generator/stubs/' => base_path('resources/raindrops/'),
+        ], 'raindrops');
+
         // register new resource route methods
         $registrar = new ResourceRegister($this->app['router']);
 
@@ -71,11 +76,19 @@ class RainDropsServiceProvider extends ServiceProvider
         );
 
         $this->mergeConfigFrom(
-            __DIR__ . '/configs/datatable.php', 'raindrops.datatable'
+            __DIR__ . '/configs/table.php', 'raindrops.table'
         );
 
         $this->mergeConfigFrom(
             __DIR__ . '/configs/crud.php', 'raindrops.crud'
+        );
+
+        // register console commands
+        $this->commands(
+            'Rashidul\RainDrops\Generator\Command\ScaffoldCommand',
+            'Rashidul\RainDrops\Generator\Command\MakeControllerCommand',
+            'Rashidul\RainDrops\Generator\Command\MakeModelCommand',
+            'Rashidul\RainDrops\Generator\Command\MakeMigrationCommand'
         );
 
     }

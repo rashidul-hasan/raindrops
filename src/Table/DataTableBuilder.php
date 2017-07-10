@@ -101,7 +101,7 @@ class DataTableBuilder
 
     function __construct()
     {
-        $this->config = Config::get('raindrops.datatable.table');
+        $this->config = Config::get('raindrops.table.index');
 
         $this->setId( $this->config['id'] );
         $this->setClass( $this->config['class'] );
@@ -482,7 +482,7 @@ class DataTableBuilder
     {
         $indexFields = [];
 
-        foreach ($this->model->fields as $field_name => $options){
+        foreach ($this->model->getFields() as $field_name => $options){
             if (array_key_exists('index', $options) && $options['index']){
                 $indexFields[$field_name] = $options;
             }

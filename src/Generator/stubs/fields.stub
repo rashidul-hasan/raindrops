@@ -1,0 +1,12 @@
+array (
+  'title' => 
+  array (
+    'label' => 'Title',
+    'type' => 'text',
+  ),
+  'content' => 
+  array (
+    'label' => 'Content',
+    'type' => 'text',
+  ),
+)

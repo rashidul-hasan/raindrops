@@ -9,7 +9,7 @@
 namespace Rashidul\RainDrops\Model;
 
 
-trait RainDropsModelHelper
+trait RainDropsSupport
 {
 
     public function getBaseUrl()
@@ -47,6 +47,11 @@ trait RainDropsModelHelper
     public function getCreateUrl($baseUrl)
     {
         return url($baseUrl . '/create');
+    }
+
+    public function getFields()
+    {
+        return $this->fields;
     }
 
     public function getDataUrl($baseUrl = null)

@@ -1,0 +1,25 @@
+<?php
+
+namespace DummyNamespace;
+
+use Illuminate\Database\Eloquent\Model;
+use Rashidul\RainDrops\Model\RainDropsSupport;
+
+class DummyClass extends Model
+{
+
+    use RainDropsSupport;
+
+    protected $table = '{{table}}';
+
+    protected $fillable = {{fillable}};
+
+    protected $baseUrl = '{{route}}';
+    protected $entityName = 'DummyClass';
+    protected $entityNamePlural = '{{entityNamePlural}}';
+
+    protected $fields = {{fields}};
+
+
+
+}

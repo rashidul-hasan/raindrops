@@ -1,9 +1,14 @@
 <?php
 
-return array(
+return [
 
-    // details table related configs
-    'details' => [
+    /*
+    |--------------------------------------------------------------------------
+    | configs for the show details page.
+    |--------------------------------------------------------------------------
+    |
+    */
+    'show' => [
 
         /*
          * class name that should be added to the table element.
@@ -26,12 +31,12 @@ return array(
 
     /*
     |--------------------------------------------------------------------------
-    | Table specific configuration options.
+    | Data Table specific configuration options for the index page.
     |--------------------------------------------------------------------------
     |
     */
 
-    'table' => array(
+    'index' => [
 
         /*
         |--------------------------------------------------------------------------
@@ -70,12 +75,12 @@ return array(
         |
         */
 
-        'options' => array(
+        'options' => [
 
             "processing" => true,
             "responsive" => true
 
-        ),
+        ],
 
         /*
         |--------------------------------------------------------------------------
@@ -138,33 +143,33 @@ return array(
           |
         */
 
-        'options_view' => config('chumper.datatable::options')
-
-    ),
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Engine specific configuration options.
-    |--------------------------------------------------------------------------
-    |
-    */
-
-    'engine' => array(
+        'options_view' => config('chumper.datatable::options'),
 
         /*
         |--------------------------------------------------------------------------
-        | Search for exact words
+        | Engine specific configuration options.
         |--------------------------------------------------------------------------
         |
-        | If the search should be done with exact matching
-        | Supported: boolean
-        |
         */
+        'engine' => [
 
-        'exactWordSearch' => false,
+            /*
+            |--------------------------------------------------------------------------
+            | Search for exact words
+            |--------------------------------------------------------------------------
+            |
+            | If the search should be done with exact matching
+            | Supported: boolean
+            |
+            */
 
-    )
+            'exactWordSearch' => false,
+
+        ]
+
+    ],
 
 
-);
+
+
+];

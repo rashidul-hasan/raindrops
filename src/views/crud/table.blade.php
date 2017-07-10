@@ -1,6 +1,6 @@
 @extends(config('raindrops.crud.layout'))
 
-@section('crud')
+@section('raindrops')
     <div class="row">
         <div class="col-md-12">
             {!! $table->render() !!}

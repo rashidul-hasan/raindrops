@@ -9,5 +9,5 @@
 </table>
 
 @if (!$noScript)
-    @include(Config::get('raindrops.datatable.table.script_view'), array('id' => $id, 'options' => $options))
+    @include(Config::get('raindrops.table.index.script_view'), array('id' => $id, 'options' => $options))
 @endif

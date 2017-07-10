@@ -30,7 +30,7 @@ class ModelHelper
     public static function getActionLinks( $model, $url = null )
     {
         if (!$url){
-            $url = $model->baseUrl;
+            $url = $model->getBaseUrl();
         }
 
         $linksTemplate = '<td>
