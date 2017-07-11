@@ -110,7 +110,7 @@ class DetailsTableBuilder
 
         $this->model = $model;
 
-        $this->fields = $model->fields;
+        $this->fields = $model->getFields();
 
         return $this;
     }

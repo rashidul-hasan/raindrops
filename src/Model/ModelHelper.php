@@ -16,7 +16,7 @@ class ModelHelper
     {
         $indexFields = [];
 
-        $fields = $model->fields;
+        $fields = $model->getFields();
 
         foreach ($fields as $field_name => $options){
             if (array_key_exists('index', $options) && $options['index']){
@@ -123,7 +123,7 @@ class ModelHelper
         $fields = [];
         $fileTypes = ['file', 'image'];
 
-        foreach ($model->fields as $field_name => $options){
+        foreach ($model->getFields() as $field_name => $options){
             if (array_key_exists('type', $options) && in_array($options['type'], $fileTypes)){
                 $fields[$field_name] = $options;
             }
