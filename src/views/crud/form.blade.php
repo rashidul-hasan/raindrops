@@ -11,12 +11,17 @@
 @section('raindrops')
 
     <div class="row" style="margin: 15px 0;">
-        <div class="pull-right">
-            @if(isset($buttons))
-                @foreach($buttons as $button)
-                    <a href="{{ $button['url'] }}" class="{{ $button['class'] }}">{{ $button['text'] }}</a>
-                @endforeach
-            @endif
+        <div class="col-md-4">
+            <h2 style="margin-top: 10px;">{{$title or ''}}</h2>
+        </div>
+        <div class="col-md-8">
+            <div class="pull-right " style="margin-top: 10px;">
+                @if(isset($buttons))
+                    @foreach($buttons as $button)
+                        <a href="{{ $button['url'] }}" class="{{ $button['class'] }}">{{ $button['text'] }}</a>
+                    @endforeach
+                @endif
+            </div>
         </div>
     </div>
 
