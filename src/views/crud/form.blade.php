@@ -2,6 +2,16 @@
 
 @section('raindrops')
 
+    <div class="row" style="margin: 15px 0;">
+        <div class="pull-right">
+            @if(isset($buttons))
+                @foreach($buttons as $button)
+                    <a href="{{ $button['url'] }}" class="{{ $button['class'] }}">{{ $button['text'] }}</a>
+                @endforeach
+            @endif
+        </div>
+    </div>
+
     <div class="row">
         <div class="col-md-12">
             {!! $form->render() !!}

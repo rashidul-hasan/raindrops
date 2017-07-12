@@ -14,7 +14,7 @@ trait RainDropsSupport
 
     public function getBaseUrl()
     {
-        return property_exists($this, 'baseUrl') ? $this->baseUrl : null;
+        return property_exists($this, 'baseUrl') ? url($this->baseUrl) : null;
     }
 
     /**
@@ -34,8 +34,10 @@ trait RainDropsSupport
      * @param $baseUrl
      * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    public function getEditUrl($baseUrl)
+    public function getEditUrl($baseUrl = null)
     {
+        $baseUrl = !$baseUrl ? $this->getBaseUrl() : $baseUrl;
+
         return url($baseUrl . '/' . $this->id . '/edit');
     }
 
@@ -44,8 +46,10 @@ trait RainDropsSupport
      * @param $baseUrl
      * @return \Illuminate\Contracts\Routing\UrlGenerator|string
      */
-    public function getCreateUrl($baseUrl)
+    public function getCreateUrl($baseUrl = null)
     {
+        $baseUrl = !$baseUrl ? $this->getBaseUrl() : $baseUrl;
+
         return url($baseUrl . '/create');
     }
 

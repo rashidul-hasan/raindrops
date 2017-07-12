@@ -38,12 +38,23 @@ trait PerformCrudActions
             ->setUrl($this->modelClass->getDataUrl())
             ->setId('data-table');
 
+        // action buttons
+        $buttons = [
+            [
+                'name' => 'add',
+                'text' => 'Add',
+                'url' => $this->modelClass->getCreateUrl(),
+                'class' => 'btn btn-primary'
+            ]
+        ];
+
         $data = [
             'url' => $this->modelClass->getBaseUrl(),
             'title' => $this->modelClass->getEntityNamePlural(),
             'entity' => $this->modelClass,
             'ajax' => $ajax,
             'table' => $table,
+            'buttons' => $buttons,
             'include_view' => $this->modelClass->getBaseUrl() . '.' . 'index'
 
         ];
@@ -175,12 +186,30 @@ trait PerformCrudActions
         // prepare table object
         $table = DetailsTable::of($item);
 
+        // action buttons
+        $buttons = [
+            [
+                'name' => 'edit',
+                'text' => 'Edit',
+                'url' => $item->getEditUrl(),
+                'class' => 'btn btn-default'
+            ],
+
+            [
+                'name' => 'back',
+                'text' => 'Back',
+                'url' => $item->getBaseUrl(),
+                'class' => 'btn btn-default'
+            ]
+        ];
+
         $data = [
             'title' => $this->modelClass->getEntityName() . ' Details',
             'item' => $item,
             'success' => true,
             'back_url' => $this->modelClass->getBaseUrl(),
             'table' => $table,
+            'buttons' => $buttons,
             'include_view' => $this->modelClass->getBaseUrl() . '.' . 'show',
             'view' => 'raindrops::crud.table'
         ];
@@ -218,6 +247,16 @@ trait PerformCrudActions
         // prepare the form
         $form = FormBuilder::build( $item );
 
+        // action buttons
+        $buttons = [
+            [
+                'name' => 'back',
+                'text' => 'Back',
+                'url' => $item->getBaseUrl(),
+                'class' => 'btn btn-default'
+            ]
+        ];
+
         $data = [
             'title' => 'Edit ' . $this->modelClass->getEntityName(),
             'item' => $item,
@@ -225,6 +264,7 @@ trait PerformCrudActions
             'url' => $this->modelClass->getBaseurl(),
             'back_url' => $item->getShowUrl(),
             'form' => $form,
+            'buttons' => $buttons,
             'view' => 'raindrops::crud.form',
             'include_view' => $this->modelClass->getBaseUrl() . '.' . 'edit'
         ];
