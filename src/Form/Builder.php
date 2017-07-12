@@ -127,7 +127,7 @@ class Builder
         'text' => 'Submit',
         'icon' => 'fa fa-save',
         'class' => 'btn btn-primary',
-        'wrapper' => ''
+        'wrapper' => 'div.tc'
     ];
 
     /**

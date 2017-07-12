@@ -59,6 +59,11 @@ trait PerformCrudActions
 
         ];
 
+        if (method_exists($this, 'indexing'))
+        {
+            $data = $this->indexing($this->request, $data);
+        }
+
         return view('raindrops::crud.table', $data);
 
     }
@@ -90,10 +95,21 @@ trait PerformCrudActions
         // generate form
         $form = FormBuilder::build( $item );
 
+        // action buttons
+        $buttons = [
+            [
+                'name' => 'back',
+                'text' => 'Back',
+                'url' => $item->getBaseUrl(),
+                'class' => 'btn btn-default'
+            ]
+        ];
+
         $data = [
             'title' => 'Add New ' . $item->getEntityName(),
             'back_url' => $item->getBaseUrl(),
             'form' => $form,
+            'buttons' => $buttons,
             'view' => 'raindrops::crud.form',
             'include_view' => $this->modelClass->getBaseUrl() . '.' . 'create'
         ];

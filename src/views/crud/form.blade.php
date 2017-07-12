@@ -1,5 +1,13 @@
 @extends(config('raindrops.crud.layout'))
-
+<style>
+    .tc{
+        text-align: center;
+        clear: both;
+    }
+    button[type=submit] i{
+        margin-left: 5px;
+    }
+</style>
 @section('raindrops')
 
     <div class="row" style="margin: 15px 0;">
