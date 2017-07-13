@@ -36,6 +36,18 @@ class MakeModelCommand extends GeneratorCommand
     protected $type = 'Model';
 
     /**
+     * Fields that need to casted to native types
+     * @var array
+     */
+    protected $casts = [];
+
+    /**
+     * A handy helper class to make some stuffs easy
+     * @var Helper
+     */
+    protected $helper;
+
+    /**
      * Get the stub file for the generator.
      *
      * @return string
@@ -69,6 +81,8 @@ class MakeModelCommand extends GeneratorCommand
     {
         $stub = $this->files->get($this->getStub());
 
+        $this->helper = new Helper();
+
         $fields = $this->generateFieldsArray(rtrim($this->option('fields'), ';'));
 
         $table = $this->option('table') ? $this->option('table') : str_plural(snake_case($this->option('name')));
@@ -80,6 +94,7 @@ class MakeModelCommand extends GeneratorCommand
             ->replaceFields($stub, $fields)
             ->replaceTable($stub, $table)
             ->replaceFillable($stub, $fillable)
+            ->replaceCastsArray($stub)
             ->replaceEntityName($stub, $this->argument('name'))
             ->replaceRoute($stub, $route);
 
@@ -196,6 +211,16 @@ class MakeModelCommand extends GeneratorCommand
                     }
                 }
 
+                // type checkbox
+                // syntax: field_name#checkbox
+                if ( isset($fieldArray[1]) && $fieldArray[1] === 'checkbox')
+                {
+                    // need to add a $casts array in the model
+                    // and set this field to cast as boolean
+                    $fieldOptionsArray['type'] = trim($fieldArray[1]);
+                    $this->casts[$fieldName] = 'boolean';
+                }
+
 
                 $data[$fieldName] = $fieldOptionsArray;
 
@@ -203,6 +228,22 @@ class MakeModelCommand extends GeneratorCommand
         }
 
         return $data;
+
+    }
+
+    protected function replaceCastsArray(&$stub)
+    {
+        if (!empty($this->casts))
+        {
+            $fields = $this->helper->arrayAsString($this->casts);
+            $stub = str_replace('{{casts}}', "\n\tprotected \$casts = $fields;\n", $stub);
+            return $this;
+        }
+        else
+        {
+            $stub = str_replace('{{casts}}', "", $stub);
+            return $this;
+        }
 
     }
 }

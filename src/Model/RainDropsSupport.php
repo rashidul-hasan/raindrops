@@ -58,6 +58,11 @@ trait RainDropsSupport
         return $this->fields;
     }
 
+    public function getCheckBoxFields()
+    {
+        return ModelHelper::getCheckBoxFields($this);
+    }
+
     public function getDataUrl($baseUrl = null)
     {
         $baseUrl = !$baseUrl ? $this->getBaseUrl() : $baseUrl;

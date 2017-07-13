@@ -1,0 +1,5 @@
+<div class="form-group {error_class}">
+    <label class="control-label">{label_text}</label>
+    {element}
+    <p class="help-block">{error_text}</p>
+</div>

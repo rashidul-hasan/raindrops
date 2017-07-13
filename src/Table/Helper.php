@@ -72,6 +72,10 @@ class Helper
                 $row_data = $this->columnTransformer->image($model, $field, $value);
                 break;
 
+            case 'checkbox':
+                $row_data = $this->columnTransformer->checkbox($model, $field, $value);
+                break;
+
             case 'doc':
                 $data[$fieldName] = $this->generateDocRow($field, $value);
                 break;
@@ -138,6 +142,11 @@ class Helper
             switch($value['type']){
                 case 'select' :
                     return 'enum';
+                    break;
+
+                case 'checkbox' :
+                    return 'checkbox';
+                    break;
 
                 default:
                     return 'exact';

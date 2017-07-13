@@ -73,6 +73,10 @@ class DataTableTransformer extends TransformerAbstract
                     $data[$fieldName] = $this->generatePhoneNumberRow($field, $value);
                     break;
 
+                case 'checkbox':
+                    $data[$fieldName] = $this->generateCheckBoxRow($field, $value);
+                    break;
+
                 case 'mailto':
                     $data[$fieldName] = $this->generateMailtoRow($field, $value);
                     break;
@@ -537,6 +541,11 @@ class DataTableTransformer extends TransformerAbstract
             switch($value['type']){
                 case 'select' :
                     return 'enum';
+                    break;
+
+                case 'checkbox' :
+                    return 'checkbox';
+                    break;
 
                 default:
                     return 'exact';
@@ -546,6 +555,10 @@ class DataTableTransformer extends TransformerAbstract
         return 'exact';
     }
 
+    protected function generateCheckBoxRow($field, $value)
+    {
+        return $this->model->{$field} ? 'Yes' : 'No';
+    }
 
 
 }

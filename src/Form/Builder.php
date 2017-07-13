@@ -91,7 +91,7 @@ class Builder
     /**
      * @var int
      */
-    protected $columns = 2;
+    protected $columns = 4;
 
     /**
      * @var array
@@ -141,6 +141,8 @@ class Builder
         $this->errors = $this->getErrorsFromRequest();
         $this->oldInputs = $this->getOldInputsFromSession();
         $this->configs = config('raindrops.form');
+        $this->columns = $this->configs['columns'];
+
     }
 
     /**
@@ -757,7 +759,16 @@ class Builder
 
         $template = file_get_contents( $this->configs['templates'][ $this->templateName ] );
 
+        $count = 0;
+
+        $wrapperClass = $this->getWrapperClass();
+
+        $row = Element::build('div')
+            ->addClass('row');
+
         foreach ( $section_fields as $field => $options) {
+
+            $stub = file_get_contents( $this->configs['stubs']['basic'] );
 
             // form is false then abort
             if ( array_key_exists('form', $options) && !$options['form'] ){
@@ -923,6 +934,20 @@ class Builder
 
                     break;
 
+                case 'checkbox':
+                    $stub = file_get_contents( $this->configs['stubs']['checkbox'] );
+                    $element = Element::build('input')
+                        ->setName($field)
+                        ->setType('checkbox')
+                        ->setRequired($required);
+                    if ($value)
+                    {
+                        $element->set('checked', 'checked');
+                    }
+                    $element = $element->render();
+
+                    break;
+
                 default:
 
                     $element = Element::build('input')
@@ -944,9 +969,36 @@ class Builder
 
             ];
 
-            $raw = strtr($template, $placeholders);
+            $element = strtr($stub, $placeholders);
 
-            $this->form->text($raw);
+            $wrapper = Element::build('div')
+                ->addClass($wrapperClass)
+                ->text($element)
+                ->render();
+
+            $row->text($wrapper);
+
+            $count++;
+
+            // when we generated elements as the column number, or there's no
+            // elemnt left to build
+            // then we add the row in the form, nullify the row object,
+            // and reset the counter
+            if ($count === $this->columns || !next( $section_fields))
+            {
+                // add the row to form
+                $this->form->text($row->render());
+
+                // clear the previous row object and create a new
+                $row = null;
+                $row = Element::build('div')
+                    ->addClass('row');
+
+                // reset the counter
+                $count = 0;
+            }
+
+
 
         }
 
@@ -961,6 +1013,31 @@ class Builder
         $request = app(Request::class);
 
         return $request->session()->getOldInput();
+    }
+
+    /**
+     * Get wrapper class for a single element
+     * based on the number of columns set for the form
+     * @return string
+     */
+    protected function getWrapperClass()
+    {
+        switch ($this->columns)
+        {
+            case 2:
+                return 'col-md-6';
+                break;
+
+            case 3:
+                return 'col-md-4';
+                break;
+
+            case 4:
+                return 'col-md-3';
+                break;
+        }
+
+        return 'col-md-6';
     }
 
     /*private function setFormDefaults($model)

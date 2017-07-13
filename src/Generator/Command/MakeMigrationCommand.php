@@ -57,6 +57,9 @@ class MakeMigrationCommand extends GeneratorCommand
         'double' => 'double',
         'float' => 'float',
         'select' => 'enum',
+
+        // custom
+        'checkbox' => 'boolean'
     ];
     /**
      * Get the stub file for the generator.

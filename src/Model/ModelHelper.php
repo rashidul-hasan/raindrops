@@ -132,5 +132,17 @@ class ModelHelper
         return $fields;
     }
 
+    public static function getCheckBoxFields($model)
+    {
+        $fields = [];
+        foreach ($model->getFields() as $field_name => $options){
+            if (array_key_exists('type', $options) && $options['type'] === 'checkbox'){
+                $fields[$field_name] = $options;
+            }
+        }
+
+        return $fields;
+    }
+
 
 }

@@ -1,0 +1,5 @@
+<div class="form-group {error_class}" style="margin-top:25px;">
+    {element}
+    <label class="checkbox-inline">{label_text}</label>
+    <p class="help-block">{error_text}</p>
+</div>

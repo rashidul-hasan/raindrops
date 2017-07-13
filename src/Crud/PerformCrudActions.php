@@ -9,6 +9,7 @@
 namespace Rashidul\RainDrops\Crud;
 
 
+use App\Post;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -151,6 +152,20 @@ trait PerformCrudActions
                 $input[$field] = $this->request->file($field)->store($field, 'public');
             }
         }
+
+        // handle checkboxes
+        $checkboxes = $item->getCheckBoxFields();
+        foreach ($checkboxes as $field => $options) {
+            if ($this->request->has($field) && $this->request->get($field) === 'on')
+            {
+                $input[$field] = 1;
+            }
+            else
+            {
+                $input[$field] = 0;
+            }
+        }
+
         $item->fill($input);
 
         try{
@@ -322,6 +337,29 @@ trait PerformCrudActions
         $this->validate($request, $this->modelClass->getvalidationRules($item), [], $this->modelClass->getFieldsWithLabels());
 
         $input = $request->except(['_token', '_method']);
+
+        // handle files uploads
+        $fileInputs = $item->getFileFields();
+        foreach ($fileInputs as $field => $options)
+        {
+            if ($this->request->hasFile($field))
+            {
+                $input[$field] = $this->request->file($field)->store($field, 'public');
+            }
+        }
+
+        // handle checkboxes
+        $checkboxes = $item->getCheckBoxFields();
+        foreach ($checkboxes as $field => $options) {
+            if ($this->request->has($field) && $this->request->get($field) === 'on')
+            {
+                $input[$field] = 1;
+            }
+            else
+            {
+                $input[$field] = 0;
+            }
+        }
 
         $item->fill($input);
 

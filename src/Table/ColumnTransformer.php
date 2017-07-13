@@ -98,4 +98,10 @@ class ColumnTransformer
 
         return '';
     }
+
+    public function checkbox($model, $field, $value)
+    {
+        return $model->{$field} ? 'Yes' : 'No';
+    }
+
 }
