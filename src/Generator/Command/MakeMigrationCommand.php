@@ -172,21 +172,19 @@ class MakeMigrationCommand extends GeneratorCommand
                     {
                         $optionsArray = $this->arrayToString($item['options']);
                     }
-                    $schemaFields .= "\$table->" . $type . "('" . $item['name'] . "', ". $optionsArray .")";
+                    $schemaFields .= "\$table->" . $type . "('" . $item['name'] . "', ". $optionsArray .")->nullable()";
                 }
                 else
                 {
                     $type = $this->typeLookup[$item['type']];
 
-                    $schemaFields .= "\$table->" . $type . "('" . $item['name'] . "')";
+                    $schemaFields .= "\$table->" . $type . "('" . $item['name'] . "')->nullable()";
                 }
 
             }
-
-
             else
             {
-                $schemaFields .= "\$table->string('" . $item['name'] . "')";
+                $schemaFields .= "\$table->string('" . $item['name'] . "')->nullable()";
             }
 
 
