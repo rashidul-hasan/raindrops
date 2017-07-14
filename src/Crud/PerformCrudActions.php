@@ -166,6 +166,12 @@ trait PerformCrudActions
             }
         }
 
+        // let user do any modfications on the inputs before storing
+        if (method_exists($this, 'storing'))
+        {
+            $input = $this->storing($this->request, $input);
+        }
+
         $item->fill($input);
 
         try{
@@ -361,6 +367,12 @@ trait PerformCrudActions
             }
         }
 
+        // let user do any modfications on the inputs before updating
+        if (method_exists($this, 'updating'))
+        {
+            $input = $this->updating($this->request, $input);
+        }
+
         $item->fill($input);
 
         try{
@@ -406,6 +418,12 @@ trait PerformCrudActions
             $data['success'] = false;
             $data['message'] = $e->getMessage();
             return $this->responseBuilder->send($this->request, $data);
+        }
+
+        // let the user do something before destroying the item
+        if (method_exists($this, 'destroying'))
+        {
+            $this->destroying($this->request, $item);
         }
 
         try{
