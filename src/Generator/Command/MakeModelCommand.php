@@ -17,6 +17,7 @@ class MakeModelCommand extends GeneratorCommand
                             {--table= : The name of the table.}
                             {--route= : Base route for the model.}
                             {--fields= : Database fields.}
+                            {--namespace= : Namespace for the model.}
                             {--fillable= : The names of the fillable columns.}
                             {--relationships= : The relationships for the model}
                             {--pk=id : The name of the primary key.}';
@@ -150,7 +151,14 @@ class MakeModelCommand extends GeneratorCommand
 
     protected function replaceEntityName(&$stub, $entity)
     {
-        $stub = str_replace('{{entityNamePlural}}', str_plural($entity), $stub);
+        $exploded = explode('\\', $entity);
+        $name = array_pop($exploded);
+
+        /*$stub = str_replace('{{entityNamePlural}}',
+            str_plural(array_pop(explode('\\', $entity))),
+            $stub);*/
+        $stub = str_replace('{{entityNamePlural}}', str_plural($name),
+            $stub);
         return $this;
     }
 

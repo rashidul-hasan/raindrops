@@ -3,7 +3,8 @@
 namespace DummyNamespace;
 
 
-use DummyRootNamespace{{modelNamespace}}{{modelName}};
+//use DummyRootNamespace{{modelNamespace}}{{modelName}};
+use {{modelNamespace}}{{modelName}};
 use Rashidul\RainDrops\Controllers\BaseController;
 
 class DummyClass extends BaseController

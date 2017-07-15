@@ -4,6 +4,8 @@ namespace Rashidul\RainDrops\Generator\Command;
 
 use File;
 use Illuminate\Console\Command;
+use Illuminate\Support\Facades\Config;
+use Nwidart\Modules\Facades\Module;
 
 class ScaffoldCommand extends Command
 {
@@ -25,6 +27,7 @@ class ScaffoldCommand extends Command
                             {--indexes= : The fields to add an index to.}
                             {--foreign-keys= : The foreign keys for the table.}
                             {--relationships= : The relationships for the model.}
+                            {--module= : Specify which module this crud belongs to.}
                             {--route-group= : Prefix of the route group.}
                             {--view-path= : The name of the view path.}
                             {--localize=no : Allow to localize? yes|no.}
@@ -67,11 +70,75 @@ class ScaffoldCommand extends Command
         $fields = rtrim($this->option('fields'), ';');
         $migrationName = $tableName;
 
+        $controllerNamespace = '';
+        $modelNamespace = 'App\\';
+
+        // location of the routes file
+        $routeFile = app_path('Http/routes.php');
+
+        if (\App::VERSION() >= '5.3') {
+            $routeFile = base_path('routes/web.php');
+        }
+
         //$controllerNamespace = ($this->option('controller-namespace')) ? $this->option('controller-namespace') . '\\' : '';
         //$modelNamespace = ($this->option('model-namespace')) ? trim($this->option('model-namespace')) . '\\' : '';
 
-        $this->call('raindrops:controller', ['name' => $entity . 'Controller', '--model-name' => $entity/*, '--model-namespace' => $modelNamespace*/]);
-        $this->call('raindrops:model', ['name' => $entity, '--table' => $tableName, '--route' => $this->routeName, '--fields' => $fields]);
+        // if module option is provided, resolve the namespace for controllers, models
+        // migration files and route file
+        if ($this->option('module'))
+        {
+            // if nwidart/laravel-modules package is installed
+            if (Config::has('modules')) {
+
+                // get module instance by name
+                $moduleName = null;
+                try
+                {
+                    $moduleName = Module::find($this->option('module'));
+                    if ($moduleName != null)
+                    {
+                        $moduleName = $moduleName->getStudlyName();
+                    }
+                    else
+                    {
+                        $this->error('Specified module not found!');
+                        $this->error('Aborting...');
+                        dd();
+                    }
+                }
+                catch(\Exception $e)
+                {
+                    $this->error($e->getMessage());
+                    $this->error('Aborting...');
+                    dd();
+                }
+                $moduleConfigs = Config::get('modules');
+
+                // controller namepsace
+                $controllerNamespace = $moduleConfigs['namespace'] . '\\' . $moduleName . '\\'
+                    . str_replace('/', '\\', $moduleConfigs['paths']['generator']['controller'])
+                    . '\\';
+
+                // model namespace
+                $modelNamespace = $moduleConfigs['namespace'] . '\\' . $moduleName . '\\'
+                    . str_replace('/', '\\', $moduleConfigs['paths']['generator']['model'])
+                    . '\\';
+
+
+
+                // route file
+                $routeFile = Module::find($this->option('module'))->getExtraPath('Http') . '/routes.php';
+            }
+            else
+            {
+                $this->error('Modules package isn\'t found!');
+                $this->error('Aborting...');
+                dd();
+            }
+        }
+
+        $this->call('raindrops:controller', ['name' => $controllerNamespace . $entity . 'Controller', '--model-name' => $entity, '--model-namespace' => $modelNamespace]);
+        $this->call('raindrops:model', ['name' => $modelNamespace . $entity, '--table' => $tableName, '--route' => $this->routeName, '--fields' => $fields]);
         $this->call('raindrops:migration', ['name' => $migrationName, '--schema' => $fields/*, '--pk' => $primaryKey, '--indexes' => $indexes, '--foreign-keys' => $foreignKeys*/]);
 
 
@@ -80,11 +147,7 @@ class ScaffoldCommand extends Command
         $this->callSilent('optimize');
 
         // Updating the Http/routes.php file
-        $routeFile = app_path('Http/routes.php');
 
-        if (\App::VERSION() >= '5.3') {
-            $routeFile = base_path('routes/web.php');
-        }
 
         if (file_exists($routeFile)) {
             //$this->controller = ($controllerNamespace != '') ? $controllerNamespace . '\\' . $entity . 'Controller' : $entity . 'Controller';
