@@ -15,6 +15,7 @@ class MakeMigrationCommand extends GeneratorCommand
                             {name : The name of the migration.}
                             {--schema= : The name of the schema.}
                             {--indexes= : The fields to add an index too.}
+                            {--path= : The path to store the migration file.}
                             {--foreign-keys= : Foreign keys.}
                             {--pk=id : The name of the primary key.}';
 
@@ -61,6 +62,8 @@ class MakeMigrationCommand extends GeneratorCommand
         // custom
         'checkbox' => 'boolean'
     ];
+
+
     /**
      * Get the stub file for the generator.
      *
@@ -84,7 +87,12 @@ class MakeMigrationCommand extends GeneratorCommand
     {
         $name = str_replace($this->laravel->getNamespace(), '', $name);
         $datePrefix = date('Y_m_d_His');
+        $migrationPath = $this->option('path');
 
+        if ($migrationPath != '')
+        {
+            return $migrationPath . '/' . $datePrefix . '_create_' . $name . '_table.php';
+        }
         return database_path('/migrations/') . $datePrefix . '_create_' . $name . '_table.php';
     }
 
@@ -263,6 +271,9 @@ class MakeMigrationCommand extends GeneratorCommand
             ->replaceSchemaDown($stub, $schemaDown)
             ->replaceClass($stub, $className);
     }
+
+
+
 
     /**
      * Replace the schema_up for the given stub.

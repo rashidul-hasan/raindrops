@@ -2,8 +2,6 @@
 
 namespace DummyNamespace;
 
-
-//use DummyRootNamespace{{modelNamespace}}{{modelName}};
 use {{modelNamespace}}{{modelName}};
 use Rashidul\RainDrops\Controllers\BaseController;
 

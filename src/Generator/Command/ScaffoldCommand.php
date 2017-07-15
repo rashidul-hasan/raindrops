@@ -72,6 +72,7 @@ class ScaffoldCommand extends Command
 
         $controllerNamespace = '';
         $modelNamespace = 'App\\';
+        $migrationDirectory = '';
 
         // location of the routes file
         $routeFile = app_path('Http/routes.php');
@@ -124,8 +125,9 @@ class ScaffoldCommand extends Command
                     . str_replace('/', '\\', $moduleConfigs['paths']['generator']['model'])
                     . '\\';
 
-
-
+                // migration directory
+                $migrationDirectory = Module::find($this->option('module'))->getExtraPath($moduleConfigs['paths']['generator']['migration']);
+                $migrationDirectory = str_replace('/', '\\', $migrationDirectory);
                 // route file
                 $routeFile = Module::find($this->option('module'))->getExtraPath('Http') . '/routes.php';
             }
@@ -139,7 +141,7 @@ class ScaffoldCommand extends Command
 
         $this->call('raindrops:controller', ['name' => $controllerNamespace . $entity . 'Controller', '--model-name' => $entity, '--model-namespace' => $modelNamespace]);
         $this->call('raindrops:model', ['name' => $modelNamespace . $entity, '--table' => $tableName, '--route' => $this->routeName, '--fields' => $fields]);
-        $this->call('raindrops:migration', ['name' => $migrationName, '--schema' => $fields/*, '--pk' => $primaryKey, '--indexes' => $indexes, '--foreign-keys' => $foreignKeys*/]);
+        $this->call('raindrops:migration', ['name' => $migrationName, '--schema' => $fields, '--path' => $migrationDirectory    /*, '--pk' => $primaryKey, '--indexes' => $indexes, '--foreign-keys' => $foreignKeys*/]);
 
 
         // For optimizing the class loader
