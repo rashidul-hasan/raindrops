@@ -18,6 +18,9 @@
             "Rashidul\\RainDrops\\": "src/"
         }
     },
+    "suggest": {
+        "nwidart/laravel-modules": "Module Management In Laravel"
+    },
     "minimum-stability":"dev"
 
 }
