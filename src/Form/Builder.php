@@ -766,6 +766,9 @@ class Builder
         $row = Element::build('div')
             ->addClass('row');
 
+
+        $lastField = Helper::getLastKey($section_fields);
+
         foreach ( $section_fields as $field => $options) {
 
             $stub = file_get_contents( $this->configs['stubs']['basic'] );
@@ -984,7 +987,7 @@ class Builder
             // elemnt left to build
             // then we add the row in the form, nullify the row object,
             // and reset the counter
-            if ($count === $this->columns || !next( $section_fields))
+            if ($count === $this->columns || $field === $lastField)
             {
                 // add the row to form
                 $this->form->text($row->render());
@@ -1024,6 +1027,10 @@ class Builder
     {
         switch ($this->columns)
         {
+            case 1:
+                return 'col-md-12';
+                break;
+
             case 2:
                 return 'col-md-6';
                 break;

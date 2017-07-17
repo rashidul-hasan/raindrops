@@ -16,4 +16,11 @@ class Helper
     {
         return array_key_exists($key, $array) ? $array[$key] : '';
     }
+
+    public static function getLastKey($arr)
+    {
+        end($arr);
+
+        return key($arr);
+    }
 }
