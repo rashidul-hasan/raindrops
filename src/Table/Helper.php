@@ -93,8 +93,8 @@ class Helper
                 break;
 
             case 'relation':
-                $data[$fieldName] = [$relatedColumnName => $this->generateRelationRow($field, $value)];
-                break; // array, first element is name of the relation, 2nd is the column name to
+                $row_data = $this->columnTransformer->relation($model, $field, $value);
+                break;
 
             case 'relation-details':
                 $data[$fieldName] = $this->generateRelationDetailsRow($field, $value);
@@ -148,11 +148,15 @@ class Helper
                     return 'checkbox';
                     break;
 
-                default:
+                case 'text' :
                     return 'exact';
+                    break;
+
+                default:
+                    return $value['type'];
             }
         }
 
-        return 'string';
+        return 'exact';
     }
 }

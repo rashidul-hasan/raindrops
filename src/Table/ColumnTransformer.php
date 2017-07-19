@@ -104,4 +104,29 @@ class ColumnTransformer
         return $model->{$field} ? 'Yes' : 'No';
     }
 
+    public function relation($model, $field, $value)
+    {
+        if ($model->{$field})
+        {
+            $relatedModel = $model->{$value['options'][0]};
+            // TODO.
+            // 1. check if returned related model is actually a subclass of eloquent
+            // 2. handle relationship more than 2 levels
+            if ($relatedModel)
+            {
+
+                return $relatedModel->{$value['options'][1]};
+                /*array_shift($showArray); // remove the first element of the array
+                foreach ($showArray as $item) {
+                    $row_data .= $relatedModel->{$item} . ' ';
+                }*/
+
+            }
+
+        }
+
+        return '';
+
+    }
+
 }

@@ -75,7 +75,7 @@ trait PerformCrudActions
     public function data()
     {
 
-        $query = $this->modelClass->select();
+        $query = $this->modelClass->with('county')->select();
 
         return $this->dataTable->eloquent($query)
             ->setTransformer(new DataTableTransformer())

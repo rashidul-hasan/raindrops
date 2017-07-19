@@ -43,9 +43,9 @@ class DataTableTransformer extends TransformerAbstract
 
             // setup the key name of the data array
             if ($dataType == 'relation'){
-                $relationOptions = $value['show'];
-                $fieldName = $relationOptions[0];
-                $relatedColumnName = $relationOptions[1];
+//                $relationOptions = $value['show'];
+                $fieldName = $value['options'][0];
+                $relatedColumnName = $value['options'][1];
             } else {
                 $fieldName = $field;
             }
@@ -360,19 +360,21 @@ class DataTableTransformer extends TransformerAbstract
         // 1. check to see if relationship is defined in the model
         $row = '<tr><td>%s:</td><td> %s</td></tr>';
         $row_data = '';
-        $showArray = $value['show'];
+//        $showArray = $value['show'];
 
         if ($this->model->{$field}){
-            $relatedModel = $this->model->{$showArray[0]};
+            $relatedModel = $this->model->{$value['options'][0]};
             // TODO.
             // 1. check if returned related model is actually a subclass of eloquent
             // 2. handle relationship more than 2 levels
             if ($relatedModel){
 
-                array_shift($showArray); // remove the first element of the array
+                $row_data .= $relatedModel->{$value['options'][1]};
+
+                /*array_shift($showArray); // remove the first element of the array
                 foreach ($showArray as $item) {
-                    $row_data .= $relatedModel->{$item} . ' ';
-                }
+                    $row_data .= $relatedModel->{$value['options'][0]} . ' ';
+                }*/
 
             }
 
@@ -545,6 +547,10 @@ class DataTableTransformer extends TransformerAbstract
 
                 case 'checkbox' :
                     return 'checkbox';
+                    break;
+
+                case 'relation' :
+                    return 'relation';
                     break;
 
                 default:

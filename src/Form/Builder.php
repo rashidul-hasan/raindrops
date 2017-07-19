@@ -8,15 +8,15 @@
 
 namespace Rashidul\RainDrops\Form;
 
-
 use Exception;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Config;
-use Rashidul\RainDrops\Helper;
-use Rashidul\RainDrops\Html\Helper as HtmlHelper;
-use Rashidul\RainDrops\Html\Element;
 use Illuminate\Support\Facades\DB;
+use Rashidul\RainDrops\Facades\JavaScript;
+use Rashidul\RainDrops\Helper;
+use Rashidul\RainDrops\Html\Element;
+use Rashidul\RainDrops\Html\Helper as HtmlHelper;
 
 class Builder
 {
@@ -881,6 +881,46 @@ class Builder
                         $option_value = count($options['options']) > 2 ? $table_data_single->{$options['options'][1]} . ' ' . $table_data_single->{$options['options'][2]} : $table_data_single->{$options['options'][1]};
                         $element .= sprintf('<option value="%s">%s</option>', $table_data_single->{$option_key}, $option_value);
                     }
+                    $element .= '</select>';
+
+                    break;
+
+                // build a dropdown for a foreign key
+                // type is `relation` and mostly belongsTo relation
+                // for Eloquent
+                case 'relation':
+
+                    // get the related model
+                    $relatedModel = $this->model->{$options['options'][0]}()->getRelated();
+
+                    // get collection of all rows from the related model
+                    $relatedCollection = $relatedModel->all();
+
+                    // if this dropdwn depends on the value from another field, there should be
+                    // a `depends` key on the field's option array, just add that field's name as a data
+                    // attribute on the select element. we'll handle it on the cleintside via jQuery
+                    $dependsOn = '';
+                    if (isset($options['parent']) && $options['parent'] != '')
+                    {
+                        $dependsOn = 'data-depends="' . $options['parent'] . '"';
+
+                        // send the collection to javascript, we need that to populate the
+                        // options dynamically on the view
+                        JavaScript::put(
+                            [
+                                $field => [
+                                    'data' => $relatedCollection->toArray(),
+                                    'indexColumn' => $options['options'][1]
+                                ]
+                            ]
+                        );
+                    }
+
+                    // generate the dropdown
+                    $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
+
+                    $element .= '<option value="" disabled selected>--Select One--</option>';
+                    $element .= \Rashidul\RainDrops\Form\Helper::collectionToOptions($relatedCollection, ['id', $options['options'][1]], $value);
                     $element .= '</select>';
 
                     break;

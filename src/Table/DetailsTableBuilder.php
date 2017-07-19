@@ -573,11 +573,11 @@ class DetailsTableBuilder
                     return 'enum';
 
                 default:
-                    return 'exact';
+                    return $value['type'];
             }
         }
 
-        return 'string';
+        return 'exact';
     }
 
 

@@ -1,13 +1,9 @@
 @extends(config('raindrops.crud.layout'))
-<style>
-    .tc{
-        text-align: center;
-        clear: both;
-    }
-    button[type=submit] i{
-        margin-left: 5px;
-    }
-</style>
+
+@section('raindrops-header')
+    @include('raindrops::styles.styles')
+@stop
+
 @section('raindrops')
 
     <div class="row" style="margin: 15px 0;">
@@ -32,6 +28,13 @@
     </div>
 
 @stop
+
+@section('raindrops-footer')
+    @include('raindrops::scripts.php-to-js')
+    @include('raindrops::scripts.dropdown')
+    @include('raindrops::scripts.delete')
+@stop
+
 
 @if(isset($include_view))
     @includeIf($include_view)
