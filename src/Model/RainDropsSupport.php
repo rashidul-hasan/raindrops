@@ -12,9 +12,15 @@ namespace Rashidul\RainDrops\Model;
 trait RainDropsSupport
 {
 
-    public function getBaseUrl()
+    public function getBaseUrl($isUrl = true)
     {
-        return property_exists($this, 'baseUrl') ? url($this->baseUrl) : null;
+        // if $isUrl is false then just return the $baseUrl field
+        // by default, return the complete url (wrapped in url function)
+        if (property_exists($this, 'baseUrl') )
+        {
+            return ($isUrl) ? url($this->baseUrl) : $this->baseUrl;
+        }
+        return null;
     }
 
     /**

@@ -56,7 +56,7 @@ trait PerformCrudActions
             'ajax' => $ajax,
             'table' => $table,
             'buttons' => $buttons,
-            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'index'
+            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'index'
 
         ];
 
