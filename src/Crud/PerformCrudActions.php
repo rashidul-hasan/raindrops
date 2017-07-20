@@ -75,7 +75,15 @@ trait PerformCrudActions
     public function data()
     {
 
-        $query = $this->modelClass->with('county')->select();
+        $query = $this->modelClass->select();
+
+        // let user modify the query builder object to
+        // further customize the data to be feed to the
+        // datatable via ajax
+        if (method_exists($this, 'querying'))
+        {
+            $query = $this->querying($this->request, $query);
+        }
 
         return $this->dataTable->eloquent($query)
             ->setTransformer(new DataTableTransformer())
