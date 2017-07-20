@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Test Korlam &mdash; RainDrops Developer&#39;s Toolbox 0.2.3 documentation</title>
+  
+
+  
+  
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+        <link rel="index" title="Index"
+              href="genindex.html"/>
+        <link rel="search" title="Search" href="search.html"/>
+    <link rel="top" title="RainDrops Developer&#39;s Toolbox 0.2.3 documentation" href="index.html"/>
+        <link rel="prev" title="Installation &amp; Configuration" href="installation.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> RainDrops Developer's Toolbox
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                0.2.3
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <p class="caption"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation &amp; Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Test Korlam</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#installation">Installation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#generating-form">Generating Form</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#form-configuration">Form Configuration</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">RainDrops Developer's Toolbox</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>Test Korlam</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/test.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="test-korlam">
+<h1>Test Korlam<a class="headerlink" href="#test-korlam" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="installation">
+<h2>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Inside your project root, run</p>
+<p><code class="docutils literal"><span class="pre">composer</span> <span class="pre">require</span> <span class="pre">rashidul/raindrops=dev-master</span></code></p>
+</li>
+<li><p class="first">Add this to your <code class="docutils literal"><span class="pre">app.php</span></code> config file’s <code class="docutils literal"><span class="pre">providers</span></code> array</p>
+<p><code class="docutils literal"><span class="pre">Rashidul\RainDrops\RainDropsServiceProvider::class,</span></code></p>
+</li>
+<li><p class="first">Optionally, you can add this to <code class="docutils literal"><span class="pre">aliases</span></code> array for simplicity</p>
+<p><code class="docutils literal"><span class="pre">'FormBuilder'</span> <span class="pre">=&gt;</span> <span class="pre">Rashidul\RainDrops\Facades\FormBuilder::class,</span></code></p>
+</li>
+<li><p class="first">Finally, publish the config files.</p>
+<p><code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">vendor:publish</span> <span class="pre">--provider=Rashidul\RainDrops\RainDropsServiceProvider</span></code></p>
+</li>
+</ol>
+</div>
+<div class="section" id="generating-form">
+<h2>Generating Form<a class="headerlink" href="#generating-form" title="Permalink to this headline">¶</a></h2>
+<p>To generate a form for a model, you first need to add a <code class="docutils literal"><span class="pre">$fields</span></code>
+public property to your model and populate it with required
+informations.</p>
+<p>Then you can generate the form markup by simply calling the <code class="docutils literal"><span class="pre">build</span></code>
+method on <code class="docutils literal"><span class="pre">FormBuilder</span></code> providing an instance of your model</p>
+</div>
+<div class="section" id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<p>In your controller:</p>
+<div class="code php highlight-default"><div class="highlight"><pre><span></span>$client = new Client();
+
+/* or, $client = Client::find(&lt;id&gt;); if you are editing ane existing record */
+
+$form = FormBuilder::build( $client )
+                -&gt;form([
+                    &#39;action&#39; =&gt; &#39;clients&#39;,
+                    &#39;method&#39; =&gt; &#39;POST&#39;
+                ])
+                -&gt;render();
+
+return view(&#39;create&#39;, compact(&#39;form&#39;));
+</pre></div>
+</div>
+<p><em>don’t forget to ``use`` the ``FormBuilder`` class at the top of your
+model</em></p>
+<p>Then in your view, you can do:</p>
+<div class="code php highlight-default"><div class="highlight"><pre><span></span>{!! $form !!}
+</pre></div>
+</div>
+<p>That’s it!</p>
+</div>
+<div class="section" id="form-configuration">
+<h2>Form Configuration<a class="headerlink" href="#form-configuration" title="Permalink to this headline">¶</a></h2>
+<p>There are some helpful methods to further customize the form.</p>
+<ul>
+<li><p class="first"><code class="docutils literal"><span class="pre">add(</span> <span class="pre">$field_name,</span> <span class="pre">$options</span> <span class="pre">=</span> <span class="pre">[]</span> <span class="pre">)</span></code> You can add fields to the
+existing fields which are defined in your model’s <code class="docutils literal"><span class="pre">$fields</span></code>
+property.</p>
+<div class="code php highlight-default"><div class="highlight"><pre><span></span>$form = FormBuilder::build( $client )
+                    -&gt;form([
+                        &#39;action&#39; =&gt; &#39;clients&#39;,
+                        &#39;method&#39; =&gt; &#39;POST&#39;
+                    ])
+                    -&gt;add(&#39;field_name&#39;, [
+                        &#39;label&#39; =&gt; &#39;Field Label&#39;,
+                        &#39;type&#39; =&gt; &#39;date&#39;
+                    ])
+                    -&gt;render();
+</pre></div>
+</div>
+<p>first argument is the field’s <code class="docutils literal"><span class="pre">name</span></code> and second one is an array
+containing various options for that field.</p>
+<p><em>``label`` &amp; ``type`` fields are mandatory</em></p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">modify(</span> <span class="pre">$field_name,</span> <span class="pre">$options</span> <span class="pre">=</span> <span class="pre">[]</span> <span class="pre">)</span></code> You can modify any defined
+field in the model</p>
+<div class="code php highlight-default"><div class="highlight"><pre><span></span>$form = FormBuilder::build( $client )
+                    -&gt;form([
+                        &#39;action&#39; =&gt; &#39;clients&#39;,
+                        &#39;method&#39; =&gt; &#39;POST&#39;
+                    ])
+                    -&gt;modify(&#39;field_name&#39;, [
+                        &#39;label&#39; =&gt; &#39;New changed label&#39;,
+                        &#39;required&#39; =&gt; true
+                    ])
+                    -&gt;render();
+</pre></div>
+</div>
+<p>You need to provide only the options you want to modify/override.</p>
+</li>
+<li><p class="first"><code class="docutils literal"><span class="pre">section(</span> <span class="pre">$header,</span> <span class="pre">$fields</span> <span class="pre">=</span> <span class="pre">[]</span> <span class="pre">)</span></code> Grouping some fields together
+with a header.</p>
+<div class="line-block">
+<div class="line">```php</div>
+<div class="line">$form = FormBuilder::build( $client )</div>
+<div class="line">-&gt;form([</div>
+<div class="line">‘action’ =&gt;</div>
+</div>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+           <div class="articleComments">
+            
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="installation.html" class="btn btn-neutral" title="Installation &amp; Configuration" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2017, Rashidul Hasan.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'0.2.3',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true,
+            SOURCELINK_SUFFIX: '.txt'
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,28 @@
+Installation & Configuration
+============================
+
+
+#. Inside your project root, run
+
+    .. code-block:: php
+
+       composer require rashidul/raindrops=dev-master
+
+#. Add this to your :code:`app.php` config file's :code:`providers` array
+
+    .. code-block:: php
+
+       Rashidul\RainDrops\RainDropsServiceProvider::class,
+
+
+    .. code-block:: php
+
+        // publish configs
+        $this->publishes([
+            __DIR__ . '/configs' => config_path('raindrops'),
+        ], 'raindrops');
+
+        // publish stub files for the generator
+        $this->publishes([
+            __DIR__ . '/Generator/stubs/' => base_path('resources/raindrops/'),
+        ], 'raindrops');
