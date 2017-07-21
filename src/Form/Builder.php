@@ -902,7 +902,7 @@ class Builder
                     $dependsOn = '';
                     if (isset($options['parent']) && $options['parent'] != '')
                     {
-                        $dependsOn = 'data-depends="' . $options['parent'] . '"';
+                        $dependsOn = 'data-parent="' . $options['parent'] . '"';
 
                         // send the collection to javascript, we need that to populate the
                         // options dynamically on the view
@@ -914,6 +914,16 @@ class Builder
                                 ]
                             ]
                         );
+
+                        // generate dropdown with no options
+                        // generate the dropdown
+                        $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
+
+                        $element .= '<option value="" disabled selected>--Select One--</option>';
+                        $element .= '</select>';
+
+                        break;
+
                     }
 
                     // generate the dropdown
