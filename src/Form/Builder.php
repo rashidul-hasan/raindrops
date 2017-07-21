@@ -793,6 +793,8 @@ class Builder
 
             $label = $this->getLabel($options, $required, $unique);
 
+            $attributes = isset($options['attributes']) ? $options['attributes'] : null;
+
             $error_class = '';
 
             $error_text = '';
@@ -813,6 +815,7 @@ class Builder
                         ->setName($field)
                         ->setRequired($required)
                         ->set('rows', '10')
+                        ->set($attributes)
                         ->text($value)
                         ->render();
 
@@ -826,6 +829,7 @@ class Builder
                         ->setName($field)
                         ->setRequired($required)
                         ->set('rows', '10')
+                        ->set($attributes)
                         ->text($value)
                         ->render();
 
@@ -837,6 +841,7 @@ class Builder
                         ->addClass($elementClass)
                         ->addClass('select2')
                         ->setName($field)
+                        ->set($attributes)
                         ->setRequired($required);
 
                     $default = Element::build('option')
@@ -941,6 +946,7 @@ class Builder
                         ->addClass('datepicker')
                         ->setName($field)
                         ->setType('text')
+                        ->set($attributes)
                         ->setValue($value)
                         ->setRequired($required)
                         ->render();
@@ -954,6 +960,7 @@ class Builder
                         ->addClass('datetimepicker')
                         ->setName($field)
                         ->setType('text')
+                        ->set($attributes)
                         ->setRequired($required)
                         ->render();
 
@@ -965,6 +972,7 @@ class Builder
                         ->addClass($elementClass)
                         ->setName($field)
                         ->setType('file')
+                        ->set($attributes)
                         ->set('accept', $options['accept'])
                         ->setRequired($required)
                         ->render();
@@ -980,6 +988,7 @@ class Builder
                         ->addClass($elementClass)
                         ->addClass('timepicker')
                         ->setName($field)
+                        ->set($attributes)
                         ->setType('text')
                         ->setRequired($required)
                         ->render();
@@ -991,6 +1000,7 @@ class Builder
                     $element = Element::build('input')
                         ->setName($field)
                         ->setType('checkbox')
+                        ->set($attributes)
                         ->setRequired($required);
                     if ($value)
                     {
@@ -1006,9 +1016,11 @@ class Builder
                         ->addClass($elementClass)
                         ->setName($field)
                         ->setValue($value)
+                        ->set($attributes)
                         ->setType($options['type'])
                         ->setRequired($required)
                         ->render();
+
 
 
             }
