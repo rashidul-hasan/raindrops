@@ -187,6 +187,12 @@ trait PerformCrudActions
                 $data['success'] = true;
                 $data['message'] = $this->modelClass->getEntityName() . ' Created!';
                 $data['item'] = $item;
+
+                if (method_exists($this, 'stored'))
+                {
+                    $data = $this->stored($this->request, $item);
+                }
+
             } else {
                 $data['success'] = false;
                 $data['message'] = 'Something went wrong';
@@ -388,6 +394,12 @@ trait PerformCrudActions
                 $data['success'] = true;
                 $data['message'] = $this->modelClass->getEntityName() . ' Updated!';
                 $data['item'] = $item;
+
+                if (method_exists($this, 'updated'))
+                {
+                    $data = $this->updated($this->request, $item);
+                }
+
             } else {
                 $data['success'] = false;
                 $data['message'] = 'Something went wrong';
