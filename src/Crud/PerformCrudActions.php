@@ -190,7 +190,7 @@ trait PerformCrudActions
 
                 if (method_exists($this, 'stored'))
                 {
-                    $data = $this->stored($this->request, $item);
+                    $this->stored($this->request, $item);
                 }
 
             } else {
@@ -397,7 +397,7 @@ trait PerformCrudActions
 
                 if (method_exists($this, 'updated'))
                 {
-                    $data = $this->updated($this->request, $item);
+                    $this->updated($this->request, $item);
                 }
 
             } else {
