@@ -144,5 +144,42 @@ class ModelHelper
         return $fields;
     }
 
+    public static function fillWithRequestData($model, $request)
+    {
+        $fields = $model->getFields();
+
+        foreach ($fields as $field => $options)
+        {
+            // save the data according to the field type
+            switch ($options['type'])
+            {
+                case 'checkbox':
+
+                    if ($request->has($field) && $request->get($field) === 'on')
+                    {
+                        $model->{$field} = 1;
+                    }
+                    else
+                    {
+                        $model->{$field} = 0;
+                    }
+
+                    break;
+
+                case 'file':
+                    if ($request->hasFile($field))
+                    {
+                        $model->{$field} = $request->file($field)->store($field, 'public');
+                    }
+                    break;
+
+                default:
+                    $model->{$field} = $request->has($field) ? $request->get($field) : null;
+            }
+        }
+
+        return $model;
+    }
+
 
 }

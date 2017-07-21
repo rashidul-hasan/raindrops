@@ -916,7 +916,6 @@ class Builder
                         );
 
                         // generate dropdown with no options
-                        // generate the dropdown
                         $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
 
                         $element .= '<option value="" disabled selected>--Select One--</option>';

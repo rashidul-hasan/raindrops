@@ -183,6 +183,15 @@ trait RainDropsSupport
         return ModelHelper::getActionLinks($this, $url);
     }
 
+    /**
+     * Fill up the model with data from request object
+     * @param $request
+     */
+    public function fillWithRequestData($request)
+    {
+        return ModelHelper::fillWithRequestData($this, $request);
+    }
+
 
 
 

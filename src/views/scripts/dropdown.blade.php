@@ -29,8 +29,6 @@
             childElement.prop('disabled', true);
 
             var childElementName = childElement.attr('name');
-            //console.log(childElementName);
-
 
             // generate <option> based on this childElements selected value
             var selectedId = parentElement.find(":selected").val();
@@ -38,7 +36,6 @@
             // get data objects
             var dataObject = raindrops[childElementName].data;
             var indexColumnName = raindrops[childElementName].indexColumn;
-
 
             // remove all options from dependent select
             childElement.find("option").remove();
@@ -72,8 +69,6 @@
             var childElementSelector = '[data-parent=' + parentElement.attr('name') + ']';
             var childElement = $(childElementSelector);
 
-            // first check if any other fields depends on this dropdown,
-            // if not, just return
             return !!childElement.length;
         }
 
