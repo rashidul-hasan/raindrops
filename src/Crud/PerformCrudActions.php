@@ -120,7 +120,7 @@ trait PerformCrudActions
             'form' => $form,
             'buttons' => $buttons,
             'view' => 'raindrops::crud.form',
-            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'create'
+            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'create'
         ];
 
         // check if we need to pass additional data to view
@@ -261,7 +261,7 @@ trait PerformCrudActions
             'back_url' => $this->modelClass->getBaseUrl(),
             'table' => $table,
             'buttons' => $buttons,
-            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'show',
+            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'show',
             'view' => 'raindrops::crud.table'
         ];
 
@@ -317,7 +317,7 @@ trait PerformCrudActions
             'form' => $form,
             'buttons' => $buttons,
             'view' => 'raindrops::crud.form',
-            'include_view' => $this->modelClass->getBaseUrl() . '.' . 'edit'
+            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'edit'
         ];
 
         // check if we need to pass additional data to view
