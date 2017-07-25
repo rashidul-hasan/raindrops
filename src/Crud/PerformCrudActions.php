@@ -9,12 +9,10 @@
 namespace Rashidul\RainDrops\Crud;
 
 
-use App\Post;
 use Illuminate\Database\QueryException;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Session;
 use Rashidul\RainDrops\Facades\DataTable;
 use Rashidul\RainDrops\Facades\DetailsTable;
 use Rashidul\RainDrops\Facades\FormBuilder;
@@ -63,6 +61,10 @@ trait PerformCrudActions
         if (method_exists($this, 'indexing'))
         {
             $data = $this->indexing($this->request, $data);
+            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $data;
+            }
         }
 
         return view('raindrops::crud.table', $data);
@@ -83,6 +85,10 @@ trait PerformCrudActions
         if (method_exists($this, 'querying'))
         {
             $query = $this->querying($this->request, $query);
+            if ($query instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $query;
+            }
         }
 
         return $this->dataTable->eloquent($query)
@@ -130,6 +136,10 @@ trait PerformCrudActions
         if (method_exists($this, 'creating'))
         {
             $data = $this->creating($this->request, $data);
+            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $data;
+            }
         }
 
         return $this->responseBuilder->send($this->request, $data);
@@ -178,6 +188,10 @@ trait PerformCrudActions
         if (method_exists($this, 'storing'))
         {
             $input = $this->storing($this->request, $input);
+            if ($input instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $input;
+            }
         }
 
         $item->fill($input);
@@ -268,6 +282,10 @@ trait PerformCrudActions
         if (method_exists($this, 'showing'))
         {
             $data = $this->showing($this->request, $data);
+            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $data;
+            }
         }
 
         return $this->responseBuilder->send($this->request, $data);
@@ -327,6 +345,11 @@ trait PerformCrudActions
         if (method_exists($this, 'editing'))
         {
             $data = $this->editing($this->request, $data);
+            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $data;
+            }
+
         }
 
         return $this->responseBuilder->send($this->request, $data);
@@ -385,6 +408,10 @@ trait PerformCrudActions
         if (method_exists($this, 'updating'))
         {
             $input = $this->updating($this->request, $input);
+            if ($input instanceof \Symfony\Component\HttpFoundation\Response)
+            {
+                return $input;
+            }
         }
 
         $item->fill($input);
