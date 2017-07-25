@@ -528,7 +528,7 @@ class DataTableBuilder
             $dataType = $this->getDataType($options);
 
             if ($dataType == 'relation'){
-                $relationOptions = $options['show'];
+                $relationOptions = $options['options'];
                 $column['data'] = $relationOptions[0] . '.' . $relationOptions[1];
                 $column['name'] = $relationOptions[0] . '.' . $relationOptions[1];
                 $column['defaultContent'] = '';
@@ -591,6 +591,11 @@ class DataTableBuilder
             switch($value['type']){
                 case 'select' :
                     return 'enum';
+                    break;
+
+                case 'relation' :
+                    return 'relation';
+                    break;
 
                 default:
                     return 'exact';
