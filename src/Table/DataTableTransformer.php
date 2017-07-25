@@ -21,6 +21,18 @@ class DataTableTransformer extends TransformerAbstract
      */
     protected $model;
 
+    protected $actions;
+
+    /**
+     * DataTableTransformer constructor.
+     * @param $actions
+     * @internal param $model
+     */
+    public function __construct($actions = null)
+    {
+        $this->actions = $actions;
+    }
+
     public function transform(Model $model)
     {
 
@@ -123,7 +135,7 @@ class DataTableTransformer extends TransformerAbstract
         }
 
         // now add the actions column
-        $data['action'] = ModelHelper::getActionLinks($model);
+        $data['action'] = ModelHelper::getActionLinks($model, null, $this->actions);
 
         return $data;
     }

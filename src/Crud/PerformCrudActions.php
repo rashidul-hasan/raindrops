@@ -39,13 +39,18 @@ trait PerformCrudActions
 
         // action buttons
         $buttons = [
-            [
-                'name' => 'add',
+            'add' => [
                 'text' => 'Add',
                 'url' => $this->modelClass->getCreateUrl(),
                 'class' => 'btn btn-primary'
             ]
         ];
+
+        // if add action is not present in the permitted actions list, remove it
+        if (property_exists($this, 'actions') && !in_array('add', $this->actions))
+        {
+            unset($buttons['add']);
+        }
 
         $data = [
             'url' => $this->modelClass->getBaseUrl(),
@@ -91,8 +96,12 @@ trait PerformCrudActions
             }
         }
 
+        // which actions will be shown for this
+        // particular resource
+        $actions = property_exists($this, 'actions') ? $this->actions : null;
+
         return $this->dataTable->eloquent($query)
-            ->setTransformer(new DataTableTransformer())
+            ->setTransformer(new DataTableTransformer($actions))
             ->make(true);
 
     }

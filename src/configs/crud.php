@@ -13,6 +13,16 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Show title
+    |--------------------------------------------------------------------------
+    | Should the title text be displayed on the top of the table and form
+    | set it false if you need to display the title in some other places
+    | other than the default place
+    */
+    'show_title' => true,
+
+    /*
+    |--------------------------------------------------------------------------
     | Generator related configs
     |--------------------------------------------------------------------------
     |
