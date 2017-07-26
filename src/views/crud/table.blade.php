@@ -8,8 +8,8 @@
 
     <div class="row" style="margin: 15px 0;">
         <div class="col-md-4">
-            @if(\Illuminate\Support\Facades\Config::get('raindrops.crud.show_title'))
-            <h2 style="margin-top: 10px;">{{$title or ''}}</h2>
+            @if(config('raindrops.crud.show_title'))
+                <h2 style="margin-top: 10px;">{{$title or ''}}</h2>
             @endif
         </div>
         <div class="col-md-8">

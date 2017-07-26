@@ -121,8 +121,7 @@ trait PerformCrudActions
 
         // action buttons
         $buttons = [
-            [
-                'name' => 'back',
+            'back' => [
                 'text' => 'Back',
                 'url' => $item->getBaseUrl(),
                 'class' => 'btn btn-default'
@@ -262,20 +261,24 @@ trait PerformCrudActions
 
         // action buttons
         $buttons = [
-            [
-                'name' => 'edit',
+            'edit' => [
                 'text' => 'Edit',
                 'url' => $item->getEditUrl(),
                 'class' => 'btn btn-default'
             ],
 
-            [
-                'name' => 'back',
+            'back' => [
                 'text' => 'Back',
                 'url' => $item->getBaseUrl(),
                 'class' => 'btn btn-default'
             ]
         ];
+
+        // if edit action is not present in the permitted actions list, remove it
+        if (property_exists($this, 'actions') && !in_array('edit', $this->actions))
+        {
+            unset($buttons['edit']);
+        }
 
         $data = [
             'title' => $this->modelClass->getEntityName() . ' Details',

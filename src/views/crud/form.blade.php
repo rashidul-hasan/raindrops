@@ -8,7 +8,9 @@
 
     <div class="row" style="margin: 15px 0;">
         <div class="col-md-4">
-            <h2 style="margin-top: 10px;">{{$title or ''}}</h2>
+            @if(config('raindrops.crud.show_title'))
+                <h2 style="margin-top: 10px;">{{$title or ''}}</h2>
+            @endif
         </div>
         <div class="col-md-8">
             <div class="pull-right " style="margin-top: 10px;">

@@ -51,14 +51,23 @@ class ModelHelper
         //$singleLinkTemplate = ''
 
         // first create basic view, edit, delete links
-        $viewLink = ($actions) && in_array('show', $actions)
-                    ? sprintf('<a href="%s" class="btn btn-sm btn-default button-show">View</a>', url($url . '/' . $model->id)) : '';
+        $viewLink = sprintf('<a href="%s" class="btn btn-sm btn-default button-show">View</a>', url($url . '/' . $model->id));
+        if ($actions != null && !in_array('view', $actions))
+        {
+            $viewLink = '';
+        }
 
-        $editLink = ($actions) && in_array('edit', $actions)
-                    ? sprintf('<li><a href="%s" class="button-edit">Edit</a></li>', url($url . '/' . $model->id . '/edit')) : '';
+        $editLink = sprintf('<li><a href="%s" class="button-edit">Edit</a></li>', url($url . '/' . $model->id . '/edit'));
+        if ($actions != null && !in_array('edit', $actions))
+        {
+            $editLink = '';
+        }
 
-        $deleteLink = ($actions) && in_array('delete', $actions)
-                     ? sprintf('<li><a href="%s" class="button-delete" data-method="delete" data-confirm="Are you sure?">Delete</a></li>', url($url .'/'.$model->id)) : '';
+        $deleteLink = sprintf('<li><a href="%s" class="button-delete" data-method="delete" data-confirm="Are you sure?">Delete</a></li>', url($url .'/'.$model->id));
+        if ($actions != null && !in_array('delete', $actions))
+        {
+            $deleteLink = '';
+        }
 
         // if there's extra links defined in the model
         $extraLinks = '';
