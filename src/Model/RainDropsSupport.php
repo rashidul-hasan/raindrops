@@ -32,7 +32,7 @@ trait RainDropsSupport
     {
         $baseUrl = !$baseUrl ? $this->getBaseUrl() : $baseUrl;
 
-        return url($baseUrl . '/' . $this->id);
+        return url($baseUrl . '/' . $this->getKey());
     }
 
     /**
@@ -44,7 +44,7 @@ trait RainDropsSupport
     {
         $baseUrl = !$baseUrl ? $this->getBaseUrl() : $baseUrl;
 
-        return url($baseUrl . '/' . $this->id . '/edit');
+        return url($baseUrl . '/' . $this->getKey() . '/edit');
     }
 
     /**
@@ -94,7 +94,7 @@ trait RainDropsSupport
 
                 $rule = $options['validations'];
                 if ( str_contains($options['validations'], '{id}') ){
-                    $replacer = $item ? ',' . $item->id : '';
+                    $replacer = $item ? ',' . $item->getKey() : '';
                     $rule = str_replace('{id}', $replacer, $rule);
 
                 }
