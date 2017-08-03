@@ -101,7 +101,14 @@ class ColumnTransformer
 
     public function checkbox($model, $field, $value)
     {
-        return $model->{$field} ? 'Yes' : 'No';
+        $pos = 'Yes';
+        $neg = 'No';
+        if (isset($value['options']))
+        {
+            $pos = $value['options'][0];
+            $neg = $value['options'][1];
+        }
+        return $model->{$field} ? $pos : $neg;
     }
 
     public function relation($model, $field, $value)
