@@ -33,7 +33,27 @@ class ModelHelper
             $url = $model->getBaseUrl();
         }
 
-        $linksTemplate = '<td>
+        $permitted_actions = static::getPermittedActions($model, $actions);
+
+        $html = '';
+
+        // generate basic action buttons
+        if (in_array('view', $permitted_actions))
+        {
+            $html .= sprintf('<a href="%s" class="btn btn-xs btn-primary button-show" data-toggle="tooltip" title="View"><i class="fa fa-eye"></i></a>', url($url . '/' . $model->getKey()));
+        }
+
+        if (in_array('edit', $permitted_actions))
+        {
+            $html .= sprintf('<a href="%s" class="btn btn-xs btn-primary button-edit" data-toggle="tooltip" title="Edit"><i class="fa fa-edit"></i></a>', url($url . '/' . $model->getKey() . '/edit'));
+        }
+
+        if (in_array('delete', $permitted_actions))
+        {
+            $html .= sprintf('<a href="%s" class="btn btn-xs btn-danger button-delete" data-method="delete" data-confirm="Are you sure?" data-toggle="tooltip" title="Delete"><i class="fa fa-trash-o"></i></a>', url($url .'/'.$model->getKey()));
+        }
+
+        /*$linksTemplate = '<td>
                       <div class="btn-group">
                            %s
                            <a class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-expanded="false">
@@ -46,12 +66,12 @@ class ModelHelper
                                 %s
                            </ul>
                       </div>
-                  </td>';
+                  </td>';*/
 
         //$singleLinkTemplate = ''
 
         // first create basic view, edit, delete links
-        $viewLink = sprintf('<a href="%s" class="btn btn-sm btn-default button-show">View</a>', url($url . '/' . $model->getKey()));
+        /*$viewLink = sprintf('<a href="%s" class="btn btn-sm btn-default button-show">View</a>', url($url . '/' . $model->getKey()));
         if ($actions != null && !in_array('view', $actions))
         {
             $viewLink = '';
@@ -67,10 +87,10 @@ class ModelHelper
         if ($actions != null && !in_array('delete', $actions))
         {
             $deleteLink = '';
-        }
+        }*/
 
         // if there's extra links defined in the model
-        $extraLinks = '';
+        /*$extraLinks = '';
 
         // check if there's any extra action links defined in the model
         if (property_exists($model, 'actions')){
@@ -88,7 +108,7 @@ class ModelHelper
                  * 2nd: anchor tag's class
                  * 3rd: link target
                  */
-                $linkUrl = '';
+                /*$linkUrl = '';
                 $linkClass = '';
 
                 // if its an array
@@ -114,7 +134,9 @@ class ModelHelper
             }
         }
 
-        return sprintf($linksTemplate, $viewLink, $editLink, $deleteLink, $extraLinks);
+        return sprintf($linksTemplate, $viewLink, $editLink, $deleteLink, $extraLinks);*/
+
+        return $html;
     }
 
     private static function getReplacedUrl($linkUrl, $url, $model)
@@ -193,6 +215,15 @@ class ModelHelper
         }
 
         return $model;
+    }
+
+    private static function getPermittedActions($model, $actions)
+    {
+        if ($actions != null)
+        {
+            return $actions;
+        }
+        return ['view', 'edit', 'delete'];
     }
 
 
