@@ -56,8 +56,8 @@ class DataTableTransformer extends TransformerAbstract
             // setup the key name of the data array
             if ($dataType == 'relation'){
 //                $relationOptions = $value['show'];
-                $fieldName = $value['options'][0];
-                $relatedColumnName = $value['options'][1];
+                $fieldName = isset($value['options']) ? $value['options'][0] : $value['show'][0];
+                $relatedColumnName = isset($value['options']) ? $value['options'][1] : $value['show'][1];
             } else {
                 $fieldName = $field;
             }
@@ -390,6 +390,31 @@ class DataTableTransformer extends TransformerAbstract
 
             }
 
+        }
+        elseif (isset($value['show']))
+        {
+            $relatedModel = $this->model->{$value['show'][0]};
+
+            if ($relatedModel && $relatedModel instanceof Model)
+            {
+                // we first check if there's a fields array defined in this related model, if it is
+                // then we show it according to the configuration of that fields array,
+                /*if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
+                {
+                    $relatedModelFields = $relatedModel->getFields();
+                    return $this->helper->get($relatedModel, $value['show'][1], $relatedModelFields[$value['show'][1]]);
+                }*/
+                /*else
+                {*/
+                // otherwise just return the field's value directly
+                return $relatedModel->{$value['show'][1]};
+                /*}*/
+
+            }
+        }
+        else
+        {
+            return '';
         }
 
         if ($index){

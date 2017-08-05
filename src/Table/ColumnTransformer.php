@@ -9,14 +9,19 @@
 namespace Rashidul\RainDrops\Table;
 
 
+use Illuminate\Database\Eloquent\Model;
+
 class ColumnTransformer
 {
+
+    protected $helper;
 
     /**
      * ColumnTransformer constructor.
      */
     public function __construct()
     {
+
     }
 
     public function string($model, $field)
@@ -130,6 +135,31 @@ class ColumnTransformer
 
             }
 
+        }
+        elseif (isset($value['show']))
+        {
+            $relatedModel = $model->{$value['show'][0]};
+
+            if ($relatedModel && $relatedModel instanceof Model)
+            {
+                // we first check if there's a fields array defined in this related model, if it is
+                // then we show it according to the configuration of that fields array,
+                /*if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
+                {
+                    $relatedModelFields = $relatedModel->getFields();
+                    return $this->helper->get($relatedModel, $value['show'][1], $relatedModelFields[$value['show'][1]]);
+                }*/
+                /*else
+                {*/
+                    // otherwise just return the field's value directly
+                    return $relatedModel->{$value['show'][1]};
+                /*}*/
+
+            }
+        }
+        else
+        {
+            return '';
         }
 
         return '';

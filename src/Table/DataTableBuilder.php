@@ -528,7 +528,7 @@ class DataTableBuilder
             $dataType = $this->getDataType($options);
 
             if ($dataType == 'relation'){
-                $relationOptions = $options['options'];
+                $relationOptions = isset($options['options']) ? $options['options'] : $options['show'];
                 $column['data'] = $relationOptions[0] . '.' . $relationOptions[1];
                 $column['name'] = $relationOptions[0] . '.' . $relationOptions[1];
                 $column['defaultContent'] = '';
