@@ -118,7 +118,43 @@ class ColumnTransformer
 
     public function relation($model, $field, $value)
     {
-        if ($model->{$field})
+
+        $html = '';
+        $relatedModel = null;
+        $columnName = '';
+
+        /*if ( !$model->{$field} )
+        {
+            return $html;
+        }*/
+
+        if (isset($value['options']))
+        {
+            $relatedModel = $model->{$value['options'][0]};
+            $columnName = $value['options'][1];
+        }
+
+        if (isset($value['show']))
+        {
+            $relatedModel = $model->{$value['show'][0]};
+            $columnName = $value['show'][1];
+        }
+
+        if ( $relatedModel == null || !($relatedModel instanceof Model))
+        {
+            return $html;
+        }
+
+        $html = $relatedModel->{$columnName};
+
+        if (isset($value['linkable']) && $value['linkable'])
+        {
+            $html = sprintf('<a href="%s">%s</a>', $relatedModel->getShowUrl(), $html);
+        }
+
+        return $html;
+
+        /*if ($model->{$field})
         {
             $relatedModel = $model->{$value['options'][0]};
             // TODO.
@@ -131,7 +167,7 @@ class ColumnTransformer
                 /*array_shift($showArray); // remove the first element of the array
                 foreach ($showArray as $item) {
                     $row_data .= $relatedModel->{$item} . ' ';
-                }*/
+                }*//*
 
             }
 
@@ -142,6 +178,11 @@ class ColumnTransformer
 
             if ($relatedModel && $relatedModel instanceof Model)
             {
+                // linkable
+                if (isset($value['linkable']) && $value['linkable'])
+                {
+                    return sprintf('<a href="%s">%s</a>', $relatedModel->getShowUrl(), $relatedModel->{$value['show'][1]});
+                }
                 // we first check if there's a fields array defined in this related model, if it is
                 // then we show it according to the configuration of that fields array,
                 /*if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
@@ -150,10 +191,10 @@ class ColumnTransformer
                     return $this->helper->get($relatedModel, $value['show'][1], $relatedModelFields[$value['show'][1]]);
                 }*/
                 /*else
-                {*/
+                {
                     // otherwise just return the field's value directly
                     return $relatedModel->{$value['show'][1]};
-                /*}*/
+                /*}
 
             }
         }
@@ -162,7 +203,7 @@ class ColumnTransformer
             return '';
         }
 
-        return '';
+        return '';*/
 
     }
 

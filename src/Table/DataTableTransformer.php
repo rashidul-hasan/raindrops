@@ -370,10 +370,40 @@ class DataTableTransformer extends TransformerAbstract
 
         // TODO
         // 1. check to see if relationship is defined in the model
-        $row = '<tr><td>%s:</td><td> %s</td></tr>';
+        //$row = '<tr><td>%s:</td><td> %s</td></tr>';
         $row_data = '';
+        $html = '';
+        $relatedModel = null;
+        $columnName = '';
+
+        if (isset($value['options']))
+        {
+            $relatedModel = $this->model->{$value['options'][0]};
+            $columnName = $value['options'][1];
+        }
+
+        if (isset($value['show']))
+        {
+            $relatedModel = $this->model->{$value['show'][0]};
+            $columnName = $value['show'][1];
+        }
+
+        if ( $relatedModel == null || !($relatedModel instanceof Model))
+        {
+            return $html;
+        }
+
+        $html = $relatedModel->{$columnName};
+
+        if (isset($value['linkable']) && $value['linkable'])
+        {
+            $html = sprintf('<a href="%s">%s</a>', $relatedModel->getShowUrl(), $html);
+        }
+
+        return $html;
 //        $showArray = $value['show'];
 
+        /*
         if ($this->model->{$field}){
             $relatedModel = $this->model->{$value['options'][0]};
             // TODO.
@@ -386,7 +416,7 @@ class DataTableTransformer extends TransformerAbstract
                 /*array_shift($showArray); // remove the first element of the array
                 foreach ($showArray as $item) {
                     $row_data .= $relatedModel->{$value['options'][0]} . ' ';
-                }*/
+                }
 
             }
 
@@ -397,6 +427,11 @@ class DataTableTransformer extends TransformerAbstract
 
             if ($relatedModel && $relatedModel instanceof Model)
             {
+                // linkable
+                if (isset($value['linkable']) && $value['linkable'])
+                {
+                    return sprintf('<a href="%s">%s</a>', $relatedModel->getShowUrl(), $relatedModel->{$value['show'][1]});
+                }
                 // we first check if there's a fields array defined in this related model, if it is
                 // then we show it according to the configuration of that fields array,
                 /*if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
@@ -405,10 +440,10 @@ class DataTableTransformer extends TransformerAbstract
                     return $this->helper->get($relatedModel, $value['show'][1], $relatedModelFields[$value['show'][1]]);
                 }*/
                 /*else
-                {*/
+                {
                 // otherwise just return the field's value directly
                 return $relatedModel->{$value['show'][1]};
-                /*}*/
+                /*}
 
             }
         }
@@ -419,7 +454,7 @@ class DataTableTransformer extends TransformerAbstract
 
         if ($index){
             return sprintf('<td>%s</td>', $row_data);
-        }
+        }*/
 
         return $row_data;
 
