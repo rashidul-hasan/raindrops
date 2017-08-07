@@ -121,6 +121,10 @@ class DataTableTransformer extends TransformerAbstract
                     $data[$fieldName] = $this->generateHtmlRow($field, $value);
                     break;
 
+                case 'label':
+                    $data[$fieldName] = $this->generatelabelRow($field, $value);
+                    break;
+
                 case 'relation':
                     $data[$fieldName] = [$relatedColumnName => $this->generateRelationRow($field, $value)];
                     break; // array, first element is name of the relation, 2nd is the column name to
@@ -280,13 +284,22 @@ class DataTableTransformer extends TransformerAbstract
      */
     private function generateEnumRow($field, $value, $index = false)
     {
-        $row = '<tr><td>%s:</td><td> %s</td></tr>';
         $row_data = '';
         $enumOptionsArray = $value['options'];
+
         if ($this->model->{$field}){
             $option = $this->model->getOriginal($field);
-//            $option = $this->model->{$field};
-            $row_data = $enumOptionsArray[$option];
+            $html = $enumOptionsArray[$option];
+
+            if (isset($value['labels']))
+            {
+                $configLabels = config('raindrops.crud.labels');
+                $labelName = $value['labels'][$this->model->{$field}];
+                $labelHtml = (new \Rashidul\RainDrops\Html\Helper())->elementFromSyntax($configLabels[$labelName]);
+                $html = $labelHtml->text($html)->render();
+            }
+
+            return $html;
         }
 
         if ($index){
@@ -635,8 +648,37 @@ class DataTableTransformer extends TransformerAbstract
 
     protected function generateCheckBoxRow($field, $value)
     {
-        return $this->model->{$field} ? 'Yes' : 'No';
+        $pos = 'Yes';
+        $neg = 'No';
+
+        if (isset($value['options']))
+        {
+            $pos = $value['options'][0];
+            $neg = $value['options'][1];
+        }
+
+        $html = $this->model->{$field} ? $pos : $neg;
+
+        if (isset($value['labels']))
+        {
+            $configLabels = config('raindrops.crud.labels');
+            $labelName = $value['labels'][$this->model->{$field}];
+            $labelHtml = (new \Rashidul\RainDrops\Html\Helper())->elementFromSyntax($configLabels[$labelName]);
+            $html = $labelHtml->text($html)->render();
+        }
+
+        return $html;
     }
+
+    /*protected function generatelabelRow($field, $value)
+    {
+        $html = '';
+        // get the value
+        $configLabels = config('raindrops.crud.labels');
+        $labelName = $value['labels'][$this->model->{$field}];
+        $labelHtml = (new \Rashidul\RainDrops\Html\Helper())->elementFromSyntax($configLabels[$labelName]);
+        $la
+    }*/
 
 
 }

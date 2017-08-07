@@ -54,10 +54,23 @@ class ColumnTransformer
     public function enum($model, $field, $value)
     {
         $enumOptionsArray = $value['options'];
+
         if ($model->{$field}){
             $option = $model->getOriginal($field);
-            return $enumOptionsArray[$option];
+
+            $html = $enumOptionsArray[$option];
+            if (isset($value['labels']))
+            {
+                $configLabels = config('raindrops.crud.labels');
+                $labelName = $value['labels'][$model->{$field}];
+                $labelHtml = (new \Rashidul\RainDrops\Html\Helper())->elementFromSyntax($configLabels[$labelName]);
+                $html = $labelHtml->text($html)->render();
+            }
+
+            return $html;
         }
+
+
 
         return '';
     }
@@ -113,7 +126,18 @@ class ColumnTransformer
             $pos = $value['options'][0];
             $neg = $value['options'][1];
         }
-        return $model->{$field} ? $pos : $neg;
+
+        $html = $model->{$field} ? $pos : $neg;
+
+        if (isset($value['labels']))
+        {
+            $configLabels = config('raindrops.crud.labels');
+            $labelName = $value['labels'][$model->{$field}];
+            $labelHtml = (new \Rashidul\RainDrops\Html\Helper())->elementFromSyntax($configLabels[$labelName]);
+            $html = $labelHtml->text($html)->render();
+        }
+
+        return $html;
     }
 
     public function relation($model, $field, $value)
