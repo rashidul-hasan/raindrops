@@ -806,8 +806,7 @@ class Builder
                 }
             }
 
-            switch($options['type'])
-            {
+            switch($options['type']) {
                 case 'textarea':
 
                     $element = Element::build('textarea')
@@ -899,7 +898,12 @@ class Builder
                     $relatedModel = $this->model->{$options['options'][0]}()->getRelated();
 
                     // get collection of all rows from the related model
-                    $relatedCollection = $relatedModel->all();
+                    if (isset($options['scope'])) {
+                        $relatedCollection = $relatedModel->$options['scope']()->get();
+                    } else
+                    {
+                        $relatedCollection = $relatedModel->all();
+                    }
 
                     // if this dropdwn depends on the value from another field, there should be
                     // a `depends` key on the field's option array, just add that field's name as a data
