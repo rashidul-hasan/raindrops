@@ -25,20 +25,18 @@ class Helper
         $this->columnTransformer = new ColumnTransformer();
     }
 
-    public function get($model, $field, $value)
+    /**
+     * @param $model
+     * @param $field
+     * @param $value
+     * @param $type
+     * @return string
+     */
+    public function get($model, $field, $value, $type)
     {
-        // 1. first decide how to show the data
-        // function, determines data type by examining 'show' element
-        $dataType = $this->getDataType($value);
-
-        if ( !$dataType )
-        {
-            return '';
-        }
-
         $row_data = '';
 
-        switch ($dataType){
+        switch ($type){
 
             case 'string':
                 $row_data = $this->columnTransformer->string($model, $field);

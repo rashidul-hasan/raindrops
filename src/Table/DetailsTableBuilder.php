@@ -343,7 +343,8 @@ class DetailsTableBuilder
             }
             else
             {
-                $rows .= sprintf($this->getRowStub(), $value['label'], $this->helper->get($this->model, $field, $value));
+                $type = $this->helper->getDataType($value);
+                $rows .= sprintf($this->getRowStub(), $value['label'], $this->helper->get($this->model, $field, $value, $type));
             }
 
         }

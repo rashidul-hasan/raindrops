@@ -541,6 +541,13 @@ class DataTableBuilder
             }
         }
 
+        /*$column_action['data'] = 'kutta';
+        $column_action['name'] = 'kutta';
+        $column_action['orderable'] = false;
+        $column_action['searchable'] = false;
+        $column_action['className'] = 'datatable-action';
+        array_push($columnsArray, $column_action);*/
+
         // add column for actions
         $column_action['data'] = 'action';
         $column_action['name'] = 'action';

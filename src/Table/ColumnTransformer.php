@@ -110,7 +110,7 @@ class ColumnTransformer
         $path = $model->paths["$field"];
         if ($model->{$field}){
             $filename = $model->{$field};
-            $url = url('storage/' . $path . '/' . $filename);
+            $url = url(/*'storage/' . $path .*/ '/' . $filename);
             return sprintf('<img class="img-thumb img-responsive ui small rounded image" src="%s" alt="%s">', $url, $value['label']);
         }
 
@@ -174,7 +174,8 @@ class ColumnTransformer
         if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
         {
             $relatedModelFields = $relatedModel->getFields();
-            $html = $helper->get($relatedModel, $columnName, $relatedModelFields[$columnName]);
+            $type = $helper->getDataType($relatedModelFields[$columnName]);
+            $html = $helper->get($relatedModel, $columnName, $relatedModelFields[$columnName], $type);
         }
         else
         {
