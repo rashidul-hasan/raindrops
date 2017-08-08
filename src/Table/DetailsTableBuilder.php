@@ -300,6 +300,27 @@ class DetailsTableBuilder
         return $this->data;
     }
 
+    public function add($label, $html)
+    {
+        $this->fields[$label] = $html;
+
+        return $this;
+    }
+
+    public function addAfter($after, $label, $html)
+    {
+        // if the after key doesn't exists, just add it at the end
+        if (!array_key_exists($after, $this->fields))
+        {
+            $this->fields[$label] = $html;
+
+            return $this;
+        }
+        $this->fields = \Rashidul\RainDrops\Helper::array_insert_after($after, $this->fields, $label, $html);
+
+        return $this;
+    }
+
     /**
      * @return mixed
      * @internal param null $view
@@ -313,7 +334,17 @@ class DetailsTableBuilder
             if ( isset($value['show']) && !$value['show']){
                 continue;
             }
-            $rows .= sprintf($this->getRowStub(), $value['label'], $this->helper->get($this->model, $field, $value));
+
+            // if the value isn't an array, then it should be a html string which was added later
+            // just add it to the label as it is
+            if ( !is_array($value) )
+            {
+                $rows .= sprintf($this->getRowStub(), $field, $value);
+            }
+            else
+            {
+                $rows .= sprintf($this->getRowStub(), $value['label'], $this->helper->get($this->model, $field, $value));
+            }
 
         }
         $table = Element::build('table')
