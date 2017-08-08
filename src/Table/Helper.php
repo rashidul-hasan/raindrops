@@ -93,7 +93,7 @@ class Helper
                 break;
 
             case 'relation':
-                $row_data = $this->columnTransformer->relation($model, $field, $value);
+                $row_data = $this->columnTransformer->relation($model, $field, $value, $this);
                 break;
 
             case 'relation-details':

@@ -140,7 +140,7 @@ class ColumnTransformer
         return $html;
     }
 
-    public function relation($model, $field, $value)
+    public function relation($model, $field, $value, $helper)
     {
 
         $html = '';
@@ -169,7 +169,18 @@ class ColumnTransformer
             return $html;
         }
 
-        $html = $relatedModel->{$columnName};
+        // we first check if there's a fields array defined in this related model, if it is
+        // then we show it according to the configuration of that fields array,
+        if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
+        {
+            $relatedModelFields = $relatedModel->getFields();
+            $html = $helper->get($relatedModel, $columnName, $relatedModelFields[$columnName]);
+        }
+        else
+        {
+            // otherwise just return the field's value directly
+            $html = $relatedModel->{$columnName};
+        }
 
         if (isset($value['linkable']) && $value['linkable'])
         {
@@ -209,16 +220,16 @@ class ColumnTransformer
                 }
                 // we first check if there's a fields array defined in this related model, if it is
                 // then we show it according to the configuration of that fields array,
-                /*if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
+                if (method_exists($relatedModel, 'getFields') && $relatedModel->getFields() != null)
                 {
                     $relatedModelFields = $relatedModel->getFields();
                     return $this->helper->get($relatedModel, $value['show'][1], $relatedModelFields[$value['show'][1]]);
-                }*/
-                /*else
+                }
+                else
                 {
                     // otherwise just return the field's value directly
                     return $relatedModel->{$value['show'][1]};
-                /*}
+                }
 
             }
         }
