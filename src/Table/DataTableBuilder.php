@@ -443,6 +443,21 @@ class DataTableBuilder
         return $this;
     }
 
+
+    public function addAfter($after, $fieldName, $label)
+    {
+        // if the after key doesn't exists, just add it at the end
+        if (!array_key_exists($after, $this->indexFields))
+        {
+            $this->indexFields[$fieldName] = ['label' => $label];
+
+            return $this;
+        }
+        $this->indexFields = \Rashidul\RainDrops\Helper::array_insert_after($after, $this->indexFields, $fieldName, ['label' => $label]);
+
+        return $this;
+    }
+
     public function setAliasMapping($value)
     {
         $this->createdMapping = !$value;
@@ -540,13 +555,6 @@ class DataTableBuilder
                 array_push($columnsArray, $column);
             }
         }
-
-        /*$column_action['data'] = 'kutta';
-        $column_action['name'] = 'kutta';
-        $column_action['orderable'] = false;
-        $column_action['searchable'] = false;
-        $column_action['className'] = 'datatable-action';
-        array_push($columnsArray, $column_action);*/
 
         // add column for actions
         $column_action['data'] = 'action';

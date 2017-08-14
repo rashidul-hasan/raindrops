@@ -74,6 +74,10 @@ class Helper
                 $row_data = $this->columnTransformer->checkbox($model, $field, $value);
                 break;
 
+            case 'method':
+                $row_data = $model->{$value['method']}();
+                break;
+
             case 'doc':
                 $data[$fieldName] = $this->generateDocRow($field, $value);
                 break;
