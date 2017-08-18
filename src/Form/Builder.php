@@ -919,7 +919,9 @@ class Builder
                             [
                                 $field => [
                                     'data' => $relatedCollection->toArray(),
-                                    'indexColumn' => $options['options'][1]
+                                    'indexColumn' => $options['options'][1],
+                                    'selectedId' => $value,
+                                    'keyName' => $relatedModel->getKeyName()
                                 ]
                             ]
                         );
