@@ -16,6 +16,7 @@ use Illuminate\Http\Response;
 use Rashidul\RainDrops\Facades\DataTable;
 use Rashidul\RainDrops\Facades\DetailsTable;
 use Rashidul\RainDrops\Facades\FormBuilder;
+use Rashidul\RainDrops\Model\ModelHelper;
 use Rashidul\RainDrops\Table\DataTableTransformer;
 
 trait PerformCrudActions
@@ -167,42 +168,18 @@ trait PerformCrudActions
 
         $item = new $this->modelClass();
 
-        $input = $this->request->except(['_token']);
-
-        // handle files uploads
-        $fileInputs = $item->getFileFields();
-        foreach ($fileInputs as $field => $options)
-        {
-            if ($this->request->hasFile($field))
-            {
-                $input[$field] = $this->request->file($field)->store($field, 'public');
-            }
-        }
-
-        // handle checkboxes
-        $checkboxes = $item->getCheckBoxFields();
-        foreach ($checkboxes as $field => $options) {
-            if ($this->request->has($field) && $this->request->get($field) === 'on')
-            {
-                $input[$field] = 1;
-            }
-            else
-            {
-                $input[$field] = 0;
-            }
-        }
+        // fill the model with data from request
+        $item = ModelHelper::fillWithRequestData($item, $this->request);
 
         // let user do any modfications on the inputs before storing
         if (method_exists($this, 'storing'))
         {
-            $input = $this->storing($this->request, $input);
-            if ($input instanceof \Symfony\Component\HttpFoundation\Response)
+            $item = $this->storing($this->request, $item);
+            if ($item instanceof \Symfony\Component\HttpFoundation\Response)
             {
-                return $input;
+                return $item;
             }
         }
-
-        $item->fill($input);
 
         try{
             if ($item->save()){

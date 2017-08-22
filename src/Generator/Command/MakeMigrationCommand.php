@@ -60,7 +60,8 @@ class MakeMigrationCommand extends GeneratorCommand
         'select' => 'enum',
 
         // custom
-        'checkbox' => 'boolean'
+        'checkbox' => 'boolean',
+        'image' => 'string'
     ];
 
 

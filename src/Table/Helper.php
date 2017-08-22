@@ -70,6 +70,10 @@ class Helper
                 $row_data = $this->columnTransformer->image($model, $field, $value);
                 break;
 
+            case 'image':
+                $row_data = $this->columnTransformer->image($model, $field, $value);
+                break;
+
             case 'checkbox':
                 $row_data = $this->columnTransformer->checkbox($model, $field, $value);
                 break;
