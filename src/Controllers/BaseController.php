@@ -23,6 +23,12 @@ abstract class BaseController extends Controller
     protected $request;
     protected $responseBuilder;
 
+    // views
+    protected $indexView = 'raindrops::crud.table';
+    protected $createView = 'raindrops::crud.form';
+    protected $detailsView = 'raindrops::crud.table';
+    protected $editView = 'raindrops::crud.form';
+
     /**
      * BaseController constructor.
      * @internal param $formRequest
@@ -33,6 +39,11 @@ abstract class BaseController extends Controller
         $this->request = app(Request::class);
         $this->dataTable = app(Datatables::class);
         $this->responseBuilder = new ResponseBuilder();
+
+        if (method_exists($this, 'setup'))
+        {
+            $this->setup();
+        }
     }
 
 }

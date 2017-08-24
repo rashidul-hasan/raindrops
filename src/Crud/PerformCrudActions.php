@@ -59,6 +59,7 @@ trait PerformCrudActions
             'ajax' => $ajax,
             'table' => $table,
             'buttons' => $buttons,
+            'view' => $this->indexView,
             'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'index'
 
         ];
@@ -72,7 +73,7 @@ trait PerformCrudActions
             }
         }
 
-        return view('raindrops::crud.table', $data);
+        return $this->responseBuilder->send($this->request, $data);
 
     }
 
@@ -133,7 +134,7 @@ trait PerformCrudActions
             'back_url' => $item->getBaseUrl(),
             'form' => $form,
             'buttons' => $buttons,
-            'view' => 'raindrops::crud.form',
+            'view' => $this->createView,
             'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'create'
         ];
 
@@ -288,7 +289,7 @@ trait PerformCrudActions
             'table' => $table,
             'buttons' => $buttons,
             'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'show',
-            'view' => 'raindrops::crud.table'
+            'view' => $this->detailsView
         ];
 
         if (method_exists($this, 'showing'))
@@ -346,7 +347,7 @@ trait PerformCrudActions
             'back_url' => $item->getShowUrl(),
             'form' => $form,
             'buttons' => $buttons,
-            'view' => 'raindrops::crud.form',
+            'view' => $this->editView,
             'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'edit'
         ];
 
