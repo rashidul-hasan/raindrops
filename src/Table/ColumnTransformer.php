@@ -107,10 +107,12 @@ class ColumnTransformer
 
     public function image($model, $field, $value)
     {
-        $path = $model->paths["$field"];
+        $path = isset($value['path']) ? $value['path'] : '';
+        $root = config('raindrops.crud.filesystem_root');
+
         if ($model->{$field}){
             $filename = $model->{$field};
-            $url = url(/*'storage/' . $path .*/ '/' . $filename);
+            $url = url( $root . '/' . $path .  '/' . $filename);
             return sprintf('<img class="img-thumb img-responsive ui small rounded image" src="%s" alt="%s">', $url, $value['label']);
         }
 

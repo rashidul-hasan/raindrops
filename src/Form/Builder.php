@@ -985,6 +985,20 @@ class Builder
 
                     break;
 
+                case 'image':
+
+                    $accepts = (isset($options['accept'])) ? $options['accept'] : 'image/*';
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->setName($field)
+                        ->setType('file')
+                        ->set($attributes)
+                        ->set('accept', $accepts)
+                        ->setRequired($required)
+                        ->render();
+
+                    break;
+
                 // TODO.
                 // 2. extract the element generation code to diffeerent methods,
 

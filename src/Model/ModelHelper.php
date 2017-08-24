@@ -209,6 +209,19 @@ class ModelHelper
                     }
                     break;
 
+                case 'image':
+
+                    $disk = config('raindrops.crud.disk');
+                    $path = isset($options['path']) ? $options['path'] : '';
+                    if ($request->hasFile($field))
+                    {
+                        // save the file
+                        $request->file($field)->store($path, $disk);
+                        // store the name
+                        $model->{$field} = $request->file($field)->hashName();
+                    }
+                    break;
+
                 default:
                     $model->{$field} = $request->has($field) ? $request->get($field) : null;
             }

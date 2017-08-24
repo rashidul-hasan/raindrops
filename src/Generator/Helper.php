@@ -17,7 +17,7 @@ class Helper
     {
         switch (gettype($array)) {
             case "string":
-                return '"' . addcslashes($array, "\\\$\"\r\n\t\v\f") . '"';
+                return "'" . addcslashes($array, "\\\$\"\r\n\t\v\f") . "'";
             case "array":
                 $indexed = array_keys($array) === range(0, count($array) - 1);
                 $r = [];
