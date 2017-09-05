@@ -53,6 +53,10 @@ trait PerformCrudActions
             unset($buttons['add']);
         }
 
+        $viewRoot = property_exists($this, 'viewRoot')
+            ? $this->viewRoot
+            : $this->modelClass->getBaseUrl(false);
+
         $data = [
             'url' => $this->modelClass->getBaseUrl(),
             'title' => $this->modelClass->getEntityNamePlural(),
@@ -61,7 +65,7 @@ trait PerformCrudActions
             'table' => $table,
             'buttons' => $buttons,
             'view' => $this->indexView,
-            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'index'
+            'include_view' => $viewRoot . '.' . 'index'
 
         ];
 
@@ -130,13 +134,17 @@ trait PerformCrudActions
             ]
         ];
 
+        $viewRoot = property_exists($this, 'viewRoot')
+            ? $this->viewRoot
+            : $this->modelClass->getBaseUrl(false);
+
         $data = [
             'title' => 'Add New ' . $item->getEntityName(),
             'back_url' => $item->getBaseUrl(),
             'form' => $form,
             'buttons' => $buttons,
             'view' => $this->createView,
-            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'create'
+            'include_view' => $viewRoot . '.' . 'create'
         ];
 
         // check if we need to pass additional data to view
@@ -252,6 +260,10 @@ trait PerformCrudActions
             ]
         ];
 
+        $viewRoot = property_exists($this, 'viewRoot')
+            ? $this->viewRoot
+            : $this->modelClass->getBaseUrl(false);
+
         // if edit action is not present in the permitted actions list, remove it
         if (property_exists($this, 'actions') && !in_array('edit', $this->actions))
         {
@@ -265,7 +277,7 @@ trait PerformCrudActions
             'back_url' => $this->modelClass->getBaseUrl(),
             'table' => $table,
             'buttons' => $buttons,
-            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'show',
+            'include_view' => $viewRoot . '.' . 'show',
             'view' => $this->detailsView
         ];
 
@@ -316,6 +328,10 @@ trait PerformCrudActions
             ]
         ];
 
+        $viewRoot = property_exists($this, 'viewRoot')
+            ? $this->viewRoot
+            : $this->modelClass->getBaseUrl(false);
+
         $data = [
             'title' => 'Edit ' . $this->modelClass->getEntityName(),
             'item' => $item,
@@ -325,7 +341,7 @@ trait PerformCrudActions
             'form' => $form,
             'buttons' => $buttons,
             'view' => $this->editView,
-            'include_view' => $this->modelClass->getBaseUrl(false) . '.' . 'edit'
+            'include_view' => $viewRoot . '.' . 'edit'
         ];
 
         // check if we need to pass additional data to view
