@@ -144,6 +144,7 @@ trait PerformCrudActions
             'form' => $form,
             'buttons' => $buttons,
             'view' => $this->createView,
+            'success' => true,
             'include_view' => $viewRoot . '.' . 'create'
         ];
 
