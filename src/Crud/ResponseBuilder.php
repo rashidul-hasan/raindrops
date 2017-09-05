@@ -34,6 +34,9 @@ class ResponseBuilder
             // first, render any form or table object
             if ( isset($data['form']) && $data['form'] instanceof Builder )
             {
+                // remove the submit button from the form, it will be handled via
+                // javascript
+                $data['form']->submit(false);
                 $data['form'] = $data['form']->render();
             }
 
