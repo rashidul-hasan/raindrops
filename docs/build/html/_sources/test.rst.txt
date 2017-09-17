@@ -1,0 +1,116 @@
+Test Korlam
+===========
+
+Installation
+------------
+
+#. Inside your project root, run
+
+   ``composer require rashidul/raindrops=dev-master``
+
+#. Add this to your ``app.php`` config file’s ``providers`` array
+
+   ``Rashidul\RainDrops\RainDropsServiceProvider::class,``
+
+#. Optionally, you can add this to ``aliases`` array for simplicity
+
+   ``'FormBuilder' => Rashidul\RainDrops\Facades\FormBuilder::class,``
+
+#. Finally, publish the config files.
+
+   ``php artisan vendor:publish --provider=Rashidul\RainDrops\RainDropsServiceProvider``
+
+Generating Form
+---------------
+
+To generate a form for a model, you first need to add a ``$fields``
+public property to your model and populate it with required
+informations.
+
+Then you can generate the form markup by simply calling the ``build``
+method on ``FormBuilder`` providing an instance of your model
+
+Example:
+--------
+
+In your controller:
+
+.. code:: php
+
+
+    $client = new Client();
+
+    /* or, $client = Client::find(<id>); if you are editing ane existing record */
+
+    $form = FormBuilder::build( $client )
+                    ->form([
+                        'action' => 'clients',
+                        'method' => 'POST'
+                    ])
+                    ->render();
+
+    return view('create', compact('form'));
+
+*don’t forget to ``use`` the ``FormBuilder`` class at the top of your
+model*
+
+Then in your view, you can do:
+
+.. code:: php
+
+    {!! $form !!}
+
+That’s it!
+
+Form Configuration
+------------------
+
+There are some helpful methods to further customize the form.
+
+-  ``add( $field_name, $options = [] )`` You can add fields to the
+   existing fields which are defined in your model’s ``$fields``
+   property.
+
+   .. code:: php
+
+       $form = FormBuilder::build( $client )
+                           ->form([
+                               'action' => 'clients',
+                               'method' => 'POST'
+                           ])
+                           ->add('field_name', [
+                               'label' => 'Field Label',
+                               'type' => 'date'
+                           ])
+                           ->render();
+
+   first argument is the field’s ``name`` and second one is an array
+   containing various options for that field.
+
+   *``label`` & ``type`` fields are mandatory*
+
+-  ``modify( $field_name, $options = [] )`` You can modify any defined
+   field in the model
+
+   .. code:: php
+
+       $form = FormBuilder::build( $client )
+                           ->form([
+                               'action' => 'clients',
+                               'method' => 'POST'
+                           ])
+                           ->modify('field_name', [
+                               'label' => 'New changed label',
+                               'required' => true
+                           ])
+                           ->render();
+
+   You need to provide only the options you want to modify/override.
+
+-  ``section( $header, $fields = [] )`` Grouping some fields together
+   with a header.
+
+   | \`\`\`php
+   | $form = FormBuilder::build( $client )
+   | ->form([
+   | ‘action’ =>
