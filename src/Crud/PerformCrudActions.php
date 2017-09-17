@@ -35,14 +35,14 @@ trait PerformCrudActions
 
         // configuring the table
         $table = DataTable::of(new $this->modelClass)
-            ->setUrl($this->modelClass->getDataUrl())
+            ->setUrl($this->model->getDataUrl())
             ->setId('data-table');
 
         // action buttons
         $buttons = [
             'add' => [
                 'text' => 'Add',
-                'url' => $this->modelClass->getCreateUrl(),
+                'url' => $this->model->getCreateUrl(),
                 'class' => 'btn btn-primary'
             ]
         ];
@@ -55,12 +55,12 @@ trait PerformCrudActions
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot
-            : $this->modelClass->getBaseUrl(false);
+            : $this->model->getBaseUrl(false);
 
-        $data = [
-            'url' => $this->modelClass->getBaseUrl(),
-            'title' => $this->modelClass->getEntityNamePlural(),
-            'entity' => $this->modelClass,
+        $this->viewData = [
+            'url' => $this->model->getBaseUrl(),
+            'title' => $this->model->getEntityNamePlural(),
+            'entity' => $this->model,
             'ajax' => $ajax,
             'table' => $table,
             'buttons' => $buttons,
@@ -71,14 +71,10 @@ trait PerformCrudActions
 
         if (method_exists($this, 'indexing'))
         {
-            $data = $this->indexing($this->request, $data);
-            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $data;
-            }
+            $this->indexing();
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
 
     }
 
@@ -88,25 +84,21 @@ trait PerformCrudActions
     public function data()
     {
 
-        $query = $this->modelClass->select();
+        $this->dataTableQuery = $this->model->select();
 
         // let user modify the query builder object to
         // further customize the data to be feed to the
         // datatable via ajax
         if (method_exists($this, 'querying'))
         {
-            $query = $this->querying($this->request, $query);
-            if ($query instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $query;
-            }
+            $this->querying();
         }
 
         // which actions will be shown for this
         // particular resource
         $actions = property_exists($this, 'actions') ? $this->actions : null;
 
-        return $this->dataTable->eloquent($query)
+        return $this->dataTable->eloquent($this->dataTableQuery)
             ->setTransformer(new DataTableTransformer($actions))
             ->make(true);
 
@@ -119,28 +111,26 @@ trait PerformCrudActions
      */
     public function create()
     {
-        // get resource obj
-        $item = $this->modelClass;
 
         // generate form
-        $form = FormBuilder::build( $item );
+        $form = FormBuilder::build($this->model);
 
         // action buttons
         $buttons = [
             'back' => [
                 'text' => 'Back',
-                'url' => $item->getBaseUrl(),
+                'url' => $this->model->getBaseUrl(),
                 'class' => 'btn btn-default'
             ]
         ];
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot
-            : $this->modelClass->getBaseUrl(false);
+            : $this->model->getBaseUrl(false);
 
-        $data = [
-            'title' => 'Add New ' . $item->getEntityName(),
-            'back_url' => $item->getBaseUrl(),
+        $this->viewData = [
+            'title' => 'Add New ' . $this->model->getEntityName(),
+            'back_url' => $this->model->getBaseUrl(),
             'form' => $form,
             'buttons' => $buttons,
             'view' => $this->createView,
@@ -154,14 +144,10 @@ trait PerformCrudActions
         // it's elements
         if (method_exists($this, 'creating'))
         {
-            $data = $this->creating($this->request, $data);
-            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $data;
-            }
+            $this->creating();
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
 
     }
 
@@ -174,96 +160,90 @@ trait PerformCrudActions
     public function store()
     {
 
-        $this->validate($this->request, $this->modelClass->getvalidationRules(), [], $this->modelClass->getFieldsWithLabels());
-
-        $item = new $this->modelClass();
+        $this->validate($this->request, $this->model->getvalidationRules(), [], $this->model->getFieldsWithLabels());
 
         // fill the model with data from request
-        $item = ModelHelper::fillWithRequestData($item, $this->request);
+        $this->model = ModelHelper::fillWithRequestData($this->model, $this->request);
 
         // let user do any modfications on the inputs before storing
         if (method_exists($this, 'storing'))
         {
-            $item = $this->storing($this->request, $item);
-            if ($item instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $item;
-            }
+            $this->storing();
         }
 
         try{
-            if ($item->save()){
-                $data['success'] = true;
-                $data['message'] = $this->modelClass->getEntityName() . ' Created!';
-                $data['item'] = $item;
+            if ($this->model->save()){
+                $this->viewData['success'] = true;
+                $this->viewData['message'] = $this->model->getEntityName() . ' Created!';
+                $this->viewData['item'] = $this->model;
 
                 if (method_exists($this, 'stored'))
                 {
-                    $this->stored($this->request, $item);
+                    $this->stored();
                 }
 
             } else {
-                $data['success'] = false;
-                $data['message'] = 'Something went wrong';
+                $this->viewData['success'] = false;
+                $this->viewData['message'] = 'Something went wrong';
             }
         } catch (QueryException $e){
-            $data['message'] = $e->getMessage();
-            $data['success'] = false;
+            $this->viewData['message'] = $e->getMessage();
+            $this->viewData['success'] = false;
         }
 
         // set redirect url
-        if ( $data['success'] )
+        if ( $this->viewData['success'] )
         {
-            $data['redirect'] = $item->getShowUrl();
+            $this->viewData['redirect'] = $this->model->getShowUrl();
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
 
     }
 
     /**
      * Display the specified Resource.
      *
-     * @param Request $request
      * @param  int $id
      * @return Response
+     * @internal param Request $request
      */
-    public function show(Request $request, $id)
+    public function show($id)
     {
 
         // get item obj by id
         try
         {
-            $item = $this->modelClass->findOrFail($id);
+            $this->model = $this->model->findOrFail($id);
         }
         catch (\Exception $e)
         {
-            $data['success'] = false;
-            $data['message'] = $e->getMessage();
-            return $this->responseBuilder->send($this->request, $data);
+            $this->viewData['success'] = false;
+            $this->viewData['message'] = $e->getMessage();
+            return $this->responseBuilder->send($this->request, $this->viewData);
         }
 
         // prepare table object
-        $table = DetailsTable::of($item);
+        $table = DetailsTable::of($this->model);
 
         // action buttons
         $buttons = [
             'edit' => [
                 'text' => 'Edit',
-                'url' => $item->getEditUrl(),
+                'url' => $this->model->getEditUrl(),
                 'class' => 'btn btn-default'
             ],
 
             'back' => [
                 'text' => 'Back',
-                'url' => $item->getBaseUrl(),
+                'url' => $this->model->getBaseUrl(),
                 'class' => 'btn btn-default'
             ]
         ];
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot
-            : $this->modelClass->getBaseUrl(false);
+            : $this->model->getBaseUrl(false);
 
         // if edit action is not present in the permitted actions list, remove it
         if (property_exists($this, 'actions') && !in_array('edit', $this->actions))
@@ -271,11 +251,11 @@ trait PerformCrudActions
             unset($buttons['edit']);
         }
 
-        $data = [
-            'title' => $this->modelClass->getEntityName() . ' Details',
-            'item' => $item,
+        $this->viewData = [
+            'title' => $this->model->getEntityName() . ' Details',
+            'item' => $this->model,
             'success' => true,
-            'back_url' => $this->modelClass->getBaseUrl(),
+            'back_url' => $this->model->getBaseUrl(),
             'table' => $table,
             'buttons' => $buttons,
             'include_view' => $viewRoot . '.' . 'show',
@@ -284,30 +264,26 @@ trait PerformCrudActions
 
         if (method_exists($this, 'showing'))
         {
-            $data = $this->showing($this->request, $data);
-            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $data;
-            }
+            $this->showing();
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
     }
 
     /**
      * Show the form for editing the specified Resource.
      *
-     * @param Request $request
      * @param  int $id
      * @return Response
+     * @internal param Request $request
      */
-    public function edit(Request $request, $id)
+    public function edit($id)
     {
 
         // get item obj by id
         try
         {
-            $item = $this->modelClass->findOrFail($id);
+            $this->model = $this->model->findOrFail($id);
         }
         catch (\Exception $e)
         {
@@ -317,28 +293,28 @@ trait PerformCrudActions
         }
 
         // prepare the form
-        $form = FormBuilder::build( $item );
+        $form = FormBuilder::build( $this->model );
 
         // action buttons
         $buttons = [
             [
                 'name' => 'back',
                 'text' => 'Back',
-                'url' => $item->getBaseUrl(),
+                'url' => $this->model->getBaseUrl(),
                 'class' => 'btn btn-default'
             ]
         ];
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot
-            : $this->modelClass->getBaseUrl(false);
+            : $this->model->getBaseUrl(false);
 
-        $data = [
-            'title' => 'Edit ' . $this->modelClass->getEntityName(),
-            'item' => $item,
+        $this->viewData = [
+            'title' => 'Edit ' . $this->model->getEntityName(),
+            'item' => $this->model,
             'success' => true,
-            'url' => $this->modelClass->getBaseurl(),
-            'back_url' => $item->getShowUrl(),
+            'url' => $this->model->getBaseurl(),
+            'back_url' => $this->model->getShowUrl(),
             'form' => $form,
             'buttons' => $buttons,
             'view' => $this->editView,
@@ -351,15 +327,10 @@ trait PerformCrudActions
         // it's elements
         if (method_exists($this, 'editing'))
         {
-            $data = $this->editing($this->request, $data);
-            if ($data instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $data;
-            }
-
+            $this->editing();
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
     }
 
     /**
@@ -372,10 +343,9 @@ trait PerformCrudActions
      */
     public function update(Request $request, $id)
     {
-        // get item obj by id
         try
         {
-            $item = $this->modelClass->findOrFail($id);
+            $this->model = $this->model->findOrFail($id);
         }
         catch (\Exception $e)
         {
@@ -384,88 +354,58 @@ trait PerformCrudActions
             return $this->responseBuilder->send($this->request, $data);
         }
 
-        $this->validate($request, $this->modelClass->getvalidationRules($item), [], $this->modelClass->getFieldsWithLabels());
+        $this->validate($request, $this->model->getValidationRules(), [], $this->model->getFieldsWithLabels());
 
-        $input = $request->except(['_token', '_method']);
+        $this->model = ModelHelper::fillWithRequestData($this->model, $this->request);
 
-        // handle files uploads
-        $fileInputs = $item->getFileFields();
-        foreach ($fileInputs as $field => $options)
-        {
-            if ($this->request->hasFile($field))
-            {
-                $input[$field] = $this->request->file($field)->store($field, 'public');
-            }
-        }
-
-        // handle checkboxes
-        $checkboxes = $item->getCheckBoxFields();
-        foreach ($checkboxes as $field => $options) {
-            if ($this->request->has($field) && $this->request->get($field) === 'on')
-            {
-                $input[$field] = 1;
-            }
-            else
-            {
-                $input[$field] = 0;
-            }
-        }
-
-        // let user do any modfications on the inputs before updating
         if (method_exists($this, 'updating'))
         {
-            $input = $this->updating($this->request, $input);
-            if ($input instanceof \Symfony\Component\HttpFoundation\Response)
-            {
-                return $input;
-            }
+            $this->updating();
         }
 
-        $item->fill($input);
-
         try{
-            if ($item->update()){
-                $data['success'] = true;
-                $data['message'] = $this->modelClass->getEntityName() . ' Updated!';
-                $data['item'] = $item;
+            if ($this->model->update()){
+                $this->viewData['success'] = true;
+                $this->viewData['message'] = $this->model->getEntityName() . ' Updated!';
+                $this->viewData['item'] = $this->model;
 
                 if (method_exists($this, 'updated'))
                 {
-                    $this->updated($this->request, $item);
+                    $this->updated();
                 }
 
             } else {
-                $data['success'] = false;
-                $data['message'] = 'Something went wrong';
+                $this->viewData['success'] = false;
+                $this->viewData['message'] = 'Something went wrong';
             }
         } catch (QueryException $e){
-            $data['message'] = $e->getMessage();
-            $data['success'] = false;
+            $this->viewData['message'] = $e->getMessage();
+            $this->viewData['success'] = false;
         }
 
         // set redirect url
-        if ( $data['success'] )
+        if ( $this->viewData['success'] )
         {
-            $data['redirect'] = $item->getShowUrl();
+            $this->viewData['redirect'] = $this->model->getShowUrl();
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
 
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @param Request $request
      * @param  int $id
      * @return Response
+     * @internal param Request $request
      */
-    public function destroy(Request $request, $id)
+    public function destroy($id)
     {
         // get item obj by id
         try
         {
-            $item = $this->modelClass->findOrFail($id);
+            $this->model = $this->model->findOrFail($id);
         }
         catch (\Exception $e)
         {
@@ -475,25 +415,25 @@ trait PerformCrudActions
         }
 
         // let the user do something before destroying the item
-        if (method_exists($this, 'destroying'))
+        if (method_exists($this, 'deleting'))
         {
-            $this->destroying($this->request, $item);
+            $this->deleting();
         }
 
         try{
-            if ($item->delete()){
-                $data['success'] = true;
-                $data['message'] = $this->modelClass->getEntityName() . ' Deleted!';
+            if ($this->model->delete()){
+                $this->viewData['success'] = true;
+                $this->viewData['message'] = $this->model->getEntityName() . ' Deleted!';
             } else {
-                $data['success'] = false;
-                $data['message'] = 'Something went wrong';
+                $this->viewData['success'] = false;
+                $this->viewData['message'] = 'Something went wrong';
             }
         } catch (QueryException $e){
-            $data['message'] = $e->getMessage();
-            $data['success'] = false;
+            $this->viewData['message'] = $e->getMessage();
+            $this->viewData['success'] = false;
         }
 
-        return $this->responseBuilder->send($this->request, $data);
+        return $this->responseBuilder->send($this->request, $this->viewData);
 
     }
 

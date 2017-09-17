@@ -19,9 +19,16 @@ abstract class BaseController extends Controller
     use PerformCrudActions;
 
     protected $modelClass;
+    protected $model;
     protected $dataTable;
     protected $request;
     protected $responseBuilder;
+
+    // data that will be passed into the view
+    protected $viewData;
+
+    // query builder object used by datatable
+    protected $dataTableQuery;
 
     // views
     protected $indexView = 'raindrops::crud.table';
@@ -39,6 +46,7 @@ abstract class BaseController extends Controller
         $this->request = app(Request::class);
         $this->dataTable = app(Datatables::class);
         $this->responseBuilder = new ResponseBuilder();
+        $this->model = new $this->modelClass;
 
         if (method_exists($this, 'setup'))
         {
