@@ -99,7 +99,7 @@ trait PerformCrudActions
         $actions = property_exists($this, 'actions') ? $this->actions : null;
 
         return $this->dataTable->eloquent($this->dataTableQuery)
-            ->setTransformer(new DataTableTransformer($actions))
+            ->setTransformer(new $this->dataTransformer($actions))
             ->make(true);
 
     }

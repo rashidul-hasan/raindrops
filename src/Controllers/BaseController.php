@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Rashidul\RainDrops\Crud\PerformCrudActions;
 use Rashidul\RainDrops\Crud\ResponseBuilder;
+use Rashidul\RainDrops\Table\DataTableTransformer;
 use Yajra\Datatables\Datatables;
 
 abstract class BaseController extends Controller
@@ -29,6 +30,9 @@ abstract class BaseController extends Controller
 
     // query builder object used by datatable
     protected $dataTableQuery;
+
+    // transformer class to be used by datatble
+    protected $dataTransformer = DataTableTransformer::class;
 
     // views
     protected $indexView = 'raindrops::crud.table';
