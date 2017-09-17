@@ -57,11 +57,13 @@ class MakeMigrationCommand extends GeneratorCommand
         'decimal' => 'decimal',
         'double' => 'double',
         'float' => 'float',
-        'select' => 'enum',
 
         // custom
         'checkbox' => 'boolean',
-        'image' => 'string'
+        'image' => 'string',
+        'currency' => 'decimal',
+        'select' => 'enum',
+
     ];
 
 
@@ -146,6 +148,26 @@ class MakeMigrationCommand extends GeneratorCommand
                     }
                 }
 
+                // for currency type
+                if ( isset($fieldArray[1]) && $fieldArray[1] === 'currency')
+                {
+                    $data[$x]['type'] = trim($fieldArray[1]);
+
+                    $data[$x]['options'] = [];
+                    // if options are provided for the select type
+                    // those will be in the 3rd key
+                    if (isset($fieldArray[2]))
+                    {
+                        $options = [];
+                        $optionArray = explode(',', $fieldArray[2]);
+                        /*foreach ($optionArray as $option)
+                        {
+                            $options[$option] = str_replace('_', ' ', ucwords($option));
+                        }*/
+                        $data[$x]['options'] = $optionArray;
+                    }
+                }
+
                 $data[$x]['modifier'] = '';
 
                 $modifierLookup = [
@@ -182,6 +204,16 @@ class MakeMigrationCommand extends GeneratorCommand
                         $optionsArray = $this->arrayToString($item['options']);
                     }
                     $schemaFields .= "\$table->" . $type . "('" . $item['name'] . "', ". $optionsArray .")->nullable()";
+                }
+                elseif ($item['type'] === 'currency')
+                {
+                    $type = $this->typeLookup[$item['type']];
+                    $optionsArray = '';
+                    if (isset($item['options']) )
+                    {
+                        $optionsArray = $this->arrayToString($item['options']);
+                    }
+                    $schemaFields .= "\$table->" . $type . "('" . $item['name'] . "', ". $item['options'][0] .", ". $item['options'][1] .")->nullable()";
                 }
                 else
                 {

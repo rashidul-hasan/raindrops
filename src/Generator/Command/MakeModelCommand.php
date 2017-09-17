@@ -219,6 +219,32 @@ class MakeModelCommand extends GeneratorCommand
                     }
                 }
 
+                // currency
+                if ( isset($fieldArray[1]) && $fieldArray[1] === 'currency')
+                {
+                    $fieldOptionsArray['type'] = trim($fieldArray[1]);
+
+                    //$fieldOptionsArray['options'] = [];
+                    // if options are provided for the select type
+                    // those will be in the 3rd key
+                    if (isset($fieldArray[2]))
+                    {
+                        //$options = [];
+                        $optionArray = explode(',', $fieldArray[2]);
+                        /*foreach ($optionArray as $option)
+                        {
+                            $options[$option] = str_replace('_', ' ', ucwords($option));
+                        }*/
+                        $fieldOptionsArray['precision'] = (int) $optionArray[1];
+                    }
+
+                    // if format option is provided
+                    if (isset($fieldArray[3]))
+                    {
+                        $fieldOptionsArray['format'] = $fieldArray[3];
+                    }
+                }
+
                 // type checkbox
                 // syntax: field_name#checkbox
                 if ( isset($fieldArray[1]) && $fieldArray[1] === 'checkbox')

@@ -999,6 +999,19 @@ class Builder
 
                     break;
 
+                case 'currency':
+
+                    $element = Element::build('input')
+                        ->addClass($elementClass)
+                        ->setName($field)
+                        ->setType('number')
+                        ->set($attributes)
+                        ->set('step', $this->getPrecision($options['precision']))
+                        ->setRequired($required)
+                        ->render();
+
+                    break;
+
                 // TODO.
                 // 2. extract the element generation code to diffeerent methods,
 
@@ -1128,15 +1141,12 @@ class Builder
         return 'col-md-6';
     }
 
-    /*private function setFormDefaults($model)
+    private function getPrecision($precision)
     {
+        $test = str_pad(1, $precision , '0', STR_PAD_LEFT);
+        return '0.' . $test;
+    }
 
-        if ( $model->exists )
-        {
-            $this->formOptions['method'] = 'PUT';
-        }
-
-    }*/
 
 
 }

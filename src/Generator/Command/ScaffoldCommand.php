@@ -145,8 +145,8 @@ class ScaffoldCommand extends Command
 
 
         // For optimizing the class loader
-        $this->info('Optimizing class loader...');
-        $this->callSilent('optimize');
+        //$this->info('Optimizing class loader...');
+        //$this->callSilent('optimize');
 
         // Updating the Http/routes.php file
 
