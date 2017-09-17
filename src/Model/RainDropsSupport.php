@@ -104,15 +104,6 @@ trait RainDropsSupport
             }
         }
 
-        // check the request method, if PUT or PATCH
-        // update the unique validation rule
-//        if( $request && $item){
-//
-//            if ($request->method() === 'PUT' || $request->method() === 'PATCH'){
-//                foreach()
-//            }
-//        }
-
         return $rules;
     }
 

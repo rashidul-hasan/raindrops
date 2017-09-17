@@ -47,6 +47,14 @@ class DataTableTransformer extends TransformerAbstract
 
         foreach ($fields as $field => $value)
         {
+
+            $customTransform = $this->getTransformerMethodName($field);
+
+            if (method_exists($this, $customTransform))
+            {
+                $data[$field] = $this->{$customTransform}($this->model->{$field});
+                continue;
+            }
             // 1. first decide how to show the data
             // function, determines data type by examining 'show' element
             $dataType = $this->helper->getDataType($value);
@@ -71,6 +79,11 @@ class DataTableTransformer extends TransformerAbstract
         $data['action'] = ModelHelper::getActionLinks($model, null, $this->actions);
 
         return $data;
+    }
+
+    private function getTransformerMethodName($field)
+    {
+        return 'show' . studly_case($field);
     }
 
 
