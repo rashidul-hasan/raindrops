@@ -65,17 +65,17 @@ class RainDropsServiceProvider extends ServiceProvider
         include __DIR__.'/routes/routes.php';
 
         // register form builder
-        $this->app->singleton('formbuilder', function ($app) {
+        $this->app->bind('formbuilder', function ($app) {
             return new Builder();
         });
 
         // register datatable builder
-        $this->app->singleton('indexbuilder', function () {
+        $this->app->bind('datatable-builder', function () {
             return new DataTableBuilder();
         });
 
         // register details table builder
-        $this->app->singleton('detailstable', function () {
+        $this->app->bind('detailstable', function () {
             return new DetailsTableBuilder();
         });
         //$this->app->alias(DetailsTableBuilder::class, 'detailstable');

@@ -16,6 +16,6 @@ class DataTable extends Facade
 
     protected static function getFacadeAccessor()
     {
-        return 'indexbuilder';
+        return 'datatable-builder';
     }
 }
