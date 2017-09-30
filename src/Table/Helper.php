@@ -82,8 +82,8 @@ class Helper
                 $row_data = $model->{$value['method']}();
                 break;
 
-            case 'doc':
-                $data[$fieldName] = $this->generateDocRow($field, $value);
+            case 'currency':
+                $row_data = $this->columnTransformer->currency($model, $field, $value);
                 break;
 
             case 'time':

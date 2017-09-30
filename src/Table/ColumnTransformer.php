@@ -245,4 +245,12 @@ class ColumnTransformer
 
     }
 
+    public function currency($model, $field, $value)
+    {
+        if ($model->{$field}){
+            return $model->{$field};
+        }
+        return '';
+    }
+
 }
