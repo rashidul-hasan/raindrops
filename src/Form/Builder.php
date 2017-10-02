@@ -528,7 +528,7 @@ class Builder
     {
         /*$fields = [];*/
 
-        $defaults = $this->model ? $this->model->getFields() : [];
+        $defaults = $this->model ? $this->model->getFormFields() : [];
 
         // added fields
         $fields = array_merge($defaults, $this->fieldsAdded);
