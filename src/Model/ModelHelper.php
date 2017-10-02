@@ -27,6 +27,22 @@ class ModelHelper
         return $indexFields;
     }
 
+    public static function getFormFields( $model )
+    {
+        $formFields = [];
+
+        $fields = $model->getFields();
+
+        foreach ($fields as $field_name => $options){
+            if (array_key_exists('form', $options) && !$options['form']){
+                continue;
+            }
+            $formFields[$field_name] = $options;
+        }
+
+        return $formFields;
+    }
+
     public static function getActionLinks( $model, $url = null, $actions = null)
     {
         if (!$url){
@@ -182,7 +198,9 @@ class ModelHelper
 
     public static function fillWithRequestData($model, $request)
     {
-        $fields = $model->getFields();
+
+        $fields = $model->getFormFields();
+
 
         foreach ($fields as $field => $options)
         {
