@@ -59,6 +59,11 @@ trait RainDropsSupport
         return url($baseUrl . '/create');
     }
 
+    public function getFormFields()
+    {
+        return ModelHelper::getFormFields($this);
+    }
+
     public function getFields()
     {
         return $this->fields;
