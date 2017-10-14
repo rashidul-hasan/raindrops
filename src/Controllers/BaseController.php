@@ -8,16 +8,24 @@
 
 namespace Rashidul\RainDrops\Controllers;
 
+use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
-use Rashidul\RainDrops\Crud\PerformCrudActions;
+use Rashidul\RainDrops\Crud\Create;
+use Rashidul\RainDrops\Crud\Data;
+use Rashidul\RainDrops\Crud\Destroy;
+use Rashidul\RainDrops\Crud\Edit;
+use Rashidul\RainDrops\Crud\Index;
 use Rashidul\RainDrops\Crud\ResponseBuilder;
+use Rashidul\RainDrops\Crud\Show;
+use Rashidul\RainDrops\Crud\Store;
+use Rashidul\RainDrops\Crud\Update;
 use Rashidul\RainDrops\Table\DataTableTransformer;
 use Yajra\Datatables\Datatables;
 
 abstract class BaseController extends Controller
 {
-    use PerformCrudActions;
+    use ValidatesRequests, Index, Create, Show, Edit, Update, Data, Store, Destroy;
 
     protected $modelClass;
     protected $model;
@@ -47,15 +55,20 @@ abstract class BaseController extends Controller
      */
     public function __construct()
     {
-        $this->request = app(Request::class);
         $this->dataTable = app(Datatables::class);
         $this->responseBuilder = new ResponseBuilder();
         $this->model = new $this->modelClass;
 
-        if (method_exists($this, 'setup'))
-        {
-            $this->setup();
-        }
+        $this->middleware(function ($request, $next) {
+            $this->request = $request;
+
+            if (method_exists($this, 'setup'))
+            {
+                $this->setup();
+            }
+
+            return $next($request);
+        });
     }
 
 }
