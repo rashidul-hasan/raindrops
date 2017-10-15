@@ -271,6 +271,21 @@ class Builder
     }
 
     /**
+     * Add field with raw html
+     *
+     * @param $field
+     * @param $html
+     * @return $this
+     * @internal param $options
+     */
+    public function addHtml($field, $html)
+    {
+        $this->fieldsAdded[$field] = ['html' => $html];
+
+        return $this;
+    }
+
+    /**
      * Remove any field from the form
      *
      * @param $fields string | array
@@ -749,6 +764,7 @@ class Builder
      * Populate the $form object with elements
      *
      * @param $section_fields
+     * @return array
      */
     private function populateFormWithElements($section_fields)
     {
@@ -771,309 +787,319 @@ class Builder
 
         foreach ( $section_fields as $field => $options) {
 
-            $stub = file_get_contents( $this->configs['stubs']['basic'] );
+            if (is_array($options)) {
 
-            // form is false then abort
-            if ( array_key_exists('form', $options) && !$options['form'] ){
-                continue;
-            }
+                $stub = file_get_contents($this->configs['stubs']['basic']);
 
-            $value = $this->model->exists ? $this->model->getOriginal($field) : null;
-
-            // if old input value exists in the session
-            // for this field, use that
-            if ( !empty($this->oldInputs[$field]) )
-            {
-                $value = $this->oldInputs[$field];
-            }
-
-            $required = $this->isRequired($options);
-
-            $unique = $this->isUnique($options);
-
-            $label = $this->getLabel($options, $required, $unique);
-
-            $attributes = isset($options['attributes']) ? $options['attributes'] : null;
-
-            $error_class = '';
-
-            $error_text = '';
-
-            if ( $this->errors != null && $this->errors->any() ) {
-                if ($this->errors->has($field)) {
-                    $error_class = 'has-error';
-                    $error_text = $this->errors->first($field);
+                // form is false then abort
+                if (array_key_exists('form', $options) && !$options['form']) {
+                    continue;
                 }
-            }
 
-            switch($options['type']) {
-                case 'textarea':
+                // raw html
+                if (array_key_exists('html', $options) && $options['html'] != '') {
+                    $row->text($options['html']);
+                    continue;
+                }
 
-                    $element = Element::build('textarea')
-                        ->addClass($elementClass)
-                        ->setName($field)
-                        ->setRequired($required)
-                        ->set('rows', '10')
-                        ->set($attributes)
-                        ->text($value)
-                        ->render();
+                $value = $this->model->exists ? $this->model->getOriginal($field) : null;
 
-                    break;
+                // if old input value exists in the session
+                // for this field, use that
+                if (!empty($this->oldInputs[$field])) {
+                    $value = $this->oldInputs[$field];
+                }
 
-                case 'editor':
+                $required = $this->isRequired($options);
 
-                    $element = Element::build('textarea')
-                        ->addClass($elementClass)
-                        ->addClass('editor')
-                        ->setName($field)
-                        ->setRequired($required)
-                        ->set('rows', '10')
-                        ->set($attributes)
-                        ->text($value)
-                        ->render();
+                $unique = $this->isUnique($options);
 
-                    break;
+                $label = $this->getLabel($options, $required, $unique);
 
-                case 'select':
+                $attributes = isset($options['attributes']) ? $options['attributes'] : null;
 
-                    $element = Element::build('select')
-                        ->addClass($elementClass)
-                        ->addClass('select2')
-                        ->setName($field)
-                        ->set($attributes)
-                        ->setRequired($required);
+                $error_class = '';
 
-                    $default = Element::build('option')
-                        ->setSelected(true)
-                        ->setValue('')
-                        ->setDisabled(true)
-                        ->text('--Select One--');
+                $error_text = '';
 
-                    $element->addChild($default);
-
-                    foreach ($options['options'] as $option_key => $option_value) {
-
-                        $isSelected = $value === $option_key ? true : false;
-
-                        $option = Element::build('option')
-                            ->setValue($option_key)
-                            ->setSelected($isSelected)
-                            ->text($option_value);
-
-                        $element->addChild($option);
-
+                if ($this->errors != null && $this->errors->any()) {
+                    if ($this->errors->has($field)) {
+                        $error_class = 'has-error';
+                        $error_text = $this->errors->first($field);
                     }
+                }
 
-                    $element = $element->render();
+                switch ($options['type']) {
+                    case 'textarea':
 
-                    break;
+                        $element = Element::build('textarea')
+                            ->addClass($elementClass)
+                            ->setName($field)
+                            ->setRequired($required)
+                            ->set('rows', '10')
+                            ->set($attributes)
+                            ->text($value)
+                            ->render();
 
-                case 'select_db':
+                        break;
 
-                    // TODO.
-                    // need to let user filter some records before adding them to option list
-                    // this data should be pulled via eloquent instead of raw DB query
-                    // refactor it to use the new Element class
-                    $table_data = DB::table($options['table'])->select($options['options'])->get();
+                    case 'editor':
 
-                    $option_key = $options['options'][0];
+                        $element = Element::build('textarea')
+                            ->addClass($elementClass)
+                            ->addClass('editor')
+                            ->setName($field)
+                            ->setRequired($required)
+                            ->set('rows', '10')
+                            ->set($attributes)
+                            ->text($value)
+                            ->render();
 
-                    $element = sprintf('<select name="%s" class="form-control select2" %s>', $field, $required);
+                        break;
 
-                    $element .= '<option value="" disabled selected>--Select One--</option>';
-                    foreach ($table_data as $table_data_single) {
-                        $option_value = count($options['options']) > 2 ? $table_data_single->{$options['options'][1]} . ' ' . $table_data_single->{$options['options'][2]} : $table_data_single->{$options['options'][1]};
-                        $element .= sprintf('<option value="%s">%s</option>', $table_data_single->{$option_key}, $option_value);
-                    }
-                    $element .= '</select>';
+                    case 'select':
 
-                    break;
+                        $element = Element::build('select')
+                            ->addClass($elementClass)
+                            ->addClass('select2')
+                            ->setName($field)
+                            ->set($attributes)
+                            ->setRequired($required);
 
-                // build a dropdown for a foreign key
-                // type is `relation` and mostly belongsTo relation
-                // for Eloquent
-                case 'relation':
+                        $default = Element::build('option')
+                            ->setSelected(true)
+                            ->setValue('')
+                            ->setDisabled(true)
+                            ->text('--Select One--');
 
-                    // get the related model
-                    $relatedModel = $this->model->{$options['options'][0]}()->getRelated();
+                        $element->addChild($default);
 
-                    // get collection of all rows from the related model
-                    if (isset($options['scope'])) {
-                        $relatedCollection = $relatedModel->$options['scope']()->get();
-                    } else
-                    {
-                        $relatedCollection = $relatedModel->all();
-                    }
+                        foreach ($options['options'] as $option_key => $option_value) {
 
-                    // if this dropdwn depends on the value from another field, there should be
-                    // a `depends` key on the field's option array, just add that field's name as a data
-                    // attribute on the select element. we'll handle it on the cleintside via jQuery
-                    $dependsOn = '';
-                    if (isset($options['parent']) && $options['parent'] != '')
-                    {
-                        $dependsOn = 'data-parent="' . $options['parent'] . '"';
+                            $isSelected = $value === $option_key ? true : false;
 
-                        // send the collection to javascript, we need that to populate the
-                        // options dynamically on the view
-                        JavaScript::put(
-                            [
-                                $field => [
-                                    'data' => $relatedCollection->toArray(),
-                                    'indexColumn' => $options['options'][1],
-                                    'selectedId' => $value,
-                                    'keyName' => $relatedModel->getKeyName()
-                                ]
-                            ]
-                        );
+                            $option = Element::build('option')
+                                ->setValue($option_key)
+                                ->setSelected($isSelected)
+                                ->text($option_value);
 
-                        // generate dropdown with no options
-                        $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
+                            $element->addChild($option);
+
+                        }
+
+                        $element = $element->render();
+
+                        break;
+
+                    case 'select_db':
+
+                        // TODO.
+                        // need to let user filter some records before adding them to option list
+                        // this data should be pulled via eloquent instead of raw DB query
+                        // refactor it to use the new Element class
+                        $table_data = DB::table($options['table'])->select($options['options'])->get();
+
+                        $option_key = $options['options'][0];
+
+                        $element = sprintf('<select name="%s" class="form-control select2" %s>', $field, $required);
 
                         $element .= '<option value="" disabled selected>--Select One--</option>';
+                        foreach ($table_data as $table_data_single) {
+                            $option_value = count($options['options']) > 2 ? $table_data_single->{$options['options'][1]} . ' ' . $table_data_single->{$options['options'][2]} : $table_data_single->{$options['options'][1]};
+                            $element .= sprintf('<option value="%s">%s</option>', $table_data_single->{$option_key}, $option_value);
+                        }
                         $element .= '</select>';
 
                         break;
 
-                    }
+                    // build a dropdown for a foreign key
+                    // type is `relation` and mostly belongsTo relation
+                    // for Eloquent
+                    case 'relation':
 
-                    // generate the dropdown
-                    $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
+                        // get the related model
+                        $relatedModel = $this->model->{$options['options'][0]}()->getRelated();
 
-                    $element .= '<option value="" disabled selected>--Select One--</option>';
-                    $element .= \Rashidul\RainDrops\Form\Helper::collectionToOptions($relatedCollection, ['id', $options['options'][1]], $value);
-                    $element .= '</select>';
+                        // get collection of all rows from the related model
+                        if (isset($options['scope'])) {
+                            $relatedCollection = $relatedModel->$options['scope']()->get();
+                        } else {
+                            $relatedCollection = $relatedModel->all();
+                        }
 
-                    break;
+                        // if this dropdwn depends on the value from another field, there should be
+                        // a `depends` key on the field's option array, just add that field's name as a data
+                        // attribute on the select element. we'll handle it on the cleintside via jQuery
+                        $dependsOn = '';
+                        if (isset($options['parent']) && $options['parent'] != '') {
+                            $dependsOn = 'data-parent="' . $options['parent'] . '"';
 
-                case 'date':
+                            // send the collection to javascript, we need that to populate the
+                            // options dynamically on the view
+                            JavaScript::put(
+                                [
+                                    $field => [
+                                        'data' => $relatedCollection->toArray(),
+                                        'indexColumn' => $options['options'][1],
+                                        'selectedId' => $value,
+                                        'keyName' => $relatedModel->getKeyName()
+                                    ]
+                                ]
+                            );
 
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->addClass('datepicker')
-                        ->setName($field)
-                        ->setType('text')
-                        ->set($attributes)
-                        ->setValue($value)
-                        ->setRequired($required)
-                        ->render();
+                            // generate dropdown with no options
+                            $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
 
-                    break;
+                            $element .= '<option value="" disabled selected>--Select One--</option>';
+                            $element .= '</select>';
 
-                case 'date_time':
+                            break;
 
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->addClass('datetimepicker')
-                        ->setName($field)
-                        ->setType('text')
-                        ->set($attributes)
-                        ->setRequired($required)
-                        ->render();
+                        }
 
-                    break;
+                        // generate the dropdown
+                        $element = sprintf('<select name="%s" class="form-control select2" %s %s>', $field, $dependsOn, $required);
 
-                case 'file':
+                        $element .= '<option value="" disabled selected>--Select One--</option>';
+                        $element .= \Rashidul\RainDrops\Form\Helper::collectionToOptions($relatedCollection, ['id', $options['options'][1]], $value);
+                        $element .= '</select>';
 
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->setName($field)
-                        ->setType('file')
-                        ->set($attributes)
-                        ->set('accept', $options['accept'])
-                        ->setRequired($required)
-                        ->render();
+                        break;
 
-                    break;
+                    case 'date':
 
-                case 'image':
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->addClass('datepicker')
+                            ->setName($field)
+                            ->setType('text')
+                            ->set($attributes)
+                            ->setValue($value)
+                            ->setRequired($required)
+                            ->render();
 
-                    $accepts = (isset($options['accept'])) ? $options['accept'] : 'image/*';
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->setName($field)
-                        ->setType('file')
-                        ->set($attributes)
-                        ->set('accept', $accepts)
-                        ->setRequired($required)
-                        ->render();
+                        break;
 
-                    break;
+                    case 'date_time':
 
-                case 'currency':
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->addClass('datetimepicker')
+                            ->setName($field)
+                            ->setType('text')
+                            ->set($attributes)
+                            ->setRequired($required)
+                            ->render();
 
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->setName($field)
-                        ->setType('number')
-                        ->set($attributes)
-                        ->set('step', $this->getPrecision($options['precision']))
-                        ->setRequired($required)
-                        ->render();
+                        break;
 
-                    break;
+                    case 'file':
 
-                // TODO.
-                // 2. extract the element generation code to diffeerent methods,
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->setName($field)
+                            ->setType('file')
+                            ->set($attributes)
+                            ->set('accept', $options['accept'])
+                            ->setRequired($required)
+                            ->render();
 
-                case 'time':
+                        break;
 
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->addClass('timepicker')
-                        ->setName($field)
-                        ->set($attributes)
-                        ->setType('text')
-                        ->setRequired($required)
-                        ->render();
+                    case 'image':
 
-                    break;
+                        $accepts = (isset($options['accept'])) ? $options['accept'] : 'image/*';
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->setName($field)
+                            ->setType('file')
+                            ->set($attributes)
+                            ->set('accept', $accepts)
+                            ->setRequired($required)
+                            ->render();
 
-                case 'checkbox':
-                    $stub = file_get_contents( $this->configs['stubs']['checkbox'] );
-                    $element = Element::build('input')
-                        ->setName($field)
-                        ->setType('checkbox')
-                        ->set($attributes)
-                        ->setRequired($required);
-                    if ($value)
-                    {
-                        $element->set('checked', 'checked');
-                    }
-                    $element = $element->render();
+                        break;
 
-                    break;
+                    case 'currency':
 
-                default:
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->setName($field)
+                            ->setType('number')
+                            ->set($attributes)
+                            ->set('step', $this->getPrecision($options['precision']))
+                            ->setRequired($required)
+                            ->render();
 
-                    $element = Element::build('input')
-                        ->addClass($elementClass)
-                        ->setName($field)
-                        ->setValue($value)
-                        ->set($attributes)
-                        ->setType($options['type'])
-                        ->setRequired($required)
-                        ->render();
+                        break;
+
+                    // TODO.
+                    // 2. extract the element generation code to diffeerent methods,
+
+                    case 'time':
+
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->addClass('timepicker')
+                            ->setName($field)
+                            ->set($attributes)
+                            ->setType('text')
+                            ->setRequired($required)
+                            ->render();
+
+                        break;
+
+                    case 'checkbox':
+                        $stub = file_get_contents($this->configs['stubs']['checkbox']);
+                        $element = Element::build('input')
+                            ->setName($field)
+                            ->setType('checkbox')
+                            ->set($attributes)
+                            ->setRequired($required);
+                        if ($value) {
+                            $element->set('checked', 'checked');
+                        }
+                        $element = $element->render();
+
+                        break;
+
+                    default:
+
+                        $element = Element::build('input')
+                            ->addClass($elementClass)
+                            ->setName($field)
+                            ->setValue($value)
+                            ->set($attributes)
+                            ->setType($options['type'])
+                            ->setRequired($required)
+                            ->render();
+
+                        $fields[$field] = $element;
 
 
+                }
 
+                $placeholders = [
+                    '{error_class}' => $error_class,
+                    '{label_text}' => $label,
+                    '{element}' => $element,
+                    '{error_text}' => $error_text
+
+                ];
+
+                $element = strtr($stub, $placeholders);
+
+                $wrapper = Element::build('div')
+                    ->addClass($wrapperClass)
+                    ->text($element)
+                    ->render();
+
+                $row->text($wrapper);
             }
-
-            $placeholders = [
-                '{error_class}' => $error_class,
-                '{label_text}' => $label,
-                '{element}' => $element,
-                '{error_text}' => $error_text
-
-            ];
-
-            $element = strtr($stub, $placeholders);
-
-            $wrapper = Element::build('div')
-                ->addClass($wrapperClass)
-                ->text($element)
-                ->render();
-
-            $row->text($wrapper);
+            else
+            {
+                $row->text($options);
+            }
 
             $count++;
 
