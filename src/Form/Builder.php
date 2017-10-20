@@ -796,6 +796,12 @@ class Builder
                     continue;
                 }
 
+                // get the form's html from a model method
+                if (array_key_exists('form', $options) && $options['form'] === 'method'){
+                    $row->text($this->model->{$options['formMethod']}());
+                    continue;
+                }
+
                 // raw html
                 if (array_key_exists('html', $options) && $options['html'] != '') {
                     $row->text($options['html']);
