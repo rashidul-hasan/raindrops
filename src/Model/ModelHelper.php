@@ -204,6 +204,9 @@ class ModelHelper
 
         foreach ($fields as $field => $options)
         {
+            // skip fields who's `form` option is set to `method`
+            if (array_key_exists('form', $options) && $options['form'] == 'method') continue;
+
             // save the data according to the field type
             switch ($options['type'])
             {
