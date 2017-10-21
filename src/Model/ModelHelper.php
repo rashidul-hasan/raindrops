@@ -221,22 +221,11 @@ class ModelHelper
                     break;
 
                 case 'file':
-                    if ($request->hasFile($field))
-                    {
-                        $model->{$field} = $request->file($field)->store($field, 'public');
-                    }
-                    break;
-
                 case 'image':
 
-                    $disk = config('raindrops.crud.disk');
-                    $path = isset($options['path']) ? $options['path'] : '';
                     if ($request->hasFile($field))
                     {
-                        // save the file
-                        $request->file($field)->store($path, $disk);
-                        // store the name
-                        $model->{$field} = $request->file($field)->hashName();
+                        $model->{$field} = static::handleFileUpload($request, $field, $options);
                     }
                     break;
 
@@ -255,6 +244,20 @@ class ModelHelper
             return $actions;
         }
         return ['view', 'edit', 'delete'];
+    }
+
+    private static function handleFileUpload($request, $field, $options)
+    {
+        $disk = isset($options['disk'])
+            ? $options['disk']
+            : config('raindrops.crud.disk');
+
+        $path = isset($options['path']) ? $options['path'] : $field;
+
+        $request->file($field)->store($path, $disk);
+
+        return $request->file($field)->hashName();
+
     }
 
 

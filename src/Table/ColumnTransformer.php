@@ -107,16 +107,22 @@ class ColumnTransformer
 
     public function image($model, $field, $value)
     {
-        $path = isset($value['path']) ? $value['path'] : '';
-        $root = config('raindrops.crud.filesystem_root');
+        if (!$model->{$field}) return '';
 
-        if ($model->{$field}){
-            $filename = $model->{$field};
-            $url = url( $root . '/' . $path .  '/' . $filename);
-            return sprintf('<img class="img-thumb img-responsive ui small rounded image" src="%s" alt="%s">', $url, $value['label']);
-        }
+        $path = isset($value['path']) ? $value['path'] : $field;
+        $disk = isset($value['disk'])
+            ? $value['disk']
+            : config('raindrops.crud.disk');
 
-        return '';
+        $disk = config('filesystems.disks.' . $disk);
+
+        $classes = isset($value['classes']) ? $value['classes'] : '';
+
+        $filename = $model->{$field};
+        $url = url( $disk['url'] . '/' . $path .  '/' . $filename);
+
+        return sprintf('<img class="%s" src="%s" alt="%s">', $classes, $url, $value['label']);
+
     }
 
     public function checkbox($model, $field, $value)
