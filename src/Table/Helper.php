@@ -155,6 +155,8 @@ class Helper
                     break;
 
                 case 'text' :
+                case 'textarea' :
+                case 'number' :
                     return 'exact';
                     break;
 
