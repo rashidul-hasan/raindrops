@@ -690,7 +690,7 @@ class Builder
 
         $request = app(Request::class);
 
-        if ( $request->session()->exists('errors') )
+        if ( $request->session()->has('errors') )
         {
             return $request->session()->get('errors')->getBag('default');
         }
