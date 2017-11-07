@@ -58,17 +58,12 @@ abstract class BaseController extends Controller
         $this->dataTable = app(Datatables::class);
         $this->responseBuilder = new ResponseBuilder();
         $this->model = new $this->modelClass;
+        $this->request = app(Request::class);
 
-        $this->middleware(function ($request, $next) {
-            $this->request = $request;
-
-            if (method_exists($this, 'setup'))
-            {
-                $this->setup();
-            }
-
-            return $next($request);
-        });
+        if (method_exists($this, 'setup'))
+        {
+            $this->setup();
+        }
     }
 
 }
