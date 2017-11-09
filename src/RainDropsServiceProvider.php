@@ -46,13 +46,6 @@ class RainDropsServiceProvider extends ServiceProvider
             'Rashidul\RainDrops\Facades\JavaScript'
         );
 
-        // register new resource route methods
-        $registrar = new ResourceRegister($this->app['router']);
-
-        $this->app->bind('Illuminate\Routing\ResourceRegistrar', function () use ($registrar) {
-            return $registrar;
-        });
-
     }
 
     /**
