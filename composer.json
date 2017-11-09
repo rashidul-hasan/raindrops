@@ -21,6 +21,13 @@
     "suggest": {
         "nwidart/laravel-modules": "Module Management In Laravel"
     },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Rashidul\\RainDrops\\RainDropsServiceProvider"
+            ]
+        }
+    },
     "minimum-stability":"dev"
 
 }
