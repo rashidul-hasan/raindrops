@@ -8,11 +8,6 @@ use Rashidul\RainDrops\Controllers\BaseController;
 class DummyClass extends BaseController
 {
 
-    public function __construct({{modelName}} $modelClass)
-    {
-        $this->modelClass = $modelClass;
-        parent::__construct();
-
-    }
+    protected $modelClass = {{modelName}}::class;
 
 }
