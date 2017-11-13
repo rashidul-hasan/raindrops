@@ -9,8 +9,8 @@
 namespace Rashidul\RainDrops\Controllers;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
-use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Rashidul\RainDrops\Crud\Actions;
 use Rashidul\RainDrops\Crud\Create;
 use Rashidul\RainDrops\Crud\Data;
 use Rashidul\RainDrops\Crud\Destroy;
@@ -25,7 +25,8 @@ use Yajra\Datatables\Datatables;
 
 abstract class BaseController extends Controller
 {
-    use ValidatesRequests, Index, Create, Show, Edit, Update, Data, Store, Destroy;
+    use ValidatesRequests, Index, Create, Show, Edit,
+        Update, Data, Store, Destroy, Actions;
 
     protected $modelClass;
     protected $model;
