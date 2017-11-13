@@ -30,19 +30,7 @@ trait Index
             ->setId('data-table');
 
         // action buttons
-        $buttons = [
-            'add' => [
-                'text' => 'Add',
-                'url' => $this->model->getCreateUrl(),
-                'class' => 'btn btn-primary'
-            ]
-        ];
-
-        // if add action is not present in the permitted actions list, remove it
-        if (property_exists($this, 'actions') && !in_array('add', $this->actions))
-        {
-            unset($buttons['add']);
-        }
+        $buttons = CrudActions::render($this->replaceRoutesInActions($this->model, $this->getIndexActions()));
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot

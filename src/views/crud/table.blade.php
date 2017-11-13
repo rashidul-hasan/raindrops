@@ -14,11 +14,7 @@
         </div>
         <div class="col-md-8">
             <div class="pull-right " style="margin-top: 10px;">
-                @if(isset($buttons))
-                    @foreach($buttons as $name => $button)
-                        <a href="{{ $button['url'] }}" class="{{ $button['class'] }}">{{ $button['text'] }}</a>
-                    @endforeach
-                @endif
+                {!! $buttons !!}
             </div>
         </div>
     </div>
