@@ -9,6 +9,8 @@
 namespace Rashidul\RainDrops\Crud;
 
 
+use Rashidul\RainDrops\Exceptions\AccessDeniedException;
+
 class CrudAction
 {
 
@@ -16,6 +18,10 @@ class CrudAction
 
     // default actions
     protected $crudActions = [
+        'index' => [
+            'place' => 'permission',
+        ],
+
         'add' => [
             'text' => 'Add',
             'url' => '{route}/create',
@@ -128,6 +134,14 @@ class CrudAction
 
     }
 
+    public function modifyAction($action_id, $params)
+    {
+        if (isset($this->crudActions[$action_id]))
+        {
+            $this->crudActions[$action_id] = array_merge($this->crudActions[$action_id], $params);
+        }
+    }
+
     public function failIfNotPermitted($action_id)
     {
         if (! array_key_exists($action_id, $this->crudActions)) {
@@ -140,11 +154,13 @@ class CrudAction
     public function getIndexActions()
     {
 
-        return collect($this->crudActions)->filter(function ($value, $key){
+        $actions = collect($this->crudActions)->filter(function ($value, $key){
 
             return $value['place'] == 'index';
 
         })->all();
+
+        return array_reverse($actions);
     }
 
     public function getTableActions()
