@@ -27,14 +27,14 @@ class CrudAction
             'text' => '',
             'url' => '{route}/{id}/edit',
             'place' => 'table',
-            'btn_class' => 'btn btn-primary',
+            'btn_class' => 'btn btn-xs btn-primary',
             'icon_class' => 'fa fa-edit'
         ],
         'view' => [
             'text' => '',
             'url' => '{route}/{id}',
             'place' => 'table',
-            'btn_class' => 'btn btn-primary',
+            'btn_class' => 'btn btn-xs btn-primary',
             'icon_class' => 'fa fa-eye'
         ],
         'delete' => [
