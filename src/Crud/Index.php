@@ -22,6 +22,8 @@ trait Index
     public function index()
     {
 
+        $this->crudAction->failIfNotPermitted('index');
+
         $ajax = property_exists($this, 'ajax') ? $this->ajax : 'all';
 
         // configuring the table
