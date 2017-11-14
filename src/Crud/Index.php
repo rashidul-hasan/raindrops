@@ -22,6 +22,8 @@ trait Index
     public function index()
     {
 
+        $this->crudAction->failIfNotPermitted('index');
+
         $ajax = property_exists($this, 'ajax') ? $this->ajax : 'all';
 
         // configuring the table
@@ -30,19 +32,7 @@ trait Index
             ->setId('data-table');
 
         // action buttons
-        $buttons = [
-            'add' => [
-                'text' => 'Add',
-                'url' => $this->model->getCreateUrl(),
-                'class' => 'btn btn-primary'
-            ]
-        ];
-
-        // if add action is not present in the permitted actions list, remove it
-        if (property_exists($this, 'actions') && !in_array('add', $this->actions))
-        {
-            unset($buttons['add']);
-        }
+        $buttons = $this->crudAction->renderIndexActions();
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot

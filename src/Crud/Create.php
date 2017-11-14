@@ -23,16 +23,18 @@ trait Create
     public function create()
     {
 
+        $this->crudAction->failIfNotPermitted('edit');
+
         // generate form
         $form = FormBuilder::build($this->model);
 
         // action buttons
-        $buttons = [
-            'back' => [
-                'text' => 'Back',
-                'url' => $this->model->getBaseUrl(),
-                'class' => 'btn btn-default'
-            ]
+        $buttons = '';
+
+        $back_button = [
+            'text' => 'Back',
+            'url' => $this->model->getBaseUrl(),
+            'class' => 'btn btn-default'
         ];
 
         $viewRoot = property_exists($this, 'viewRoot')
@@ -44,6 +46,7 @@ trait Create
             'back_url' => $this->model->getBaseUrl(),
             'form' => $form,
             'buttons' => $buttons,
+            'back_button' => $back_button,
             'view' => $this->createView,
             'success' => true,
             'include_view' => $viewRoot . '.' . 'create'
