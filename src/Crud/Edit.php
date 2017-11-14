@@ -24,7 +24,8 @@ trait Edit
     public function edit($id)
     {
 
-        // get item obj by id
+        $this->failIfNotPermitted('edit');
+
         try
         {
             $this->model = $this->model->findOrFail($id);

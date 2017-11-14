@@ -23,6 +23,8 @@ trait Create
     public function create()
     {
 
+        $this->failIfNotPermitted('add');
+
         // generate form
         $form = FormBuilder::build($this->model);
 
