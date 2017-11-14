@@ -10,8 +10,8 @@ namespace Rashidul\RainDrops\Controllers;
 
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
-use Rashidul\RainDrops\Crud\Actions;
 use Rashidul\RainDrops\Crud\Create;
+use Rashidul\RainDrops\Crud\CrudAction;
 use Rashidul\RainDrops\Crud\Data;
 use Rashidul\RainDrops\Crud\Destroy;
 use Rashidul\RainDrops\Crud\Edit;
@@ -26,7 +26,7 @@ use Yajra\Datatables\Datatables;
 abstract class BaseController extends Controller
 {
     use ValidatesRequests, Index, Create, Show, Edit,
-        Update, Data, Store, Destroy, Actions;
+        Update, Data, Store, Destroy;
 
     protected $modelClass;
     protected $model;
@@ -49,6 +49,9 @@ abstract class BaseController extends Controller
     protected $detailsView = 'raindrops::crud.table';
     protected $editView = 'raindrops::crud.form';
 
+    // class to handle crud actions
+    protected $crudAction;
+
     /**
      * BaseController constructor.
      * @internal param $formRequest
@@ -59,6 +62,7 @@ abstract class BaseController extends Controller
         $this->dataTable = app(Datatables::class);
         $this->responseBuilder = new ResponseBuilder();
         $this->model = new $this->modelClass;
+        $this->crudAction = new CrudAction($this->model);
 
         $this->middleware(function ($request, $next) {
             $this->request = $request;

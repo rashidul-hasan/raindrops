@@ -39,19 +39,12 @@ trait Show
         // prepare table object
         $table = DetailsTable::of($this->model);
 
-        // action buttons
-        $buttons = [
-            'edit' => [
-                'text' => 'Edit',
-                'url' => $this->model->getEditUrl(),
-                'class' => 'btn btn-default'
-            ],
+        $buttons = '';
 
-            'back' => [
-                'text' => 'Back',
-                'url' => $this->model->getBaseUrl(),
-                'class' => 'btn btn-default'
-            ]
+        $back_button = [
+            'text' => 'Back',
+            'url' => $this->model->getBaseUrl(),
+            'class' => 'btn btn-default'
         ];
 
         $viewRoot = property_exists($this, 'viewRoot')
@@ -71,6 +64,7 @@ trait Show
             'back_url' => $this->model->getBaseUrl(),
             'table' => $table,
             'buttons' => $buttons,
+            'back_button' => $back_button,
             'include_view' => $viewRoot . '.' . 'show',
             'view' => $this->detailsView
         ];

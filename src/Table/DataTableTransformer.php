@@ -11,6 +11,7 @@ namespace Rashidul\RainDrops\Table;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Model;
 use League\Fractal\TransformerAbstract;
+use Rashidul\RainDrops\Crud\CrudAction;
 use Rashidul\RainDrops\Model\ModelHelper;
 
 class DataTableTransformer extends TransformerAbstract
@@ -21,18 +22,19 @@ class DataTableTransformer extends TransformerAbstract
      */
     protected $model;
 
-    protected $actions;
+    protected $crudActions;
 
     protected $helper;
 
     /**
      * DataTableTransformer constructor.
-     * @param $actions
+     * @param null $crudActions
+     * @internal param $actions
      * @internal param $model
      */
-    public function __construct($actions = null)
+    public function __construct($crudActions = null)
     {
-        $this->actions = $actions;
+        $this->crudActions = $crudActions;
         $this->helper = new Helper();
     }
 
@@ -76,7 +78,8 @@ class DataTableTransformer extends TransformerAbstract
         }
 
         // now add the actions column
-        $data['action'] = ModelHelper::getActionLinks($model, null, $this->actions);
+        $crudAction = new CrudAction($this->model);
+        $data['action'] =  $crudAction->render($crudAction->replaceRoutesInActions($this->crudActions));
 
         return $data;
     }

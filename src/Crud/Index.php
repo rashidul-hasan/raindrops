@@ -30,7 +30,7 @@ trait Index
             ->setId('data-table');
 
         // action buttons
-        $buttons = CrudActions::render($this->replaceRoutesInActions($this->model, $this->getIndexActions()));
+        $buttons = $this->crudAction->renderIndexActions();
 
         $viewRoot = property_exists($this, 'viewRoot')
             ? $this->viewRoot

@@ -2,19 +2,19 @@
 /**
  * Created by PhpStorm.
  * User: Rashidul Hasan
- * Date: 11/13/2017
- * Time: 2:44 PM
+ * Date: 11/14/2017
+ * Time: 12:52 PM
  */
 
 namespace Rashidul\RainDrops\Crud;
 
 
-use Rashidul\RainDrops\Exceptions\AccessDeniedException;
-
-trait Actions
+class CrudAction
 {
 
-    // actions
+    protected $model;
+
+    // default actions
     protected $crudActions = [
         'add' => [
             'text' => 'Add',
@@ -26,28 +26,43 @@ trait Actions
         'edit' => [
             'text' => '',
             'url' => '{route}/{id}/edit',
-            'place' => 'model',
+            'place' => 'table',
             'btn_class' => 'btn btn-primary',
             'icon_class' => 'fa fa-edit'
         ],
         'view' => [
             'text' => '',
             'url' => '{route}/{id}',
-            'place' => 'model',
+            'place' => 'table',
             'btn_class' => 'btn btn-primary',
             'icon_class' => 'fa fa-eye'
         ],
         'delete' => [
             'text' => '',
             'url' => '{route}/{id}',
-            'place' => 'model',
-            'btn_class' => 'btn btn-danger',
-            'icon_class' => 'fa fa-trash-o'
+            'place' => 'table',
+            'btn_class' => 'btn btn-xs btn-danger button-delete',
+            'icon_class' => 'fa fa-trash-o',
+            'attr' => [
+                'data-method' => 'delete',
+                'data-confirm' => 'Are you sure?',
+                'data-toggle' => 'tooltip',
+                'title' => 'Delete'
+            ]
         ],
 
     ];
 
-    protected function addCrudActions()
+    /**
+     * CrudAction constructor.
+     * @param $model
+     */
+    public function __construct($model)
+    {
+        $this->model = $model;
+    }
+
+    public function addCrudActions()
     {
 
         $args = func_get_args();
@@ -87,7 +102,7 @@ trait Actions
         }
     }
 
-    protected function permitActions($action_ids)
+    public function permitActions($action_ids)
     {
         $permitted_actions = [];
 
@@ -95,14 +110,13 @@ trait Actions
             if (isset($this->crudActions[$action_id]))
             {
                 $permitted_actions[$action_id] = $this->crudActions[$action_id];
-//                unset($this->crudActions[$action_id]);
             }
         }
 
         $this->crudActions = $permitted_actions;
     }
 
-    protected function restrictActions($action_ids)
+    public function restrictActions($action_ids)
     {
 
         foreach ($action_ids as $action_id) {
@@ -116,14 +130,14 @@ trait Actions
 
     public function failIfNotPermitted($action_id)
     {
-        if (! in_array($action_id, $this->crudActions)) {
+        if (! array_key_exists($action_id, $this->crudActions)) {
             throw new AccessDeniedException('Unauthorized access');
         }
 
         return true;
     }
 
-    protected function getIndexActions()
+    public function getIndexActions()
     {
 
         return collect($this->crudActions)->filter(function ($value, $key){
@@ -133,13 +147,25 @@ trait Actions
         })->all();
     }
 
-    protected function replaceRoutesInActions($model, $actions)
+    public function getTableActions()
     {
-        $id = ($model->exists) ? $model->getKey() : '';
+
+        return collect($this->crudActions)->filter(function ($value, $key){
+
+            return $value['place'] == 'table';
+
+        })->all();
+    }
+
+    public function replaceRoutesInActions($actions)
+    {
+        $id = ($this->model->exists) ? $this->model->getKey() : '';
+
+        $model = $this->model;
 
         $data = collect($actions)->map(function ($item, $key) use ($model, $id){
 
-            $item['url'] = $this->getReplacedUrl($item['url'], $model->getBaseUrl(false), $id);
+            $item['url'] = $this->getReplacedUrl($item['url'], $this->model->getBaseUrl(false), $id);
 
             return $item;
 
@@ -163,22 +189,47 @@ trait Actions
         return url(str_replace($search, $replace, $url));
     }
 
-}
-
-class CrudActions
-{
-    public static function render($actions)
+    public function render($actions)
     {
         $html = '';
-        $btn_html = '<a href="%s" class="%s"><i class="%s"></i> %s</a>';
+        $btn_html = '<a href="%s" class="%s" %s><i class="%s"></i> %s</a>';
 
         if (!empty($actions))
         {
             foreach ($actions as $action) {
-                $html .= sprintf($btn_html, $action['url'], $action['btn_class'], $action['icon_class'], $action['text']);
+                $attr = $this->getAttributes($action);
+                $html .= sprintf($btn_html, $action['url'], $action['btn_class'], $attr, $action['icon_class'], $action['text']);
             }
         }
 
         return $html;
     }
+
+    public function renderIndexActions()
+    {
+        $actions = $this->replaceRoutesInActions($this->getIndexActions());
+
+        return $this->render($actions);
+    }
+
+    public function renderTableActions()
+    {
+        $actions = $this->replaceRoutesInActions($this->getTableActions());
+
+        return $this->render($actions);
+    }
+
+    private function getAttributes($action)
+    {
+        $html = '';
+        if (isset($action['attr']) && is_array($action['attr']))
+        {
+            foreach ($action['attr'] as $attr => $value) {
+                $html .= $attr . '="' .$value. '" ';
+            }
+        }
+
+        return $html;
+    }
+
 }
