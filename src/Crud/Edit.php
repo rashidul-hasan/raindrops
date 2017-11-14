@@ -24,7 +24,7 @@ trait Edit
     public function edit($id)
     {
 
-        $this->failIfNotPermitted('edit');
+        $this->crudAction->failIfNotPermitted('edit');
 
         try
         {

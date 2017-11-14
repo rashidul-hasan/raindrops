@@ -15,6 +15,9 @@
         <div class="col-md-8">
             <div class="pull-right " style="margin-top: 10px;">
                 {!! $buttons !!}
+                @isset($back_button)
+                <a href="{{ $back_button['url'] }}" class="{{ $back_button['class'] }}">{{ $back_button['text'] }}</a>
+                @endisset
             </div>
         </div>
     </div>
