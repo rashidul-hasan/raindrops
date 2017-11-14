@@ -9,11 +9,13 @@
 namespace Rashidul\RainDrops\Crud;
 
 
+use Rashidul\RainDrops\Exceptions\AccessDeniedException;
+
 trait Actions
 {
 
     // actions
-    protected $defaultActions = [
+    protected $crudActions = [
         'add' => [
             'text' => 'Add',
             'url' => '{route}/create',
@@ -45,8 +47,6 @@ trait Actions
 
     ];
 
-    protected $customActions = [];
-
     protected function addCrudActions()
     {
 
@@ -57,7 +57,7 @@ trait Actions
             case 1:
                 if (is_array($args[0]))
                 {
-                    array_merge($this->customActions, $args[0]);
+                    array_merge($this->crudActions, $args[0]);
                 }
 
                 break;
@@ -65,13 +65,13 @@ trait Actions
             case 2:
                 if (is_string($args[0]) && is_array($args[1]))
                 {
-                    $this->customActions[$args[0]] = $args[1];
+                    $this->crudActions[$args[0]] = $args[1];
                 }
 
                 break;
 
             case 6:
-                $this->customActions[$args[0]] = [
+                $this->crudActions[$args[0]] = [
                     'text' => $args[1],
                     'url' => $args[2],
                     'place' => $args[3],
@@ -87,20 +87,50 @@ trait Actions
         }
     }
 
+    protected function permitActions($action_ids)
+    {
+        $permitted_actions = [];
+
+        foreach ($action_ids as $action_id) {
+            if (isset($this->crudActions[$action_id]))
+            {
+                $permitted_actions[$action_id] = $this->crudActions[$action_id];
+//                unset($this->crudActions[$action_id]);
+            }
+        }
+
+        $this->crudActions = $permitted_actions;
+    }
+
+    protected function restrictActions($action_ids)
+    {
+
+        foreach ($action_ids as $action_id) {
+            if (isset($this->crudActions[$action_id]))
+            {
+                unset($this->crudActions[$action_id]);
+            }
+        }
+
+    }
+
+    public function failIfNotPermitted($action_id)
+    {
+        if (! in_array($action_id, $this->crudActions)) {
+            throw new AccessDeniedException('Unauthorized access');
+        }
+
+        return true;
+    }
+
     protected function getIndexActions()
     {
-        $actions = $this->getAllActions();
 
-        return collect($actions)->filter(function ($value, $key){
+        return collect($this->crudActions)->filter(function ($value, $key){
 
             return $value['place'] == 'index';
 
         })->all();
-    }
-
-    private function getAllActions()
-    {
-        return array_merge($this->defaultActions, $this->customActions);
     }
 
     protected function replaceRoutesInActions($model, $actions)
