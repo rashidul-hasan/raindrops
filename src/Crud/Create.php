@@ -23,7 +23,7 @@ trait Create
     public function create()
     {
 
-        $this->crudAction->failIfNotPermitted('edit');
+        $this->crudAction->failIfNotPermitted('add');
 
         // generate form
         $form = FormBuilder::build($this->model);
