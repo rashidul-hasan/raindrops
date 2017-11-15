@@ -12,5 +12,8 @@ RainDrops Developer's Toolbox!
 
    installation
    configuration
+   getting
+   customization
+   customization/actions
 
 

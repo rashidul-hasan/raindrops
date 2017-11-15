@@ -1,28 +1,20 @@
-Installation & Configuration
-============================
+Installation
+============
 
+.. toctree::
+    :maxdepth: 2
+    :caption: Contents:
 
 #. Inside your project root, run
 
-    .. code-block:: php
-
-       composer require rashidul/raindrops=dev-master
-
-#. Add this to your :code:`app.php` config file's :code:`providers` array
-
-    .. code-block:: php
-
-       Rashidul\RainDrops\RainDropsServiceProvider::class,
+    ``composer require rashidul/raindrops=dev-master``
 
 
-    .. code-block:: php
+#. Add this to your ``app.php`` config file's ``providers`` array
 
-        // publish configs
-        $this->publishes([
-            __DIR__ . '/configs' => config_path('raindrops'),
-        ], 'raindrops');
+    ``Rashidul\RainDrops\RainDropsServiceProvider::class,``
 
-        // publish stub files for the generator
-        $this->publishes([
-            __DIR__ . '/Generator/stubs/' => base_path('resources/raindrops/'),
-        ], 'raindrops');
+
+#. Finally, publish the config files.
+
+    ``php artisan vendor:publish --tag=raindrops``

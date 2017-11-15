@@ -11,13 +11,9 @@ RainDrops Developer's Toolbox!
    :caption: Contents:
 
    installation
-   test
+   configuration
+   getting
+   customization
+   customization/actions
 
 
-
-Indices and tables
-==================
-
-* :ref:`genindex`
-* :ref:`modindex`
-* :ref:`search`

@@ -1,6 +1,10 @@
 Installation
 ============
 
+.. toctree::
+    :maxdepth: 2
+    :caption: Contents:
+
 #. Inside your project root, run
 
     ``composer require rashidul/raindrops=dev-master``

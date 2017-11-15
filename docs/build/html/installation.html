@@ -8,7 +8,7 @@
   
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   
-  <title>Installation &amp; Configuration &mdash; RainDrops Developer&#39;s Toolbox 0.2.3 documentation</title>
+  <title>Installation &mdash; RainDrops Developer&#39;s Toolbox 0.2.3 documentation</title>
   
 
   
@@ -36,6 +36,7 @@
               href="genindex.html"/>
         <link rel="search" title="Search" href="search.html"/>
     <link rel="top" title="RainDrops Developer&#39;s Toolbox 0.2.3 documentation" href="index.html"/>
+        <link rel="next" title="Configuration" href="configuration.html"/>
         <link rel="prev" title="RainDrops Developer’s Toolbox!" href="index.html"/> 
 
   
@@ -91,7 +92,12 @@
             
               <p class="caption"><span class="caption-text">Contents:</span></p>
 <ul class="current">
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation &amp; Configuration</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Installation</a><ul class="simple">
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="configuration.html">Configuration</a></li>
+<li class="toctree-l1"><a class="reference internal" href="getting.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="customization.html">Customization</a></li>
 </ul>
 
             
@@ -136,7 +142,7 @@
     
       <li><a href="index.html">Docs</a> &raquo;</li>
         
-      <li>Installation &amp; Configuration</li>
+      <li>Installation</li>
     
     
       <li class="wy-breadcrumbs-aside">
@@ -155,32 +161,24 @@
           <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
            <div itemprop="articleBody">
             
-  <div class="section" id="installation-configuration">
-<h1>Installation &amp; Configuration<a class="headerlink" href="#installation-configuration" title="Permalink to this headline">¶</a></h1>
+  <div class="section" id="installation">
+<h1>Installation<a class="headerlink" href="#installation" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
 <ol class="arabic">
 <li><p class="first">Inside your project root, run</p>
 <blockquote>
-<div><div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">composer require rashidul/raindrops=dev-master</span>
-</pre></div>
-</div>
+<div><p><code class="docutils literal"><span class="pre">composer</span> <span class="pre">require</span> <span class="pre">rashidul/raindrops=dev-master</span></code></p>
 </div></blockquote>
 </li>
-<li><p class="first">Add this to your <code class="code docutils literal"><span class="pre">app.php</span></code> config file’s <code class="code docutils literal"><span class="pre">providers</span></code> array</p>
+<li><p class="first">Add this to your <code class="docutils literal"><span class="pre">app.php</span></code> config file’s <code class="docutils literal"><span class="pre">providers</span></code> array</p>
 <blockquote>
-<div><div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">Rashidul\RainDrops\RainDropsServiceProvider::class,</span>
-</pre></div>
-</div>
-<div class="highlight-php"><div class="highlight"><pre><span></span><span class="x">// publish configs</span>
-<span class="x">$this-&gt;publishes([</span>
-<span class="x">    __DIR__ . &#39;/configs&#39; =&gt; config_path(&#39;raindrops&#39;),</span>
-<span class="x">], &#39;raindrops&#39;);</span>
-
-<span class="x">// publish stub files for the generator</span>
-<span class="x">$this-&gt;publishes([</span>
-<span class="x">    __DIR__ . &#39;/Generator/stubs/&#39; =&gt; base_path(&#39;resources/raindrops/&#39;),</span>
-<span class="x">], &#39;raindrops&#39;);</span>
-</pre></div>
-</div>
+<div><p><code class="docutils literal"><span class="pre">Rashidul\RainDrops\RainDropsServiceProvider::class,</span></code></p>
+</div></blockquote>
+</li>
+<li><p class="first">Finally, publish the config files.</p>
+<blockquote>
+<div><p><code class="docutils literal"><span class="pre">php</span> <span class="pre">artisan</span> <span class="pre">vendor:publish</span> <span class="pre">--tag=raindrops</span></code></p>
 </div></blockquote>
 </li>
 </ol>
@@ -195,6 +193,8 @@
           <footer>
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="configuration.html" class="btn btn-neutral float-right" title="Configuration" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
         <a href="index.html" class="btn btn-neutral" title="RainDrops Developer’s Toolbox!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
