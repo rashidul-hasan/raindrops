@@ -26,6 +26,9 @@ trait Update
      */
     public function update(Request $request, $id)
     {
+
+        $this->crudAction->failIfNotPermitted('edit');
+
         try
         {
             $this->model = $this->model->findOrFail($id);

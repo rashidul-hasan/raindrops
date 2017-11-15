@@ -30,10 +30,10 @@ trait Data
 
         // which actions will be shown for this
         // particular resource
-        $actions = property_exists($this, 'actions') ? $this->actions : null;
+        $tableActions = $this->crudAction->getTableActions();
 
         return $this->dataTable->eloquent($this->dataTableQuery)
-            ->setTransformer(new $this->dataTransformer($actions))
+            ->setTransformer(new $this->dataTransformer($tableActions))
             ->make(true);
 
     }
