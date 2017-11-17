@@ -45,6 +45,12 @@ trait Destroy
             if ($this->model->delete()){
                 $this->viewData['success'] = true;
                 $this->viewData['message'] = $this->model->getEntityName() . ' Deleted!';
+
+                if (method_exists($this, 'deleted'))
+                {
+                    $this->deleted();
+                }
+
             } else {
                 $this->viewData['success'] = false;
                 $this->viewData['message'] = 'Something went wrong';
