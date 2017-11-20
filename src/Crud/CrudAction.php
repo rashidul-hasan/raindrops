@@ -168,16 +168,26 @@ class CrudAction
 
         return collect($this->crudActions)->filter(function ($value, $key){
 
-            return $value['place'] == 'table';
+            return in_array('table', explode(',', $value['place']));
 
         })->all();
     }
 
-    public function replaceRoutesInActions($actions)
+    public function getViewActions()
     {
-        $id = ($this->model->exists) ? $this->model->getKey() : '';
 
-        $model = $this->model;
+        return collect($this->crudActions)->filter(function ($value, $key){
+
+            return in_array('view', explode(',', $value['place']));
+
+        })->all();
+    }
+
+    public function replaceRoutesInActions($actions, $model = null)
+    {
+
+        $model = is_null($model) ? $this->model : $model;
+        $id = ($model->exists) ? $model->getKey() : '';
 
         $data = collect($actions)->map(function ($item, $key) use ($model, $id){
 
@@ -224,6 +234,13 @@ class CrudAction
     public function renderIndexActions()
     {
         $actions = $this->replaceRoutesInActions($this->getIndexActions());
+
+        return $this->render($actions);
+    }
+
+    public function renderViewActions($model)
+    {
+        $actions = $this->replaceRoutesInActions($this->getViewActions(), $model);
 
         return $this->render($actions);
     }

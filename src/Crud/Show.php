@@ -39,7 +39,7 @@ trait Show
         // prepare table object
         $table = DetailsTable::of($this->model);
 
-        $buttons = '';
+        $buttons = $this->crudAction->renderViewActions($this->model);
 
         $back_button = [
             'text' => 'Back',
