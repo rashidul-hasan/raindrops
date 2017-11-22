@@ -271,6 +271,29 @@ class Builder
     }
 
     /**
+     * Add a field right after another field
+     * @param $after
+     * @param $field_name
+     * @param $options
+     * @return $this
+     * @internal param $label
+     * @internal param $html
+     */
+    public function addAfter($after, $field_name, $options)
+    {
+        // if the after key doesn't exists, just add it at the end
+        if (!array_key_exists($after, $this->fieldsAdded))
+        {
+            $this->fieldsAdded[$field_name] = $options;
+
+            return $this;
+        }
+        $this->fieldsAdded = Helper::array_insert_after($after, $this->fieldsAdded, $field_name, $options);
+
+        return $this;
+    }
+
+    /**
      * Add field with raw html
      *
      * @param $field
