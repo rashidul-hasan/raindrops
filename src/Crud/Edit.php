@@ -40,14 +40,12 @@ trait Edit
         // prepare the form
         $form = FormBuilder::build( $this->model );
 
-        // action buttons
-        $buttons = [
-            [
-                'name' => 'back',
-                'text' => 'Back',
-                'url' => $this->model->getBaseUrl(),
-                'class' => 'btn btn-default'
-            ]
+        $buttons = '';
+
+        $back_button = [
+            'text' => 'Back',
+            'url' => $this->model->getBaseUrl(),
+            'class' => 'btn btn-default'
         ];
 
         $viewRoot = property_exists($this, 'viewRoot')
@@ -57,9 +55,7 @@ trait Edit
         $this->viewData = [
             'title' => 'Edit ' . $this->model->getEntityName(),
             'item' => $this->model,
-            'success' => true,
-            'url' => $this->model->getBaseurl(),
-            'back_url' => $this->model->getShowUrl(),
+            'back_button' => $back_button,
             'form' => $form,
             'buttons' => $buttons,
             'view' => $this->editView,
