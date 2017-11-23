@@ -84,6 +84,23 @@ return [
     ],
 
     /*
+    |-------------------------------------------------------------------------
+    | Default formats for date, datetime & date types.
+    | ref: http://php.net/manual/en/function.date.php
+    |-------------------------------------------------------------------------
+    |
+    */
+    'datetime_formats' => [
+
+        'time' => 'F j, Y, g:i A',
+
+        'date' => 'F j, Y',
+
+        'datetime' => 'F j, Y, g:i A'
+
+    ],
+
+    /*
     |--------------------------------------------------------------------------
     | Classes that will be added to various fields on forms & tables
     |--------------------------------------------------------------------------
