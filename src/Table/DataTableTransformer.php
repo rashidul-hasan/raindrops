@@ -47,32 +47,35 @@ class DataTableTransformer extends TransformerAbstract
 
         $fields = ModelHelper::getIndexFields( $model );
 
-        foreach ($fields as $field => $value)
+        foreach ($fields as $field => $options)
         {
 
             $customTransform = $this->getTransformerMethodName($field);
 
-            if (method_exists($this, $customTransform))
-            {
-                $data[$field] = $this->{$customTransform}($this->model->{$field});
-                continue;
-            }
             // 1. first decide how to show the data
             // function, determines data type by examining 'show' element
-            $dataType = $this->helper->getDataType($value);
+            $dataType = $this->helper->getDataType($options);
+
+            if (method_exists($this, $customTransform))
+            {
+                $value = $this->{$customTransform}($this->model->{$field});
+            }
+            else
+            {
+                $value = $this->helper->get($this->model, $field, $options, $dataType);
+            }
 
             // setup the key name of the data array
             if ($dataType == 'relation')
             {
-                $fieldName = isset($value['options']) ? $value['options'][0] : $value['show'][0];
-                $relatedColumnName = isset($value['options']) ? $value['options'][1] : $value['show'][1];
+                $fieldName = isset($options['options']) ? $options['options'][0] : $options['show'][0];
+                $relatedColumnName = isset($options['options']) ? $options['options'][1] : $options['show'][1];
 
-                $data[$fieldName] = [$relatedColumnName => $this->helper->get($this->model, $field, $value, $dataType)];
+                $data[$fieldName] = [$relatedColumnName => $value];
             }
             else
             {
-                $fieldName = $field;
-                $data[$fieldName] = $this->helper->get($this->model, $field, $value, $dataType);
+                $data[$field] = $value;
             }
 
         }
