@@ -87,24 +87,21 @@ class Helper
                 break;
 
             case 'time':
-                $data[$fieldName] = $this->generateTimeRow($field, $value);
+                $row_data = $this->columnTransformer->time($model, $field, $value);
                 break;
 
             case 'datetime':
-                $data[$fieldName] = $this->generateDateTimeRow($field, $value);
+                $row_data = $this->columnTransformer->datetime($model, $field, $value);
                 break;
 
-            case 'html':
-                $data[$fieldName] = $this->generateHtmlRow($field, $value);
+            case 'date':
+                $row_data = $this->columnTransformer->date($model, $field, $value);
                 break;
 
             case 'relation':
                 $row_data = $this->columnTransformer->relation($model, $field, $value, $this);
                 break;
 
-            case 'relation-details':
-                $data[$fieldName] = $this->generateRelationDetailsRow($field, $value);
-                break;
 
         }
 
