@@ -52,8 +52,6 @@ class DataTableTransformer extends TransformerAbstract
 
             $customTransform = $this->getTransformerMethodName($field);
 
-            // 1. first decide how to show the data
-            // function, determines data type by examining 'show' element
             $dataType = $this->helper->getDataType($options);
 
             if (method_exists($this, $customTransform))
@@ -65,13 +63,10 @@ class DataTableTransformer extends TransformerAbstract
                 $value = $this->helper->get($this->model, $field, $options, $dataType);
             }
 
-            // setup the key name of the data array
             if ($dataType == 'relation')
             {
-                $fieldName = isset($options['options']) ? $options['options'][0] : $options['show'][0];
                 $relatedColumnName = isset($options['options']) ? $options['options'][1] : $options['show'][1];
-
-                $data[$fieldName] = [$relatedColumnName => $value];
+                $data[$field] = [$relatedColumnName => $value];
             }
             else
             {
