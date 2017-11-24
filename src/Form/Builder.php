@@ -146,26 +146,6 @@ class Builder
     }
 
     /**
-     * Type of the form: create
-     *
-     * @param $model
-     * @return $this
-     * @throws Exception
-     */
-    /*public function create($model = null)
-    {
-
-        if ( !is_null($model) && !$model instanceof Model ){
-            throw new \Exception("dafuq bro???");
-        }
-
-        $this->formType = 'create';
-        $this->model = $model;
-
-        return $this;
-    }*/
-
-    /**
      * Start building your form
      *
      * @param $model
@@ -182,24 +162,8 @@ class Builder
 
         $this->model = $model;
 
-        //$this->setFormDefaults($model);
-
         return $this;
     }
-
-    /**
-     * Type of the form: edit
-     *
-     * @param $model
-     * @return $this
-     */
-    /*public function edit($model)
-    {
-        $this->formType = 'edit';
-        $this->model = $model;
-
-        return $this;
-    }*/
 
     public function section($name, $fields)
     {
@@ -242,19 +206,6 @@ class Builder
 
         return $this;
     }
-
-    /**
-     * Validation errors
-     *
-     * @param $errors
-     * @return $this
-     */
-    /*public function errors($errors)
-    {
-        $this->errors = $errors;
-
-        return $this;
-    }*/
 
     /**
      * Add new fields to the form
@@ -341,19 +292,6 @@ class Builder
 
         return $this;
     }
-
-    /**
-     * Render all fields except the given ones
-     *
-     * @param array $fields
-     * @return $this
-     */
-    /*public function except($fields = [])
-    {
-        $this->fieldsExcept = $fields;
-
-        return $this;
-    }*/
 
     /**
      * Add hidden fields to the form
@@ -506,19 +444,10 @@ class Builder
     public function render()
     {
 
-        // first create an element object
-        /*if ( $this->formOptions ){
-            $data = $this->wrapWithForm($data);
-        }*/
         $this->form = $this->initFormObject();
 
         // build the fields array
         $this->fields = $this->populateFieldsArray();
-
-        //$templatePath = config( $this->templateName );
-
-        // variable that will hold the final form in string format
-        //$data = '';
 
         // if sections are defined, populate those first
         if ( $this->sections )
@@ -564,7 +493,6 @@ class Builder
 
     private function populateFieldsArray()
     {
-        /*$fields = [];*/
 
         $defaults = $this->model ? $this->model->getFormFields() : [];
 

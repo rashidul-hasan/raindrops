@@ -40,6 +40,7 @@ abstract class BaseController extends Controller
 
     // query builder object used by datatable
     protected $dataTableQuery;
+    protected $dataTableObject;
 
     // transformer class to be used by datatble
     protected $dataTransformer = DataTableTransformer::class;

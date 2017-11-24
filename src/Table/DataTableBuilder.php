@@ -544,8 +544,8 @@ class DataTableBuilder
 
             if ($dataType == 'relation'){
                 $relationOptions = isset($options['options']) ? $options['options'] : $options['show'];
-                $column['data'] = $relationOptions[0] . '.' . $relationOptions[1];
-                $column['name'] = $relationOptions[0] . '.' . $relationOptions[1];
+                $column['data'] = $fieldName . '.' . $relationOptions[1];
+                $column['name'] = $fieldName . '.' . $relationOptions[1];
                 $column['defaultContent'] = '';
                 array_push($columnsArray, $column);
             } else {

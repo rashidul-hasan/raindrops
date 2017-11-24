@@ -98,6 +98,10 @@ class Helper
                 $row_data = $this->columnTransformer->date($model, $field, $value);
                 break;
 
+            case 'email':
+                $row_data = $this->columnTransformer->email($model, $field, $value);
+                break;
+
             case 'relation':
                 $row_data = $this->columnTransformer->relation($model, $field, $value, $this);
                 break;
@@ -149,6 +153,10 @@ class Helper
 
                 case 'checkbox' :
                     return 'checkbox';
+                    break;
+
+                case 'email' :
+                    return 'email';
                     break;
 
                 case 'text' :
