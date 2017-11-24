@@ -62,7 +62,6 @@ class RainDropsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__.'/routes/routes.php';
 
         // register form builder
         $this->app->bind('formbuilder', function ($app) {
