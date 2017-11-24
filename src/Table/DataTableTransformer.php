@@ -77,7 +77,17 @@ class DataTableTransformer extends TransformerAbstract
 
         // now add the actions column
         $crudAction = new CrudAction($this->model);
-        $data['action'] =  $crudAction->render($crudAction->replaceRoutesInActions($this->crudActions));
+
+        // if we need to add/hide any actions based on a single model,
+        if (method_exists($this, 'getActions'))
+        {
+            $actions = $this->getActions();
+        }
+        else
+        {
+            $actions = $this->crudActions;
+        }
+        $data['action'] =  $crudAction->render($crudAction->replaceRoutesInActions($actions));
 
         return $data;
     }
