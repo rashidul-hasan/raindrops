@@ -18,7 +18,10 @@ trait Data
     public function data()
     {
 
+        $tableActions = $this->crudAction->getTableActions();
         $this->dataTableQuery = $this->model->select();
+        $this->dataTableObject = $this->dataTable->eloquent($this->dataTableQuery)
+            ->setTransformer(new $this->dataTransformer($tableActions));
 
         // let user modify the query builder object to
         // further customize the data to be feed to the
@@ -28,13 +31,7 @@ trait Data
             $this->querying();
         }
 
-        // which actions will be shown for this
-        // particular resource
-        $tableActions = $this->crudAction->getTableActions();
-
-        return $this->dataTable->eloquent($this->dataTableQuery)
-            ->setTransformer(new $this->dataTransformer($tableActions))
-            ->make(true);
+        return $this->dataTableObject->make(true);
 
     }
 
