@@ -22,16 +22,16 @@ class RainDropsServiceProvider extends ServiceProvider
     public function boot()
     {
         // load views
-        $this->loadViewsFrom(__DIR__.'/views', 'raindrops');
+        $this->loadViewsFrom(__DIR__.'/../views', 'raindrops');
 
         // publish views
         $this->publishes([
-            __DIR__.'/views' => resource_path('views/vendor/raindrops'),
+            __DIR__.'/../views' => resource_path('views/vendor/raindrops'),
         ], 'raindrops');
 
         // publish configs
         $this->publishes([
-            __DIR__ . '/configs' => config_path('raindrops'),
+            __DIR__ . '/../configs' => config_path('raindrops'),
         ], 'raindrops');
 
         // publish stub files for the generator
@@ -62,7 +62,6 @@ class RainDropsServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        include __DIR__.'/routes/routes.php';
 
         // register form builder
         $this->app->bind('formbuilder', function ($app) {
@@ -98,15 +97,15 @@ class RainDropsServiceProvider extends ServiceProvider
 
         // load configs
         $this->mergeConfigFrom(
-            __DIR__ . '/configs/form.php', 'raindrops.form'
+            __DIR__ . '/../configs/form.php', 'raindrops.form'
         );
 
         $this->mergeConfigFrom(
-            __DIR__ . '/configs/table.php', 'raindrops.table'
+            __DIR__ . '/../configs/table.php', 'raindrops.table'
         );
 
         $this->mergeConfigFrom(
-            __DIR__ . '/configs/crud.php', 'raindrops.crud'
+            __DIR__ . '/../configs/crud.php', 'raindrops.crud'
         );
 
         // register console commands
