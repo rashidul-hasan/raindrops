@@ -260,31 +260,41 @@ class ColumnTransformer
         return '';
     }
 
-    public function time($model, $field, $value)
+    public function time($model, $field, $options)
     {
         if ($model->{$field}){
-            $format = $this->getFormat($value, 'time');
-            $time = $this->getCarbonObjFromDateTime($model, $field);
+            $format = $this->getFormat($options, 'time');
+            $time = $this->getCarbonObjFromDateTime($model, $field, $options);
             return $time->format($format);
         }
         return '';
     }
 
-    public function date($model, $field, $value)
+    public function date($model, $field, $options)
     {
         if ($model->{$field}){
-            $format = $this->getFormat($value, 'date');
-            $time = $this->getCarbonObjFromDateTime($model, $field);
+            $format = $this->getFormat($options, 'date');
+            $time = $this->getCarbonObjFromDateTime($model, $field, $options);
             return $time->format($format);
         }
         return '';
     }
 
-    public function datetime($model, $field, $value)
+    public function datetime($model, $field, $options)
     {
         if ($model->{$field}){
-            $format = $this->getFormat($value, 'datetime');
-            $time = $this->getCarbonObjFromDateTime($model, $field);
+            $format = $this->getFormat($options, 'datetime');
+            $time = $this->getCarbonObjFromDateTime($model, $field, $options);
+            return $time->format($format);
+        }
+        return '';
+    }
+
+    public function timestamp($model, $field, $options)
+    {
+        if ($model->{$field}){
+            $format = $this->getFormat($options, 'datetime');
+            $time = $this->getCarbonObjFromDateTime($model, $field, $options);
             return $time->format($format);
         }
         return '';
@@ -297,9 +307,32 @@ class ColumnTransformer
     }
 
 
-    private function getCarbonObjFromDateTime($model, $field)
+    private function getCarbonObjFromDateTime($model, $field, $options)
     {
-        return Carbon::createFromFormat('Y-m-d H:i:s', $model->{$field});
+
+        if (isset($options['db_format'])){
+            $format = $options['db_format'];
+        } else {
+            switch ($options['type']){
+                case 'time':
+                    $format = 'H:i:s';
+                    break;
+
+                case 'date':
+                    $format = 'Y-m-d';
+                    break;
+
+                case 'datetime':
+                case 'timestamp':
+                    $format = 'Y-m-d H:i:s';
+                    break;
+
+                default:
+                    $format = 'Y-m-d H:i:s';
+            }
+        }
+
+        return Carbon::createFromFormat($format, $model->getOriginal($field));
     }
 
 }
