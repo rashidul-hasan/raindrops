@@ -94,6 +94,10 @@ class Helper
                 $row_data = $this->columnTransformer->datetime($model, $field, $value);
                 break;
 
+            case 'timestamp':
+                $row_data = $this->columnTransformer->timestamp($model, $field, $value);
+                break;
+
             case 'date':
                 $row_data = $this->columnTransformer->date($model, $field, $value);
                 break;
