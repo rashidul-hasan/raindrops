@@ -29,6 +29,10 @@ class RainDropsServiceProvider extends ServiceProvider
             __DIR__.'/../views' => resource_path('views/vendor/raindrops'),
         ], 'raindrops');
 
+        $this->publishes([
+            __DIR__.'/../public' => public_path('vendor/raindrops'),
+        ], 'raindrops-public');
+
         // publish configs
         $this->publishes([
             __DIR__ . '/../configs' => config_path('raindrops'),

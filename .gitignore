@@ -1,2 +1,4 @@
 # Created by .ignore support plugin (hsz.mobi)
 docs/build/
+node_modules/
+mix-manifest.json
