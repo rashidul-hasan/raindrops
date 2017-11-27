@@ -92,11 +92,13 @@ return [
     */
     'datetime_formats' => [
 
-        'time' => 'F j, Y, g:i A',
+        'time' => 'g:i A',
 
         'date' => 'F j, Y',
 
-        'datetime' => 'F j, Y, g:i A'
+        'datetime' => 'F j, Y, g:i A',
+
+        'timestamp' => 'F j, Y, g:i A',
 
     ],
 
