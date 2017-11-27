@@ -761,6 +761,10 @@ class Builder
 
                 $value = $this->model->exists ? $this->model->getOriginal($field) : null;
 
+                if (isset($options['value'])){
+                    $value = $options['value'];
+                }
+
                 // if old input value exists in the session
                 // for this field, use that
                 if (!empty($this->oldInputs[$field])) {
@@ -943,6 +947,7 @@ class Builder
                             ->addClass($elementClass)
                             ->addClass('datetimepicker')
                             ->setName($field)
+                            ->setValue($value)
                             ->setType('text')
                             ->set($attributes)
                             ->setRequired($required)
@@ -983,6 +988,7 @@ class Builder
                             ->addClass($elementClass)
                             ->setName($field)
                             ->setType('number')
+                            ->setValue($value)
                             ->set($attributes)
                             ->set('step', $this->getPrecision($options['precision']))
                             ->setRequired($required)
@@ -999,6 +1005,7 @@ class Builder
                             ->addClass($elementClass)
                             ->addClass('timepicker')
                             ->setName($field)
+                            ->setValue($value)
                             ->set($attributes)
                             ->setType('text')
                             ->setRequired($required)
