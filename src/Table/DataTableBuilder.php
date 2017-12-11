@@ -67,7 +67,7 @@ class DataTableBuilder
     /**
      * @var boolean Determines if the template should echo the javascript
      */
-    private $noScript = false;
+    private $printScript = true;
 
     /**
      * @var String The name of the id the table will have later
@@ -103,14 +103,6 @@ class DataTableBuilder
     {
         $this->config = Config::get('raindrops.table.index');
 
-        $this->setId( $this->config['id'] );
-        $this->setClass( $this->config['class'] );
-        $this->setOptions( $this->config['options'] );
-        $this->setCallbacks( $this->config['callbacks'] );
-
-        $this->noScript = $this->config['noScript'];
-        $this->table_view = $this->config['table_view'];
-        $this->script_view = $this->config['script_view'];
     }
 
     public function of($model = null)
@@ -123,6 +115,8 @@ class DataTableBuilder
         $this->model = $model;
 
         $this->indexFields = $this->getIndexFields();
+
+        $this->setDefaults();
 
         return $this;
     }
@@ -346,7 +340,7 @@ class DataTableBuilder
             'values'    => $this->customValues,
             'data'      => $this->data,
             'columns'   => array_combine($this->aliasColumns,$this->columns),
-            'noScript'  => $this->noScript,
+            'printScript'  => $this->printScript,
             'id'        => $this->idName,
             'class'     => $this->className,
         ));
@@ -358,9 +352,9 @@ class DataTableBuilder
      *
      * @return $this
      */
-    public function noScript()
+    public function printScript($flag)
     {
-        $this->noScript = true;
+        $this->printScript = $flag;
         return $this;
     }
 
@@ -620,6 +614,17 @@ class DataTableBuilder
         return 'string';
     }
 
+    protected function setDefaults()
+    {
+        $this->setId($this->config['id']);
+        $this->setClass($this->config['class']);
+        $this->setOptions($this->config['options']);
+        $this->setCallbacks($this->config['callbacks']);
+
+        $this->printScript = $this->config['script'];
+        $this->table_view = $this->config['table_view'];
+        $this->script_view = $this->config['script_view'];
+    }
 
 
 }
