@@ -28,8 +28,7 @@ trait Index
 
         // configuring the table
         $table = DataTable::of(new $this->modelClass)
-            ->setUrl($this->model->getDataUrl())
-            ->setId('data-table');
+            ->setUrl($this->model->getDataUrl());
 
         // action buttons
         $buttons = $this->crudAction->renderIndexActions();

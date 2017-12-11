@@ -61,11 +61,11 @@ return [
         |
         */
 
-        'id' => '',
+        'id' => 'dataTable',
 
         /*
         |--------------------------------------------------------------------------
-        | DataTable options
+        | Default DataTable options
         |--------------------------------------------------------------------------
         |
         | jQuery dataTable plugin options. The array will be json_encoded and
@@ -106,7 +106,7 @@ return [
         |
         */
 
-        'noScript' => false,
+        'script' => true,
 
 
         /*
@@ -131,41 +131,8 @@ return [
         | Supported: string
         |
         */
-
         'script_view' => 'raindrops::datatable.script',
 
-        /*
-          |--------------------------------------------------------------------------
-          | Option view
-          |--------------------------------------------------------------------------
-          |
-          | Template used to render the options recursive
-          |
-        */
-
-        'options_view' => config('chumper.datatable::options'),
-
-        /*
-        |--------------------------------------------------------------------------
-        | Engine specific configuration options.
-        |--------------------------------------------------------------------------
-        |
-        */
-        'engine' => [
-
-            /*
-            |--------------------------------------------------------------------------
-            | Search for exact words
-            |--------------------------------------------------------------------------
-            |
-            | If the search should be done with exact matching
-            | Supported: boolean
-            |
-            */
-
-            'exactWordSearch' => false,
-
-        ]
 
     ],
 
