@@ -1,0 +1,28 @@
+{
+  "name": "raindrops",
+  "version": "1.0.0",
+  "description": "Laravel package to speed up building enterprize apps",
+  "main": "index.js",
+  "repository": "https://github.com/rashidul-hasan/raindrops.git",
+  "author": "Rashidul Hasan <rashidul69@gmail.com>",
+  "license": "MIT",
+  "scripts": {
+    "dev": "npm run development",
+    "development": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch": "cross-env NODE_ENV=development node_modules/webpack/bin/webpack.js --watch --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "watch-poll": "npm run watch -- --watch-poll",
+    "hot": "cross-env NODE_ENV=development node_modules/webpack-dev-server/bin/webpack-dev-server.js --inline --hot --config=node_modules/laravel-mix/setup/webpack.config.js",
+    "prod": "npm run production",
+    "production": "cross-env NODE_ENV=production node_modules/webpack/bin/webpack.js --progress --hide-modules --config=node_modules/laravel-mix/setup/webpack.config.js"
+  },
+  "dependencies": {
+    "bootstrap": "^3.3.7",
+    "cross-env": "^5.1.1",
+    "datatables.net": "^1.10.16",
+    "datatables.net-bs": "^1.10.16",
+    "eonasdan-bootstrap-datetimepicker": "^4.17.47",
+    "font-awesome": "^4.7.0",
+    "jquery": "^3.2.1",
+    "laravel-mix": "^1.6.1"
+  }
+}

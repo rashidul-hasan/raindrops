@@ -6,13 +6,13 @@ class Events {
 
 	/**
 	 * Holds all registered actions
-	 * @var TorMorten\Events\Action
+	 * @var Rashidul\RainDrops\Hook\Action
 	 */
 	protected $action;
 
 	/**
 	 * Holds all registered filters
-	 * @var TorMorten\Events\Filter
+	 * @var Rashidul\RainDrops\Hook\Filter
 	 */
 	protected $filter;
 
@@ -27,7 +27,7 @@ class Events {
 
 	/**
 	 * Get the action instance
-	 * @return TorMorten\Events\Action
+	 * @return Rashidul\RainDrops\Hook\Action
 	 */
 	public function getAction() {
 		return $this->action;
@@ -36,7 +36,7 @@ class Events {
 
 	/**
 	 * Get the action instance
-	 * @return TorMorten\Events\Filter
+	 * @return Rashidul\RainDrops\Hook\Filter
 	 */
 	public function getFilter() {
 		return $this->filter;
