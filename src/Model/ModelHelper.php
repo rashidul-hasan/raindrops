@@ -232,6 +232,9 @@ class ModelHelper
                     }
                     break;
 
+                case 'relation_many':
+                    break;
+
                 default:
                     $model->{$field} = $request->has($field) ? $request->get($field) : null;
             }
@@ -260,6 +263,29 @@ class ModelHelper
         $request->file($field)->store($path, $disk);
 
         return $request->file($field)->hashName();
+
+    }
+
+    public static function updateManyToManyRelations($model, $request)
+    {
+        $fields = [];
+
+        foreach ($model->getFields() as $field_name => $options){
+            if (array_key_exists('type', $options) && $options['type'] == 'relation_many'){
+                $fields[$field_name] = $options;
+            }
+        }
+
+        foreach ($fields as $field => $options) {
+
+            if ($request->has($field))
+            {
+                $ids = $request->get($field);
+                $model->{$options['options'][0]}()->sync($ids);
+            }
+        }
+
+
 
     }
 
