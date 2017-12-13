@@ -335,4 +335,20 @@ class ColumnTransformer
         return Carbon::createFromFormat($format, $model->getOriginal($field));
     }
 
+    public function relationMany($model, $field, $value)
+    {
+        $html = '';
+
+        $relatedModels = $model->{$value['options'][0]};
+
+        if ($relatedModels->count())
+        {
+            $relatedModels->each(function ($item) use (&$html, $value){
+                $html .= ' ' . $item->{$value['options'][1]} . ',';
+            });
+        }
+
+        return rtrim($html, ',');
+    }
+
 }

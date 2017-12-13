@@ -25,7 +25,12 @@ class Helper
         $option_key = $indices[0];
         $options = '';
         foreach ($values as $value) {
-            $isSelected = $value['id'] === $selected ? 'selected' : '';
+
+            if (is_array($selected)){
+                $isSelected = in_array($value[$option_key], $selected) ? 'selected' : '';
+            } else {
+                $isSelected = $value[$option_key] === $selected ? 'selected' : '';
+            }
             $option_value = count($indices) > 2 ? $value[$indices[1]] . ' ' . $value[$indices[2]] : $value[$indices[1]];
             $options .= sprintf('<option value="%s" %s>%s</option>', $value[$option_key], $isSelected, $option_value);
         }

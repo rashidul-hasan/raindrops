@@ -55,6 +55,9 @@ trait Update
                 $this->viewData['message'] = $this->model->getEntityName() . ' Updated!';
                 $this->viewData['item'] = $this->model;
 
+                // many to many
+                ModelHelper::updateManyToManyRelations($this->model, $this->request);
+
                 if (method_exists($this, 'updated'))
                 {
                     $this->updated();
