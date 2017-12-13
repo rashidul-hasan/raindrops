@@ -927,6 +927,35 @@ class Builder
 
                         break;
 
+                    // eloquent many to many relation
+                    case 'relation_many':
+
+                        // get the related model
+                        $relationName = $options['options'][0];
+                        $relatedModel = $this->model->{$relationName}()->getRelated();
+
+                        // if model exists, get the ids of related model
+                        $values = [];
+
+                        if ($this->model->exists){
+                            $values = $this->model->{$relationName}->pluck($relatedModel->getKeyName())->toArray();
+                        }
+
+                        // get collection of all rows from the related model
+                        if (isset($options['scope'])) {
+                            $relatedCollection = $relatedModel->$options['scope']()->get();
+                        } else {
+                            $relatedCollection = $relatedModel->all();
+                        }
+
+                        // generate the dropdown
+                        $element = sprintf('<select name="%s[]" class="form-control select2" %s multiple>', $field, $required);
+
+                        $element .= \Rashidul\RainDrops\Form\Helper::collectionToOptions($relatedCollection, ['id', $options['options'][1]], $values);
+                        $element .= '</select>';
+
+                        break;
+
                     case 'date':
 
                         $element = Element::build('input')

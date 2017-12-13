@@ -110,6 +110,10 @@ class Helper
                 $row_data = $this->columnTransformer->relation($model, $field, $value, $this);
                 break;
 
+            case 'relation_many':
+                $row_data = $this->columnTransformer->relationMany($model, $field, $value);
+                break;
+
 
         }
 
