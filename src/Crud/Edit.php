@@ -62,14 +62,7 @@ trait Edit
             'include_view' => $viewRoot . '.' . 'edit'
         ];
 
-        // check if we need to pass additional data to view
-        // there will be a method 'creating', we'll pass the request object
-        // and the $data array variable to it, it'll return $data after adding/modifying
-        // it's elements
-        if (method_exists($this, 'editing'))
-        {
-            $this->editing();
-        }
+        $this->callHookMethod('editing');
 
         return $this->responseBuilder->send($this->request, $this->viewData);
     }

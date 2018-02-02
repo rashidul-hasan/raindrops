@@ -80,13 +80,18 @@ abstract class BaseController extends Controller
         $this->middleware(function ($request, $next) {
             $this->request = $request;
 
-            if (method_exists($this, 'setup'))
-            {
-                $this->container->call([$this, 'setup']);
-            }
+            $this->callHookMethod('setup');
 
             return $next($request);
         });
+    }
+
+    protected function callHookMethod($name)
+    {
+        if (method_exists($this, $name))
+        {
+            $this->container->call([$this, $name]);
+        }
     }
 
 }

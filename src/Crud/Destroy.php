@@ -23,7 +23,6 @@ trait Destroy
      */
     public function destroy($id)
     {
-        // get item obj by id
         try
         {
             $this->model = $this->model->findOrFail($id);
@@ -35,21 +34,14 @@ trait Destroy
             return $this->responseBuilder->send($this->request, $data);
         }
 
-        // let the user do something before destroying the item
-        if (method_exists($this, 'deleting'))
-        {
-            $this->deleting();
-        }
+        $this->callHookMethod('deleting');
 
         try{
             if ($this->model->delete()){
                 $this->viewData['success'] = true;
                 $this->viewData['message'] = $this->model->getEntityName() . ' Deleted!';
 
-                if (method_exists($this, 'deleted'))
-                {
-                    $this->deleted();
-                }
+                $this->callHookMethod('deleted');
 
             } else {
                 $this->viewData['success'] = false;

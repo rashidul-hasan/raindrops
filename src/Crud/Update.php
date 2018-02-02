@@ -44,10 +44,7 @@ trait Update
 
         $this->model = ModelHelper::fillWithRequestData($this->model, $this->request);
 
-        if (method_exists($this, 'updating'))
-        {
-            $this->updating();
-        }
+        $this->callHookMethod('updating');
 
         try{
             if ($this->model->update()){
@@ -58,10 +55,7 @@ trait Update
                 // many to many
                 ModelHelper::updateManyToManyRelations($this->model, $this->request);
 
-                if (method_exists($this, 'updated'))
-                {
-                    $this->updated();
-                }
+                $this->callHookMethod('updated');
 
             } else {
                 $this->viewData['success'] = false;

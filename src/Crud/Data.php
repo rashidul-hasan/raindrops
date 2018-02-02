@@ -26,25 +26,18 @@ trait Data
         $tableActions = $this->crudAction->getTableActions();
         $index_fields = array_keys(ModelHelper::getIndexFields( $this->model ));
         $index_fields[] = 'action';
+
         $this->dataTableQuery = $this->model->select();
         $this->dataTableObject = $this->dataTable->eloquent($this->dataTableQuery)
             ->rawColumns($index_fields);
+
         $this->helper = new Helper();
-
         $this->editColumns();
-
         $this->addActionColumn($tableActions);
 
-        // let user modify the query builder object to
-        // further customize the data to be feed to the
-        // datatable via ajax
-        if (method_exists($this, 'querying'))
-        {
-            $this->querying();
-        }
+        $this->callHookMethod('querying');
 
         return $this->dataTableObject->make(true);
-
     }
 
     protected function editColumns()

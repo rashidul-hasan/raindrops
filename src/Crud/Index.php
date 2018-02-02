@@ -49,10 +49,7 @@ trait Index
 
         ];
 
-        if (method_exists($this, 'indexing'))
-        {
-            $this->indexing();
-        }
+        $this->callHookMethod('indexing');
 
         return $this->responseBuilder->send($this->request, $this->viewData);
 

@@ -69,10 +69,7 @@ trait Show
             'view' => $this->detailsView
         ];
 
-        if (method_exists($this, 'showing'))
-        {
-            $this->showing();
-        }
+        $this->callHookMethod('showing');
 
         return $this->responseBuilder->send($this->request, $this->viewData);
     }

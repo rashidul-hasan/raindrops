@@ -22,51 +22,20 @@ trait Create
      */
     public function create()
     {
-
         $this->crudAction->failIfNotPermitted('add');
 
-        // generate form
         $form = FormBuilder::build($this->model);
-
-        // action buttons
-        $buttons = '';
-
-        $back_button = [
-            'text' => 'Back',
-            'url' => $this->model->getBaseUrl(),
-            'class' => 'btn btn-default'
-        ];
-
-        $viewRoot = property_exists($this, 'viewRoot')
-            ? $this->viewRoot
-            : $this->model->getBaseUrl(false);
 
         $this->viewData = [
             'title' => 'Add New ' . $this->model->getEntityName(),
-            'back_url' => $this->model->getBaseUrl(),
             'form' => $form,
-            'buttons' => $buttons,
-            'back_button' => $back_button,
+            'buttons' => '',
             'view' => $this->createView,
-            'success' => true,
-            'include_view' => $viewRoot . '.' . 'create'
+            'success' => true
         ];
 
-        // check if we need to pass additional data to view
-        // there will be a method 'creating', we'll pass the request object
-        // and the $data array variable to it, it'll return $data after adding/modifying
-        // it's elements
-        if (method_exists($this, 'creating'))
-        {
-            $data = $this->creating();
-
-            if ($data instanceof Response)
-            {
-                return $data;
-            }
-        }
+        $this->callHookMethod('creating');
 
         return $this->responseBuilder->send($this->request, $this->viewData);
-
     }
 }
