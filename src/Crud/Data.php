@@ -24,8 +24,11 @@ trait Data
     {
 
         $tableActions = $this->crudAction->getTableActions();
+        $index_fields = array_keys(ModelHelper::getIndexFields( $this->model ));
+        $index_fields[] = 'action';
         $this->dataTableQuery = $this->model->select();
-        $this->dataTableObject = $this->dataTable->eloquent($this->dataTableQuery);
+        $this->dataTableObject = $this->dataTable->eloquent($this->dataTableQuery)
+            ->rawColumns($index_fields);
         $this->helper = new Helper();
 
         $this->editColumns();
@@ -66,7 +69,7 @@ trait Data
 
             if (method_exists($this, 'getActions'))
             {
-                $actions = $this->getActions();
+                $actions = $this->getActions($item);
             }
             else
             {

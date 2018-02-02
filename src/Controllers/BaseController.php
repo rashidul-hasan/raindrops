@@ -8,6 +8,7 @@
 
 namespace Rashidul\RainDrops\Controllers;
 
+use Illuminate\Container\Container;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Routing\Controller;
 use Rashidul\RainDrops\Crud\Create;
@@ -53,6 +54,8 @@ abstract class BaseController extends Controller
     // class to handle crud actions
     protected $crudAction;
 
+    protected $container;
+
     /**
      * BaseController constructor.
      * @internal param $formRequest
@@ -64,13 +67,22 @@ abstract class BaseController extends Controller
         $this->responseBuilder = new ResponseBuilder();
         $this->model = new $this->modelClass;
         $this->crudAction = new CrudAction($this->model);
+        $this->container = Container::getInstance();
+
+        if (property_exists($this, 'inject')){
+            foreach ($this->inject as $property_name => $class){
+                if (class_exists($class)){
+                    $this->{$property_name} = app($class);
+                }
+            }
+        }
 
         $this->middleware(function ($request, $next) {
             $this->request = $request;
 
             if (method_exists($this, 'setup'))
             {
-                $this->setup();
+                $this->container->call([$this, 'setup']);
             }
 
             return $next($request);
