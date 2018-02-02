@@ -94,4 +94,11 @@ abstract class BaseController extends Controller
         }
     }
 
+    protected function setRedirectUrl()
+    {
+        if (!array_key_exists('redirect', $this->viewData)) {
+            $this->viewData['redirect'] = $this->model->getShowUrl();
+        }
+    }
+
 }

@@ -51,10 +51,7 @@ trait Store
         }
 
         // set redirect url
-        if ( $this->viewData['success'] )
-        {
-            $this->viewData['redirect'] = $this->model->getShowUrl();
-        }
+        $this->setRedirectUrl();
 
         return $this->responseBuilder->send($this->request, $this->viewData);
 
