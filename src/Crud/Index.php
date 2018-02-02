@@ -24,29 +24,18 @@ trait Index
 
         $this->crudAction->failIfNotPermitted('index');
 
-        $ajax = property_exists($this, 'ajax') ? $this->ajax : 'all';
-
-        // configuring the table
         $table = DataTable::of(new $this->modelClass)
             ->setUrl($this->model->getDataUrl());
 
         // action buttons
         $buttons = $this->crudAction->renderIndexActions();
 
-        $viewRoot = property_exists($this, 'viewRoot')
-            ? $this->viewRoot
-            : $this->model->getBaseUrl(false);
-
         $this->viewData = [
-            'url' => $this->model->getBaseUrl(),
             'title' => $this->model->getEntityNamePlural(),
-            'entity' => $this->model,
-            'ajax' => $ajax,
+            'model' => $this->model,
             'table' => $table,
             'buttons' => $buttons,
             'view' => $this->indexView,
-            'include_view' => $viewRoot . '.' . 'index'
-
         ];
 
         $this->callHookMethod('indexing');

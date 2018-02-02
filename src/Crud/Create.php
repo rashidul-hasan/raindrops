@@ -30,6 +30,7 @@ trait Create
             'title' => 'Add New ' . $this->model->getEntityName(),
             'form' => $form,
             'buttons' => '',
+            'model' => $this->model,
             'view' => $this->createView,
             'success' => true
         ];

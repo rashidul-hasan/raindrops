@@ -37,29 +37,13 @@ trait Edit
             return $this->responseBuilder->send($this->request, $data);
         }
 
-        // prepare the form
         $form = FormBuilder::build( $this->model );
-
-        $buttons = '';
-
-        $back_button = [
-            'text' => 'Back',
-            'url' => $this->model->getBaseUrl(),
-            'class' => 'btn btn-default'
-        ];
-
-        $viewRoot = property_exists($this, 'viewRoot')
-            ? $this->viewRoot
-            : $this->model->getBaseUrl(false);
 
         $this->viewData = [
             'title' => 'Edit ' . $this->model->getEntityName(),
-            'item' => $this->model,
-            'back_button' => $back_button,
+            'model' => $this->model,
             'form' => $form,
-            'buttons' => $buttons,
             'view' => $this->editView,
-            'include_view' => $viewRoot . '.' . 'edit'
         ];
 
         $this->callHookMethod('editing');

@@ -23,8 +23,6 @@ trait Show
      */
     public function show($id)
     {
-
-        // get item obj by id
         try
         {
             $this->model = $this->model->findOrFail($id);
@@ -36,20 +34,9 @@ trait Show
             return $this->responseBuilder->send($this->request, $this->viewData);
         }
 
-        // prepare table object
         $table = DetailsTable::of($this->model);
 
         $buttons = $this->crudAction->renderViewActions($this->model);
-
-        $back_button = [
-            'text' => 'Back',
-            'url' => $this->model->getBaseUrl(),
-            'class' => 'btn btn-default'
-        ];
-
-        $viewRoot = property_exists($this, 'viewRoot')
-            ? $this->viewRoot
-            : $this->model->getBaseUrl(false);
 
         // if edit action is not present in the permitted actions list, remove it
         if (property_exists($this, 'actions') && !in_array('edit', $this->actions))
@@ -59,13 +46,10 @@ trait Show
 
         $this->viewData = [
             'title' => $this->model->getEntityName() . ' Details',
-            'item' => $this->model,
+            'model' => $this->model,
             'success' => true,
-            'back_url' => $this->model->getBaseUrl(),
             'table' => $table,
             'buttons' => $buttons,
-            'back_button' => $back_button,
-            'include_view' => $viewRoot . '.' . 'show',
             'view' => $this->detailsView
         ];
 
