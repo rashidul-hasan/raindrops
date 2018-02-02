@@ -26,14 +26,9 @@ trait Store
 
         $this->validate($this->request, $this->model->getvalidationRules(), [], $this->model->getFieldsWithLabels());
 
-        // fill the model with data from request
         $this->model = ModelHelper::fillWithRequestData($this->model, $this->request);
 
-        // let user do any modfications on the inputs before storing
-        if (method_exists($this, 'storing'))
-        {
-            $this->storing();
-        }
+        $this->callHookMethod('storing');
 
         try{
             if ($this->model->save()){
@@ -44,10 +39,7 @@ trait Store
                 // many to many
                 ModelHelper::updateManyToManyRelations($this->model, $this->request);
 
-                if (method_exists($this, 'stored'))
-                {
-                    $this->stored();
-                }
+                $this->callHookMethod('stored');
 
             } else {
                 $this->viewData['success'] = false;
@@ -59,10 +51,7 @@ trait Store
         }
 
         // set redirect url
-        if ( $this->viewData['success'] )
-        {
-            $this->viewData['redirect'] = $this->model->getShowUrl();
-        }
+        $this->setRedirectUrl();
 
         return $this->responseBuilder->send($this->request, $this->viewData);
 
