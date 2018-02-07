@@ -2,16 +2,13 @@
 
 return [
 
-    'templates' => [
+    'default_template_group' => 'horizontal',
 
-        'default' => base_path() . '/vendor/rashidul/raindrops/src/Form/templates/default.stub',
-        'three-column' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/three-column.stub',
-        'four-column' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/four-column.stub',
-    ],
+    'template_groups' => [
 
-    'classes' => [
+        'horizontal' => 'raindrops::fields.horizontal',
 
-        'element' => 'form-control',
+        'two-column' => 'raindrops::fields.two-column'
 
     ],
 

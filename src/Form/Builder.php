@@ -702,6 +702,7 @@ class Builder
 
             return Element::build('form')
                 ->text($method_field)
+                ->addClass($this->configs['classes']['form'])
                 ->set(['enctype' => 'multipart/form-data'])
                 ->set($this->formOptions);
 
@@ -722,25 +723,18 @@ class Builder
 
         if ( empty($section_fields) ) return ;
 
-        $elementClass = $this->configs['classes']['element'];
+        $templateRoot = $this->configs['template_groups'][$this->configs['default_template_group']];
 
-        $template = file_get_contents( $this->configs['templates'][ $this->templateName ] );
+//        $lastField = Helper::getLastKey($section_fields);
 
-        $count = 0;
-
-        $wrapperClass = $this->getWrapperClass();
-
-        $row = Element::build('div')
-            ->addClass('row');
+        $elementClass = 'form-control';
 
 
-        $lastField = Helper::getLastKey($section_fields);
+        $markup = '';
 
         foreach ( $section_fields as $field => $options) {
 
             if (is_array($options)) {
-
-                $stub = file_get_contents($this->configs['stubs']['basic']);
 
                 // form is false then abort
                 if (array_key_exists('form', $options) && !$options['form']) {
@@ -748,16 +742,16 @@ class Builder
                 }
 
                 // get the form's html from a model method
-                if (array_key_exists('form', $options) && $options['form'] === 'method'){
+                /*if (array_key_exists('form', $options) && $options['form'] === 'method'){
                     $row->text($this->model->{$options['formMethod']}());
                     continue;
-                }
+                }*/
 
                 // raw html
-                if (array_key_exists('html', $options) && $options['html'] != '') {
+                /*if (array_key_exists('html', $options) && $options['html'] != '') {
                     $row->text($options['html']);
                     continue;
-                }
+                }*/
 
                 $value = $this->model->exists ? $this->model->getOriginal($field) : null;
 
@@ -1072,35 +1066,50 @@ class Builder
 
                 }
 
-                $placeholders = [
+                /*$placeholders = [
                     '{error_class}' => $error_class,
                     '{label_text}' => $label,
                     '{element}' => $element,
                     '{error_text}' => $error_text
 
+                ];*/
+
+                $data = [
+                    'error_class' => $error_class,
+                    'label' => $label,
+                    'field' => $element,
+                    'error_text' => $error_text,
                 ];
 
-                $element = strtr($stub, $placeholders);
+                if ($options['type'] == 'checkbox'){
+                    $element = view($templateRoot . '.checkbox', $data)->render();
+                } elseif ($options['type'] == 'radio'){
 
-                $wrapper = Element::build('div')
+                } else {
+                    $element = view($templateRoot. '.basic', $data)->render();
+                }
+
+                $markup .= $element;
+
+                /*$wrapper = Element::build('div')
                     ->addClass($wrapperClass)
                     ->text($element)
                     ->render();
 
-                $row->text($wrapper);
+                $row->text($element);*/
             }
             else
             {
-                $row->text($options);
+                $markup .= $options;
             }
 
-            $count++;
+//            $count++;
 
             // when we generated elements as the column number, or there's no
             // elemnt left to build
             // then we add the row in the form, nullify the row object,
             // and reset the counter
-            if ($count === $this->columns || $field === $lastField)
+            /*if ($count === $this->columns || $field === $lastField)
             {
                 // add the row to form
                 $this->form->text($row->render());
@@ -1112,11 +1121,14 @@ class Builder
 
                 // reset the counter
                 $count = 0;
-            }
+            }*/
 
 
 
         }
+
+        $this->form->text($markup);
+
 
     }
 
