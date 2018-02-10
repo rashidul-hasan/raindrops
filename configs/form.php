@@ -2,26 +2,15 @@
 
 return [
 
-    'templates' => [
+    'default_template_group' => 'horizontal',
 
-        'default' => base_path() . '/vendor/rashidul/raindrops/src/Form/templates/default.stub',
-        'three-column' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/three-column.stub',
-        'four-column' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/Form/templates/four-column.stub',
-    ],
+    'template_groups' => [
 
-    'classes' => [
-
-        'element' => 'form-control',
+        'horizontal' => 'raindrops::form.horizontal',
 
     ],
 
-
-    'stubs' => [
-        'basic' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/basic.stub',
-        'checkbox' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/checkbox.stub',
-    ],
-
-    'columns' => 2,
+    'form_class' => 'form-horizontal'
 
 
 ];

@@ -9,7 +9,7 @@ return [
     | Here you set the master layout file for your project. This should have
     | a `raindrops` section where all the CRUD related stuffs will be attached to
     */
-    'layout' => 'layouts.master',
+    'layout' => 'layouts.app',
 
     /*
     |--------------------------------------------------------------------------
