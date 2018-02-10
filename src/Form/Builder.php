@@ -141,7 +141,6 @@ class Builder
         $this->errors = $this->getErrorsFromRequest();
         $this->oldInputs = $this->getOldInputsFromSession();
         $this->configs = config('raindrops.form');
-        $this->columns = $this->configs['columns'];
 
     }
 
@@ -702,7 +701,7 @@ class Builder
 
             return Element::build('form')
                 ->text($method_field)
-                ->addClass($this->configs['classes']['form'])
+                ->addClass($this->configs['form_class'])
                 ->set(['enctype' => 'multipart/form-data'])
                 ->set($this->formOptions);
 
@@ -1037,7 +1036,6 @@ class Builder
                         break;
 
                     case 'checkbox':
-                        $stub = file_get_contents($this->configs['stubs']['checkbox']);
                         $element = Element::build('input')
                             ->setName($field)
                             ->setType('checkbox')

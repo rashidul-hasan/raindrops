@@ -4,6 +4,10 @@
     @include('raindrops::styles.styles')
 @stop
 
+@section('raindrops-action')
+    {!! $buttons !!}
+@stop
+
 @section('raindrops')
 
     <div class="row">

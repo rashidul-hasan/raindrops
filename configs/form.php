@@ -6,19 +6,11 @@ return [
 
     'template_groups' => [
 
-        'horizontal' => 'raindrops::fields.horizontal',
-
-        'two-column' => 'raindrops::fields.two-column'
+        'horizontal' => 'raindrops::form.horizontal',
 
     ],
 
-
-    'stubs' => [
-        'basic' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/basic.stub',
-        'checkbox' => base_path() . '/vendor/rashidul/raindrops/src/Form/stubs/checkbox.stub',
-    ],
-
-    'columns' => 2,
+    'form_class' => 'form-horizontal'
 
 
 ];
