@@ -161,6 +161,8 @@ class Builder
 
         $this->model = $model;
 
+        $this->formType = $this->model->exists ? 'edit' : 'create';
+
         return $this;
     }
 
@@ -737,6 +739,10 @@ class Builder
 
                 // form is false then abort
                 if (array_key_exists('form', $options) && !$options['form']) {
+                    continue;
+                }
+
+                if (array_key_exists('form', $options) && $options['form'] != $this->formType) {
                     continue;
                 }
 
