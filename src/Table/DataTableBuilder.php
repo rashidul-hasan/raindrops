@@ -522,32 +522,13 @@ class DataTableBuilder
 
     private function prepareColumns()
     {
-
         $columnsArray = [];
 
-        /*$column_select['data'] = 'select';
-        $column_select['name'] = 'select';
-        $column_select['orderable'] = false;
-        $column_select['searchable'] = false;
-        //$column_select['className'] = 'datatable-select';
-        array_push($columnsArray, $column_select);*/
-
-
         foreach ($this->indexFields as $fieldName => $options){
-            $dataType = $this->getDataType($options);
-
-            if ($dataType == 'relation'){
-                $relationOptions = isset($options['options']) ? $options['options'] : $options['show'];
-                $column['data'] = $fieldName . '.' . $relationOptions[1];
-                $column['name'] = $fieldName . '.' . $relationOptions[1];
-                $column['defaultContent'] = '';
-                array_push($columnsArray, $column);
-            } else {
-                $column['data'] = $fieldName;
-                $column['name'] = $fieldName;
-                $column['defaultContent'] = '';
-                array_push($columnsArray, $column);
-            }
+            $column['data'] = $fieldName;
+            $column['name'] = $fieldName;
+            $column['defaultContent'] = '';
+            array_push($columnsArray, $column);
         }
 
         // add column for actions
@@ -558,7 +539,6 @@ class DataTableBuilder
         $column_action['className'] = 'datatable-action';
         array_push($columnsArray, $column_action);
 
-        // finally return the array
         return $columnsArray;
     }
 
