@@ -882,7 +882,7 @@ class Builder
 
                         // get collection of all rows from the related model
                         if (isset($options['scope'])) {
-                            $relatedCollection = $relatedModel->$options['scope']()->get();
+                            $relatedCollection = $relatedModel->{$options['scope']}()->get();
                         } else {
                             $relatedCollection = $relatedModel->all();
                         }
