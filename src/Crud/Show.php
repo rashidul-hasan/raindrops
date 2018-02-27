@@ -36,7 +36,7 @@ trait Show
 
         $table = DetailsTable::of($this->model);
 
-        $buttons = $this->crudAction->renderViewActions($this->model);
+        $buttons = $this->crudAction->renderActions('show', $this->model);
 
         // if edit action is not present in the permitted actions list, remove it
         if (property_exists($this, 'actions') && !in_array('edit', $this->actions))

@@ -127,6 +127,75 @@ return [
         'image_index' => 'image-list',
     ],
 
+    /*
+    |--------------------------------------------------------------------------
+    | Default CRUD actions
+    |--------------------------------------------------------------------------
+    |
+    */
+    'default_actions' => [
+        'index' => [
+            'place' => 'permission',
+        ],
+
+        'add' => [
+            'text' => 'Add',
+            'url' => '{route}/create',
+            'place' => 'index|show|edit',
+            'btn_class' => 'btn btn-primary',
+            'icon_class' => ''
+        ],
+        'edit' => [
+            'text' => '',
+            'url' => '{route}/{id}/edit',
+            'place' => 'table',
+            'btn_class' => 'btn btn-xs btn-primary',
+            'icon_class' => 'fa fa-edit'
+        ],
+        'edit_icon' => [
+            'text' => 'Edit',
+            'url' => '{route}/{id}/edit',
+            'place' => 'show',
+            'btn_class' => 'btn btn-default',
+            'icon_class' => 'fa fa-edit'
+        ],
+        'view' => [
+            'text' => '',
+            'url' => '{route}/{id}',
+            'place' => 'table',
+            'btn_class' => 'btn btn-xs btn-primary',
+            'icon_class' => 'fa fa-eye'
+        ],
+        'view_icon' => [
+            'text' => 'Details',
+            'url' => '{route}/{id}',
+            'place' => 'edit',
+            'btn_class' => 'btn btn-default',
+            'icon_class' => 'fa fa-eye'
+        ],
+        'list' => [
+            'text' => 'List',
+            'url' => '{route}',
+            'place' => 'edit|create|show',
+            'btn_class' => 'btn btn-default',
+            'icon_class' => 'fa fa-eye'
+        ],
+        'delete' => [
+            'text' => '',
+            'url' => '{route}/{id}',
+            'place' => 'table',
+            'btn_class' => 'btn btn-xs btn-danger button-delete',
+            'icon_class' => 'fa fa-trash-o',
+            'attr' => [
+                'data-method' => 'delete',
+                'data-confirm' => 'Are you sure?',
+                'data-toggle' => 'tooltip',
+                'title' => 'Delete'
+            ]
+        ],
+
+    ]
+
 
 
 ];

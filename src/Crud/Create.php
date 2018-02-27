@@ -25,11 +25,12 @@ trait Create
         $this->crudAction->failIfNotPermitted('add');
 
         $form = FormBuilder::build($this->model);
+        $buttons = $this->crudAction->renderActions('create', $this->model);
 
         $this->viewData = [
             'title' => 'Add New ' . $this->model->getEntityName(),
             'form' => $form,
-            'buttons' => '',
+            'buttons' => $buttons,
             'model' => $this->model,
             'view' => $this->createView,
             'success' => true

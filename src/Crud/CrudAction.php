@@ -17,47 +17,7 @@ class CrudAction
     protected $model;
 
     // default actions
-    protected $crudActions = [
-        'index' => [
-            'place' => 'permission',
-        ],
-
-        'add' => [
-            'text' => 'Add',
-            'url' => '{route}/create',
-            'place' => 'index',
-            'btn_class' => 'btn btn-primary',
-            'icon_class' => ''
-        ],
-        'edit' => [
-            'text' => '',
-            'url' => '{route}/{id}/edit',
-            'place' => 'table',
-            'btn_class' => 'btn btn-xs btn-primary',
-            'icon_class' => 'fa fa-edit'
-        ],
-        'view' => [
-            'text' => '',
-            'url' => '{route}/{id}',
-            'place' => 'table',
-            'btn_class' => 'btn btn-xs btn-primary',
-            'icon_class' => 'fa fa-eye'
-        ],
-        'delete' => [
-            'text' => '',
-            'url' => '{route}/{id}',
-            'place' => 'table',
-            'btn_class' => 'btn btn-xs btn-danger button-delete',
-            'icon_class' => 'fa fa-trash-o',
-            'attr' => [
-                'data-method' => 'delete',
-                'data-confirm' => 'Are you sure?',
-                'data-toggle' => 'tooltip',
-                'title' => 'Delete'
-            ]
-        ],
-
-    ];
+    protected $crudActions;
 
     /**
      * CrudAction constructor.
@@ -66,6 +26,7 @@ class CrudAction
     public function __construct($model)
     {
         $this->model = $model;
+        $this->crudActions = config('raindrops.crud.default_actions');
     }
 
     public function addCrudActions()
@@ -155,8 +116,8 @@ class CrudAction
     {
 
         $actions = collect($this->crudActions)->filter(function ($value, $key){
-
-            return $value['place'] == 'index';
+            $places = explode('|', $value['place']);
+            return in_array('index', $places);
 
         })->all();
 
@@ -178,7 +139,7 @@ class CrudAction
 
         return collect($this->crudActions)->filter(function ($value, $key){
 
-            return in_array('view', explode(',', $value['place']));
+            return in_array('show', explode('|', $value['place']));
 
         })->all();
     }
@@ -263,6 +224,22 @@ class CrudAction
         }
 
         return $html;
+    }
+
+    public function getActions($place)
+    {
+        return collect($this->crudActions)->filter(function ($value, $key) use($place) {
+
+            return in_array($place, explode('|', $value['place']));
+
+        })->all();
+    }
+
+    public function renderActions($place, $model = null)
+    {
+        $actions = $this->replaceRoutesInActions($this->getActions($place), $model);
+
+        return $this->render($actions);
     }
 
 }
