@@ -38,11 +38,12 @@ trait Edit
         }
 
         $form = FormBuilder::build( $this->model );
+        $buttons = $this->crudAction->renderActions('edit', $this->model);
 
         $this->viewData = [
             'title' => 'Edit ' . $this->model->getEntityName(),
             'model' => $this->model,
-            'buttons' => '',
+            'buttons' => $buttons,
             'form' => $form,
             'view' => $this->editView,
         ];
