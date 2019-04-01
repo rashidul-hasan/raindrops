@@ -11,7 +11,7 @@
     ],
     "require": {
         "yajra/laravel-datatables-fractal": "^1.0",
-        "yajra/laravel-datatables-oracle": "^8.0"
+        "yajra/laravel-datatables-oracle": "^9.0"
     },
     "autoload": {
         "psr-4": {
