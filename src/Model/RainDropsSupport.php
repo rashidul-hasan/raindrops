@@ -8,6 +8,7 @@
 
 namespace Rashidul\RainDrops\Model;
 
+use \Illuminate\Support\Str;
 
 trait RainDropsSupport
 {
@@ -98,9 +99,9 @@ trait RainDropsSupport
             if (array_key_exists('validations', $options) && $options['validations'] != ''){
 
                 $rule = $options['validations'];
-                if ( str_contains($options['validations'], '{id}') ){
+                if ( Str::contains($options['validations'], '{id}') ){
                     $replacer = $item ? ',' . $item->getKey() : '';
-                    $rule = str_replace('{id}', $replacer, $rule);
+                    $rule = Str::replace('{id}', $replacer, $rule);
 
                 }
                 $rules[$field_name] = $rule;
@@ -132,7 +133,7 @@ trait RainDropsSupport
     {
         return property_exists($this, 'entityNamePlural')
             ? $this->entityNamePlural
-            : str_plural($this->getEntityName());
+            : Str::plural($this->getEntityName());
     }
 
 
