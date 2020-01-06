@@ -6,6 +6,7 @@ use File;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Config;
 use Nwidart\Modules\Facades\Module;
+use Illuminate\Support\Str;
 
 class ScaffoldCommand extends Command
 {
@@ -14,7 +15,7 @@ class ScaffoldCommand extends Command
      *
      * @var string
      */
-    protected $signature = 'raindrops:scaffold
+    protected $signature = 'make:module
                             {entity : The name of the Crud.}
                             {--table= : Fields name for the form & migration.}
                             {--route= : Base route, default is table name.}
@@ -65,7 +66,7 @@ class ScaffoldCommand extends Command
     public function handle()
     {
         $entity = $this->argument('entity');
-        $tableName = ($this->option('table')) ? $this->option('table') : str_plural(snake_case($entity));
+        $tableName = ($this->option('table')) ? $this->option('table') : Str::plural(Str::snake($entity));
         $this->routeName = ($this->option('route')) ? $this->option('route') : $tableName;
         $fields = rtrim($this->option('fields'), ';');
         $migrationName = $tableName;

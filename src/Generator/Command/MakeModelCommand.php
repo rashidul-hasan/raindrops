@@ -4,6 +4,7 @@ namespace Rashidul\RainDrops\Generator\Command;
 
 use Illuminate\Console\GeneratorCommand;
 use Rashidul\RainDrops\Generator\Helper;
+use Illuminate\Support\Str;
 
 class MakeModelCommand extends GeneratorCommand
 {
@@ -86,7 +87,7 @@ class MakeModelCommand extends GeneratorCommand
 
         $fields = $this->generateFieldsArray(rtrim($this->option('fields'), ';'));
 
-        $table = $this->option('table') ? $this->option('table') : str_plural(snake_case($this->option('name')));
+        $table = $this->option('table') ? $this->option('table') : Str::plural(Str::snake($this->option('name')));
         $fillable = array_keys($fields);
         $route = ($this->option('route')) ? $this->option('route') : $table;
 
@@ -157,7 +158,7 @@ class MakeModelCommand extends GeneratorCommand
         /*$stub = str_replace('{{entityNamePlural}}',
             str_plural(array_pop(explode('\\', $entity))),
             $stub);*/
-        $stub = str_replace('{{entityNamePlural}}', str_plural($name),
+        $stub = str_replace('{{entityNamePlural}}', Str::plural($name),
             $stub);
         return $this;
     }
